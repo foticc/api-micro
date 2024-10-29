@@ -35,6 +35,10 @@ export default [
         loadChildren: () => import('../../pages/level/level-routing')
       },
       {
+        path: 'page',
+        loadChildren: () => import('../../pages/zpage/page-routing')
+      },
+      {
         path: 'about',
         title: '关于',
         data: { key: 'about' },

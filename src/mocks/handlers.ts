@@ -1,3 +1,4 @@
+import { apis } from '@app/pages/zpage/mock/client_mock';
 import { http, passthrough } from 'msw';
 
 import { department } from './business/department';
@@ -14,6 +15,7 @@ export const handlers = [
   ...user, // 用户列表
   ...department, // 部门
   ...other, // 其他
+  ...apis,
 
   http.get(/.*\.(js|svg|css|jpg|gif|png|woff2)$/, () => passthrough()),
   http.get('https://vdata.amap.com/tiles', () => passthrough()),

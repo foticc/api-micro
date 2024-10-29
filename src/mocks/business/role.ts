@@ -90,6 +90,7 @@ const roleId1Permission = http.get('/site/api/permission/1/', () => {
     code: 0,
     msg: 'SUCCESS',
     data: [
+      'default:page',
       'default:dashboard',
       'default:dashboard:analysis',
       'default:dashboard:monitor',
@@ -1688,11 +1689,11 @@ const systemPermissionList = http.post('/site/api/sysPermission/list', () => {
           updateTime: 1652165916000
         },
         {
-          id: 125,
+          id: 999,
           menuName: '关于',
           code: 'default:about',
           fatherId: 0,
-          orderNum: 7,
+          orderNum: 999,
           path: '/default/about',
           menuType: 'C',
           visible: true,
