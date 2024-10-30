@@ -99,6 +99,24 @@ export class ModalWrapService {
       .subscribe();
   }
 
+  private confirmCallbackPromise<T extends BasicConfirmModalComponent>(modalContentCompInstance: T): Promise<void> {
+    this.modalCompVerification(modalContentCompInstance);
+    return modalContentCompInstance.modalRef.componentInstance
+      .getCurrentValue()
+      .pipe(
+        tap(modalValue => {
+          this.modalFullStatusStoreService.setModalFullStatusStore(false);
+          if (!modalValue) {
+            return of(false);
+          } else {
+            return modalContentCompInstance.modalRef.destroy({ status: ModalBtnStatus.Ok, modalValue });
+          }
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .toPromise();
+  }
+
   modalCompVerification(modalContentCompInstance: BasicConfirmModalComponent): void {
     if (!modalContentCompInstance.modalRef) {
       throwModalRefError();
@@ -183,7 +201,9 @@ export class ModalWrapService {
           label: '确认',
           type: 'primary',
           show: true,
-          onClick: this.confirmCallback.bind(this)<T>
+          autoLoading: true,
+          // onClick: this.confirmCallback.bind(this)<T> 转为确认按钮loading状态，autoLoading 为true并且onClick 返回Promise会自动转为loading
+          onClick: this.confirmCallbackPromise.bind(this)<T>
         },
         {
           label: '取消',
