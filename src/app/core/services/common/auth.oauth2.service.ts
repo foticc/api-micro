@@ -28,7 +28,12 @@ export class AuthOauth2Service {
 
   login(): void {
     this.oauthService.initCodeFlow(); // 启动授权码登录流程
-    // this.oauthService.initLoginFlowInPopup(); // 启动弹出式登录流程
+    // this.oauthService.initLoginFlowInPopup().then(res=>{
+    //   console.log(res);
+    // }); // 启动弹出式登录流程
+    // this.oauthService.tryLoginCodeFlow().then(res => {
+    //   console.log(res);
+    // });
   }
   logout(): void {
     // this.oauthService.revokeTokenAndLogout()
