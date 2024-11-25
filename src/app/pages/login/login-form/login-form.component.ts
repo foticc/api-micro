@@ -17,6 +17,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzNotificationModule, NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import {AuthOauth2Service} from "@core/services/common/auth.oauth2.service";
 
 @Component({
   selector: 'app-login-form',
@@ -36,6 +37,7 @@ export class LoginFormComponent implements OnInit {
   private spinService = inject(SpinService);
   private dataService = inject(LoginService);
   private loginInOutService = inject(LoginInOutService);
+  private authOauth2Service = inject(AuthOauth2Service);
 
   submitForm(): void {
     // 校验表单
@@ -91,5 +93,9 @@ export class LoginFormComponent implements OnInit {
       password: ['123456', [Validators.required]],
       remember: [true]
     });
+  }
+
+  oauth2Login(): void {
+    this.authOauth2Service.login();
   }
 }

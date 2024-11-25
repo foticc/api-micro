@@ -18,6 +18,7 @@ import { SubLockedStatusService } from '@core/services/common/sub-locked-status.
 import { SubWindowWithService } from '@core/services/common/sub-window-with.service';
 import { ThemeSkinService } from '@core/services/common/theme-skin.service';
 import { StartupService } from '@core/startup/startup.service';
+import { provideOAuthClient } from 'angular-oauth2-oidc';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NZ_I18N, zh_CN } from 'ng-zorro-antd/i18n';
 import { NZ_ICONS } from 'ng-zorro-antd/icon';
@@ -122,6 +123,7 @@ export const appConfig: ApplicationConfig = {
     ...APPINIT_PROVIDES, // 项目启动之前，需要调用的一系列方法
     provideAnimationsAsync(), // 开启延迟加载动画，ng17新增特性，如果想要项目启动时就加载动画，可以使用provideAnimations()
     provideHttpClient(withInterceptorsFromDi()),
-    provideExperimentalZonelessChangeDetection() // 开启 zoneless
+    provideExperimentalZonelessChangeDetection(), // 开启 zoneless
+    provideOAuthClient() // angular-oauth2-oidc
   ]
 };
