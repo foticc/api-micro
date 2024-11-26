@@ -14,6 +14,7 @@ const canActivateChildFn: CanActivateFn = () => {
   const windowSrc = inject(WindowService);
   const router = inject(Router);
   const isLogin = !!windowSrc.getSessionStorage(TokenKey);
+  console.log('isLogin', isLogin);
   if (isLogin) {
     return true;
   }
