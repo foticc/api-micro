@@ -1,5 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { filter } from 'rxjs/operators';
 
+import { TokenKey, TokenPre } from '@config/constant';
+import { WindowService } from '@core/services/common/window.service';
 import { AuthConfig, OAuthService } from 'angular-oauth2-oidc';
 
 @Injectable({
@@ -21,9 +24,15 @@ export class AuthOauth2Service {
     logoutUrl: 'http://127.0.0.1:9000/connect/logout'
   };
 
+  private windowServe = inject(WindowService);
+
   constructor(private oauthService: OAuthService) {
     this.oauthService.configure(this.pkceAuthConfig);
-    this.oauthService.setStorage(localStorage);
+    this.oauthService.setStorage(sessionStorage);
+    this.oauthService.events.pipe(filter(e => ['token_received'].includes(e.type))).subscribe(e => {
+      let token = this.oauthService.getAccessToken();
+      this.windowServe.setSessionStorage(TokenKey, TokenPre + token);
+    });
   }
 
   login(): void {
@@ -34,6 +43,11 @@ export class AuthOauth2Service {
     // this.oauthService.tryLoginCodeFlow().then(res => {
     //   console.log(res);
     // });
+    // this.oauthService.tryLoginCodeFlow()
+    // this.oauthService.initLoginFlowInPopup().then(res => {
+    //   console.log(res);
+    // });
+    this.oauthService.tryLoginCodeFlow()
   }
   logout(): void {
     // this.oauthService.revokeTokenAndLogout()
@@ -49,7 +63,7 @@ export class AuthOauth2Service {
   }
 
   userInfo(): any {
-    this.oauthService.loadUserProfile().then((res) => {
+    this.oauthService.loadUserProfile().then(res => {
       console.log(' ', res);
     });
     return this.oauthService.getGrantedScopes(); // 获取用户信息 claims
