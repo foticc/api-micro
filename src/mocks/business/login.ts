@@ -1,9 +1,0 @@
-import { http, HttpResponse } from 'msw';
-
-export const login = http.post('/site/api/login', () => {
-  return HttpResponse.json({
-    code: 0,
-    msg: 'SUCCESS',
-    data: 'eyJraWQiOiI2ZjUxMTkzYS0xOWE4LTRiYmEtOWU5My1iNjcwNjcxNTk4NjEiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImF1ZCI6InB1YmxpYy1jbGllbnQiLCJuYmYiOjE3MzI3NjUwNjksInNjb3BlIjpbIm9wZW5pZCJdLCJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjkwMDAiLCJleHAiOjE3MzI3NzIyNjksImlhdCI6MTczMjc2NTA2OSwianRpIjoiZGNjMzQzNGUtMDc5NC00MzQzLThiZDEtYjYyZjY2NjlmN2FlIiwiYXV0aG9yaXRpZXMiOlsib3BlbmlkIiwiYWRtaW4iXX0.Pvdc8xgWh4YBF92YlxpH4bWrk_NGIMOk3uc85Xt3sVQZLHQf6bKxXYwnzOb1nA22fXY8_7RmH6OUnRMhIEzSj5WtvyQF3efPlv1G82ZuUdhoapWXZXRby6YwlRp0vfNauMtWMqYddacakYQUWxWaYK-c11ZpqbaSOvuHyaOSaljrBb07m1fCXRGCzsQn8ovFftyF5-Q4MDUwK5Z1xuIdgN1WGOjzblZ_obsGDpBEyQG9qqcm9rCj675ZN4k6C_uNj9bhyYOyn1FlSzFryJcTMuLCl17VyeZIG54IJKj_ksdMMj5S_m25zN093TYmt3T6v6BWjfkCyQYscAo2beyToQ'
-  });
-});
