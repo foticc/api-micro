@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 export interface UserInfo {
-  userId: number;
+  userId: string;
   authCode: string[];
 }
 
@@ -12,19 +12,19 @@ export interface UserInfo {
   providedIn: 'root'
 })
 export class UserInfoService {
-  private userInfo$ = new BehaviorSubject<UserInfo>({ userId: -1, authCode: [] });
+  private userInfo$ = new BehaviorSubject<UserInfo>({ userId: '', authCode: [] });
 
   parsToken(token: string): UserInfo {
     const helper = new JwtHelperService();
     try {
-      const { rol, userId } = helper.decodeToken(token);
+      const { authorities, sub } = helper.decodeToken(token);
       return {
-        userId,
-        authCode: rol.split(',')
+        userId: sub,
+        authCode: authorities
       };
     } catch (e) {
       return {
-        userId: -1,
+        userId: '',
         authCode: []
       };
     }

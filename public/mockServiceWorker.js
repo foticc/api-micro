@@ -91,7 +91,10 @@ self.addEventListener('message', async function (event) {
 
 self.addEventListener('fetch', function (event) {
   const { request } = event
-
+  console.log('request.host',request.url);
+  if (request.url.indexOf(':9000') !== -1) {
+    return;
+  }
   // Bypass navigation requests.
   if (request.mode === 'navigate') {
     return

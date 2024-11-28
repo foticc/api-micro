@@ -115,7 +115,7 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({
         scrollPositionRestoration: 'top'
       }),
-      withHashLocation(), // 使用哈希路由
+      // withHashLocation(), // 使用哈希路由, 哈希路由和oauth2 冲突???
       withComponentInputBinding() // 开启路由参数绑定到组件的输入属性,ng16新增特性
     ),
     importProvidersFrom(NzDrawerModule, NzModalModule),

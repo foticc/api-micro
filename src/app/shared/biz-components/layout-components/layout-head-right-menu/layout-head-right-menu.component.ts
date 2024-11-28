@@ -65,7 +65,7 @@ export class LayoutHeadRightMenuComponent {
       }
       this.userInfoService.getUserInfo().subscribe(res => {
         this.user = {
-          id: res.userId,
+          id: 1,
           oldPassword: modalValue.oldPassword,
           newPassword: modalValue.newPassword
         };

@@ -96,6 +96,6 @@ export class LoginFormComponent implements OnInit {
   }
 
   oauth2Login(): void {
-    this.authOauth2Service.login();
+    this.authOauth2Service.initCodeFlow();
   }
 }

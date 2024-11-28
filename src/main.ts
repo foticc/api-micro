@@ -7,11 +7,12 @@ import { appConfig } from '@app/app.config';
 
 async function prepareApp(): Promise<ServiceWorkerRegistration | undefined> {
   const { worker } = await import('./mocks/browser');
-  return worker.start({
-    serviceWorker: {
-      url: './mockServiceWorker.js'
-    }
-  });
+  // return worker.start({
+  //   serviceWorker: {
+  //     url: './mockServiceWorker.js'
+  //   }
+  // });
+  return worker.start();
 }
 
 // 启动mock数据

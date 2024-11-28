@@ -1,7 +1,10 @@
 import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 import { TokenKey, TokenPre } from '@config/constant';
+import { PKCE_AUTH_CONFIG } from '@config/oauth2_config';
+import { LoginInOutService } from '@core/services/common/login-in-out.service';
 import { WindowService } from '@core/services/common/window.service';
 import { AuthConfig, OAuthService } from 'angular-oauth2-oidc';
 
@@ -9,68 +12,33 @@ import { AuthConfig, OAuthService } from 'angular-oauth2-oidc';
   providedIn: 'root'
 })
 export class AuthOauth2Service {
-  pkceAuthConfig: AuthConfig = {
-    issuer: 'http://127.0.0.1:9000',
-    loginUrl: 'http://127.0.0.1:9000/oauth2/authorize',
-    clientId: 'public-client',
-    redirectUri: 'http://127.0.0.1:4201/callback',
-    responseType: 'code',
-    scope: 'openid profile email',
-    tokenEndpoint: 'http://127.0.0.1:9000/oauth2/token',
-    postLogoutRedirectUri: 'http://127.0.0.1:4201/',
-    userinfoEndpoint: 'http://127.0.0.1:9000/userinfo',
-    requireHttps: false,
-    showDebugInformation: true,
-    logoutUrl: 'http://127.0.0.1:9000/connect/logout'
-  };
-
-  private windowServe = inject(WindowService);
+  private loginInOutService = inject(LoginInOutService);
+  private router = inject(Router);
 
   constructor(private oauthService: OAuthService) {
-    this.oauthService.configure(this.pkceAuthConfig);
-    this.oauthService.setStorage(sessionStorage);
-    this.oauthService.events.pipe(filter(e => ['token_received'].includes(e.type))).subscribe(e => {
-      let token = this.oauthService.getAccessToken();
-      this.windowServe.setSessionStorage(TokenKey, TokenPre + token);
+    this.oauthService.configure(PKCE_AUTH_CONFIG);
+    this.oauthService.setStorage(localStorage);
+    this.oauthService.events.subscribe(res => {
+      console.log('event', res);
     });
   }
 
-  login(): void {
+  initCodeFlow(): void {
     this.oauthService.initCodeFlow(); // 启动授权码登录流程
-    // this.oauthService.initLoginFlowInPopup().then(res=>{
-    //   console.log(res);
-    // }); // 启动弹出式登录流程
-    // this.oauthService.tryLoginCodeFlow().then(res => {
-    //   console.log(res);
-    // });
-    // this.oauthService.tryLoginCodeFlow()
-    // this.oauthService.initLoginFlowInPopup().then(res => {
-    //   console.log(res);
-    // });
-    this.oauthService.tryLoginCodeFlow()
   }
   logout(): void {
-    // this.oauthService.revokeTokenAndLogout()
-    // this.oauthService.revokeTokenAndLogout()
-    //   .then(res=>{
-    //     console.log(res);
-    //     this.router.navigate(['/']);
-    //   });
     this.oauthService.logOut(); // 登出
   }
   get isAuthenticated(): boolean {
     return this.oauthService.hasValidAccessToken(); // 检查访问令牌是否有效
   }
 
-  userInfo(): any {
-    this.oauthService.loadUserProfile().then(res => {
-      console.log(' ', res);
-    });
-    return this.oauthService.getGrantedScopes(); // 获取用户信息 claims
-  }
-
   accessToken(): string {
     // 获取访问令牌
     return this.oauthService.getAccessToken();
+  }
+
+  tryLogin(): Promise<boolean> {
+    return this.oauthService.tryLogin();
   }
 }

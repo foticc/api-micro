@@ -73,14 +73,14 @@ export class JudgeAuthGuardService {
     if (!!route.data['authCode']) {
       return this.getResult(route.data['authCode'], this.authCodeArray);
     }
-
     // 如果是菜单上的按钮，则走下面
     this.getMenu(this.menuNavList, state.url);
     // 没找到菜单，直接回登录页
     if (!this.selMenu) {
       return this.getResult(fnGetUUID(), this.authCodeArray);
     }
-    const selMenuCode = this.selMenu.code;
+    // 角色或者菜单权限
+    const selMenuCode = this.selMenu.role || this.selMenu.code;
     this.selMenu = null;
     // 找到了菜单，但是菜单的权限码用户不拥有，则跳转到登录页
     return this.getResult(selMenuCode!, this.authCodeArray);
