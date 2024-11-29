@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import {ForbiddenException, Inject, Injectable, Logger} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { rowId } from 'drizzle-orm/sqlite-core/expressions';
@@ -19,6 +19,7 @@ export class AuthService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @Inject(DrizzleAsyncProvider) private conn: NodePgDatabase<typeof schema>,
   ) {}
+  private readonly logger = new Logger(AuthService.name);
 
   // 登录
   async signIn(userName: string, password: string) {

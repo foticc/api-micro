@@ -3,7 +3,16 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import zh from '@angular/common/locales/zh';
 import { APP_INITIALIZER, ApplicationConfig, FactoryProvider, importProvidersFrom, provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideRouter, RouteReuseStrategy, TitleStrategy, withComponentInputBinding, withHashLocation, withInMemoryScrolling, withPreloading } from '@angular/router';
+import {
+  provideRouter,
+  RouteReuseStrategy,
+  TitleStrategy,
+  withComponentInputBinding,
+  withDisabledInitialNavigation,
+  withHashLocation,
+  withInMemoryScrolling,
+  withPreloading
+} from '@angular/router';
 
 import { DashboardOutline, FormOutline, MenuFoldOutline, MenuUnfoldOutline } from '@ant-design/icons-angular/icons';
 import { appRoutes } from '@app/app-routing';

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } 
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 
+import { AuthOauth2Service } from '@core/services/common/auth.oauth2.service';
 import { LoginInOutService } from '@core/services/common/login-in-out.service';
 import { LoginService } from '@core/services/http/login/login.service';
 import { SpinService } from '@store/common-store/spin.service';
@@ -17,7 +18,6 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzNotificationModule, NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
-import {AuthOauth2Service} from "@core/services/common/auth.oauth2.service";
 
 @Component({
   selector: 'app-login-form',

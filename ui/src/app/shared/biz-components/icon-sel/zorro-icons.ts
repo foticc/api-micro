@@ -179,7 +179,8 @@ const logo = [
   'Alibaba',
   'Yahoo',
   'Reddit',
-  'Sketch'
+  'Sketch',
+  'Kubernetes'
 ];
 
 const newIconNames: string[] = [

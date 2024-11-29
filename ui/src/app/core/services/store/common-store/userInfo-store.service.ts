@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -21,10 +21,15 @@ export class UserInfoStoreService {
   parsToken(token: string): UserInfo {
     const helper = new JwtHelperService();
     try {
-      const { userName, sub } = helper.decodeToken(token);
+      const { userName, sub, uid } = helper.decodeToken(token);
+      console.log('userName,sub,uid', {
+        userId: uid || sub,
+        userName: userName || sub,
+        authCode: []
+      });
       return {
-        userId: sub,
-        userName,
+        userId: uid || sub,
+        userName: userName || sub,
         authCode: []
       };
     } catch (e) {

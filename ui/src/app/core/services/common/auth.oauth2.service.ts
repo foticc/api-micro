@@ -1,26 +1,21 @@
-import { inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
-import { TokenKey, TokenPre } from '@config/constant';
 import { PKCE_AUTH_CONFIG } from '@config/oauth2_config';
-import { LoginInOutService } from '@core/services/common/login-in-out.service';
-import { WindowService } from '@core/services/common/window.service';
-import { AuthConfig, OAuthService } from 'angular-oauth2-oidc';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { LoginOptions } from 'angular-oauth2-oidc/types';
+import { fromPromise } from 'rxjs/internal/observable/innerFrom';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthOauth2Service {
-  private loginInOutService = inject(LoginInOutService);
-  private router = inject(Router);
-
   constructor(private oauthService: OAuthService) {
     this.oauthService.configure(PKCE_AUTH_CONFIG);
     this.oauthService.setStorage(localStorage);
-    this.oauthService.events.subscribe(res => {
-      console.log('event', res);
-    });
+    // this.oauthService.events.subscribe(res => {
+    //   console.log('event', res);
+    // });
   }
 
   initCodeFlow(): void {
@@ -38,7 +33,7 @@ export class AuthOauth2Service {
     return this.oauthService.getAccessToken();
   }
 
-  tryLogin(): Promise<boolean> {
-    return this.oauthService.tryLogin();
+  tryLogin(options?: LoginOptions): Observable<boolean> {
+    return fromPromise(this.oauthService.tryLogin(options));
   }
 }
