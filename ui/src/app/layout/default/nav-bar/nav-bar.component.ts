@@ -24,8 +24,7 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
   selector: 'app-nav-bar',
   templateUrl: './nav-bar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [NzMenuModule, NzNoAnimationModule, NgTemplateOutlet, AuthDirective, NzButtonModule, NzIconModule, RouterLink, AsyncPipe]
+  imports: [NzMenuModule, NzNoAnimationModule, NgTemplateOutlet, NzButtonModule, NzIconModule, RouterLink, AsyncPipe, AuthDirective]
 })
 export class NavBarComponent implements OnInit {
   @Input({ transform: booleanAttribute })

@@ -30,7 +30,6 @@ interface DataItem {
   templateUrl: './analysis.component.html',
   styleUrls: ['./analysis.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NzCardModule,
     NzBreadCrumbModule,

@@ -28,8 +28,7 @@ import { HomeNoticeComponent } from '../home-notice/home-notice.component';
   templateUrl: './layout-head-right-menu.component.html',
   styleUrls: ['./layout-head-right-menu.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [NgTemplateOutlet, ScreenLessHiddenDirective, NzToolTipModule, NzIconModule, NzButtonModule, ToggleFullscreenDirective, NzDropDownModule, NzBadgeModule, NzMenuModule, HomeNoticeComponent]
+  imports: [NgTemplateOutlet, NzToolTipModule, NzIconModule, NzButtonModule, ToggleFullscreenDirective, NzDropDownModule, NzBadgeModule, NzMenuModule, HomeNoticeComponent, ScreenLessHiddenDirective]
 })
 export class LayoutHeadRightMenuComponent {
   user!: UserPsd;
