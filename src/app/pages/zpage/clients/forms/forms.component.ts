@@ -1,13 +1,11 @@
-import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { fnCheckForm } from '@utils/tools';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
-import { NzButtonComponent } from 'ng-zorro-antd/button';
-import { NzCheckboxComponent, NzCheckboxGroupComponent } from 'ng-zorro-antd/checkbox';
+import { NzCheckboxComponent } from 'ng-zorro-antd/checkbox';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzDatePickerComponent } from 'ng-zorro-antd/date-picker';
 import { NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLabelComponent } from 'ng-zorro-antd/form';
@@ -24,7 +22,6 @@ import { Clients, ClientService } from '../../api/client.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    JsonPipe,
     FormsModule,
     NzColDirective,
     NzFormControlComponent,
@@ -35,11 +32,8 @@ import { Clients, ClientService } from '../../api/client.service';
     NzRowDirective,
     ReactiveFormsModule,
     NzDatePickerComponent,
-    NzButtonComponent,
     NzRadioGroupComponent,
     NzRadioComponent,
-    NzCheckboxGroupComponent,
-    NzCheckboxComponent,
     NzSelectComponent,
     NzOptionComponent
   ],
