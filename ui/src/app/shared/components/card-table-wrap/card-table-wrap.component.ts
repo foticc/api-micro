@@ -29,6 +29,7 @@ interface TableSizeItem {
   selector: 'app-card-table-wrap',
   templateUrl: './card-table-wrap.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     NzCardModule,
     NgTemplateOutlet,

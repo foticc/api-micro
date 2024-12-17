@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { PKCE_AUTH_CONFIG } from '@config/oauth2_config';
-import { OAuthService } from 'angular-oauth2-oidc';
-import { LoginOptions } from 'angular-oauth2-oidc/types';
+import { OAuthService, LoginOptions } from 'angular-oauth2-oidc';
 import { fromPromise } from 'rxjs/internal/observable/innerFrom';
 
 @Injectable({
