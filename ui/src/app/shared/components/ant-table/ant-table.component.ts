@@ -180,9 +180,24 @@ export class AntTableComponent implements OnChanges {
     ) as TableHeader[];
   }
 
+  private findIndexFn(cashItem: NzSafeAny, dataItem: NzSafeAny): boolean {
+    const keyField = this.tableConfig.keyField?.trim(); // 确保 keyField 有效且去除多余空白
+    if (!keyField) {
+      return false; // 如果 keyField 无效，直接返回 false
+    }
+
+    // 确保 cashItem 和 dataItem 有效
+    if (!cashItem || !dataItem || !(keyField in cashItem) || !(keyField in dataItem)) {
+      return false;
+    }
+
+    // 比较 keyField 对应的值是否相等
+    return cashItem[keyField] === dataItem[keyField];
+  }
+
   checkFn(dataItem: NzSafeAny, isChecked: boolean): void {
     dataItem['_checked'] = isChecked;
-    const index = this.checkedCashArrayFromComment.findIndex(cashItem => cashItem.id === dataItem.id);
+    const index = this.checkedCashArrayFromComment.findIndex(cashItem => this.findIndexFn(cashItem, dataItem));
     if (isChecked) {
       if (index === -1) {
         this.checkedCashArrayFromComment.push(dataItem);
@@ -214,7 +229,7 @@ export class AntTableComponent implements OnChanges {
   refreshStatus(): void {
     this._dataList.forEach(item => {
       const index = this.checkedCashArrayFromComment.findIndex(cashItem => {
-        return item.id === cashItem.id;
+        return this.findIndexFn(cashItem, item);
       });
       item['_checked'] = index !== -1;
     });

@@ -1,31 +1,51 @@
 import { ChangeDetectorRef, Component, DestroyRef, inject, TemplateRef, ViewChild, OnInit } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 
 import { AcDetailService } from '@app/pages/zpage/api/acdetail.service';
-import { Clients, ClientService } from '@app/pages/zpage/api/client.service';
+import { Clients } from '@app/pages/zpage/api/client.service';
 import { FormsComponent } from '@app/pages/zpage/clients/forms/forms.component';
+import { SearchCommonVO } from '@core/services/types';
 import { AntTableComponent, AntTableConfig, SortFile } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { PageHeaderType } from '@shared/components/page-header/page-header.component';
-import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
 import { ModalBtnStatus, ModalWrapService } from '@widget/base-modal';
 import { NzBadgeComponent } from 'ng-zorro-antd/badge';
 import { NzButtonComponent } from 'ng-zorro-antd/button';
 import { NzCardComponent } from 'ng-zorro-antd/card';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
+import { NzWaveDirective } from 'ng-zorro-antd/core/wave';
+import { NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLabelComponent } from 'ng-zorro-antd/form';
+import { NzColDirective, NzRowDirective } from 'ng-zorro-antd/grid';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
+import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 interface SearchParam {
-  ruleName: number;
+  name: string;
   desc: string;
 }
 @Component({
   selector: 'app-tvcms',
-  imports: [NzBadgeComponent, NzButtonComponent, NzCardComponent, NzIconDirective, WaterMarkComponent, CardTableWrapComponent, AntTableComponent],
+  imports: [
+    NzBadgeComponent,
+    NzButtonComponent,
+    NzCardComponent,
+    NzIconDirective,
+    CardTableWrapComponent,
+    AntTableComponent,
+    FormsModule,
+    NzColDirective,
+    NzFormControlComponent,
+    NzFormDirective,
+    NzFormItemComponent,
+    NzFormLabelComponent,
+    NzInputDirective,
+    NzRowDirective,
+    NzWaveDirective
+  ],
   templateUrl: './tvcms.component.html',
   standalone: true,
   styleUrl: './tvcms.component.less'
@@ -77,13 +97,13 @@ export class TvcmsComponent implements OnInit {
 
   getDataList(e?: NzTableQueryParams): void {
     this.tableConfig.loading = true;
-    this.dataList = [];
+    const params = {
+      size: this.tableConfig.pageSize!,
+      page: e?.pageIndex || this.tableConfig.pageIndex!,
+      ...this.searchParam
+    };
     this.api
-      .fetchPage({
-        name: '帝国',
-        page: e?.pageIndex,
-        size: e?.pageSize
-      })
+      .fetchPage(params)
       .pipe(
         finalize(() => {
           this.tableLoading(false);
@@ -94,6 +114,7 @@ export class TvcmsComponent implements OnInit {
         this.dataList = [...content];
         this.tableConfig.total = page.totalElements;
         this.tableConfig.pageSize = page.size;
+        this.tableConfig.pageIndex = page.number;
       });
     /*-----实际业务请求http接口如下------*/
     // this.tableConfig.loading = true;
@@ -252,6 +273,13 @@ export class TvcmsComponent implements OnInit {
           title: 'vodName',
           field: 'vodName',
           show: true
+        },
+        {
+          title: '操作',
+          tdTemplate: this.operationTpl,
+          width: 120,
+          fixed: true,
+          fixedDir: 'right'
         }
       ],
       keyField: 'vodId',

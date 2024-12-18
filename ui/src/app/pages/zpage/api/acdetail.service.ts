@@ -1,12 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { SearchCommonVO } from '@core/services/types';
 import { BaseHttpService } from '@services/base-http.service';
+import { NzSafeAny } from 'ng-zorro-antd/core/types';
 
 interface QueryParams {
-  name: string | undefined;
-  page: number | undefined;
-  size: number | undefined;
+  page: number;
+  size: number;
+  [key: string]: any;
 }
 
 interface PageResult<T> {
