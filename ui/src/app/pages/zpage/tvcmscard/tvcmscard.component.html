@@ -1,0 +1,58 @@
+<div class="normal-table-wrap">
+  <nz-card class="m-b-10" [nzBodyStyle]="{ 'padding-bottom': 0 }">
+    <form nz-form>
+      <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24 }">
+        <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXl]="8" [nzXs]="24" [nzXXl]="8">
+          <nz-form-item>
+            <nz-form-label [nzFor]="">名称</nz-form-label>
+            <nz-form-control>
+              <input name="menuName" nz-input placeholder="请输入名称" [(ngModel)]="searchParam.name" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXl]="8" [nzXs]="24" [nzXXl]="8">
+          <nz-form-item>
+            <nz-form-label [nzFor]="">描述</nz-form-label>
+            <nz-form-control>
+              <input name="desc" nz-input placeholder="请输入" [(ngModel)]="searchParam.desc" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div class="text-right p-0 m-b-10" nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXl]="8" [nzXs]="24" [nzXXl]="8">
+          <button nz-button [nzType]="'primary'">
+            <i nz-icon nzType="search"></i>
+            搜索
+          </button>
+          <button class="m-l-15" nz-button>
+            <i nz-icon nzTheme="outline" nzType="close-circle"></i>
+            重置
+          </button>
+        </div>
+      </div>
+    </form>
+  </nz-card>
+  <nz-list nzGrid [nzLoading]="loading">
+    <div nz-row [nzGutter]="16">
+      @for (item of list; track item.vod_id) {
+        <div nz-col [nzLg]="12" [nzMd]="12" [nzSm]="12" [nzXl]="8" [nzXs]="24" [nzXXl]="6">
+          <nz-card class="m-t-20" nzHoverable [nzCover]="coverTemplate" style="height: 300px; width: auto">
+            <nz-card-meta [nzDescription]="item.vod_name" [nzTitle]="item.vod_name"></nz-card-meta>
+          </nz-card>
+          <ng-template #avatarTemplate>
+            <nz-avatar nzSize="large" nzShape="square" [nzSrc]="item.vod_pic" [nzAlt]="item.vod_name"></nz-avatar>
+          </ng-template>
+          <ng-template #coverTemplate>
+            <img style="height: 200px; width: auto" alt="{{ item.vod_name }}" src="{{ item.vod_pic }}" />
+          </ng-template>
+          <ng-template #actionSetting>操作一</ng-template>
+          <ng-template #actionEdit>操作二</ng-template>
+        </div>
+      }
+    </div>
+  </nz-list>
+
+  <nz-list-pagination>
+    <nz-pagination nzShowQuickJumper [nzPageIndex]="pageIndex" [nzTotal]="total" (nzPageIndexChange)="changePageIndex($event)"></nz-pagination>
+  </nz-list-pagination>
+</div>
