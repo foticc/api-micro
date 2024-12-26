@@ -1,6 +1,6 @@
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet, NgStyle } from '@angular/common';
-import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, ContentChild, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
+import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, Input, TemplateRef, input, output, contentChild, computed } from '@angular/core';
 
 import { AntTreeTableComponentToken } from '@shared/components/tree-table/tree-table.component';
 import { ScreenLessHiddenDirective } from '@shared/directives/screen-less-hidden.directive';
@@ -50,13 +50,12 @@ interface TableSizeItem {
   ]
 })
 export class CardTableWrapComponent implements AfterContentInit {
-  @Input() tableTitle: string | TemplateRef<NzSafeAny> | undefined;
-  @Input() btnTpl: TemplateRef<NzSafeAny> | undefined;
-  @Input({ transform: booleanAttribute })
-  isNormalTable = true; // 如果只是需要card-table-wrap的样式，这里设置为false
-  @Output() readonly reload = new EventEmitter<NzSafeAny>();
-  @ContentChild(AntTableComponentToken) antTableComponent!: AntTableComponentToken;
-  @ContentChild(AntTreeTableComponentToken) antTreeTableComponent!: AntTreeTableComponentToken;
+  readonly tableTitle = input<string | TemplateRef<NzSafeAny>>();
+  readonly btnTpl = input<TemplateRef<NzSafeAny>>();
+  readonly isNormalTable = input(true, { transform: booleanAttribute }); // 如果只是需要card-table-wrap的样式，这里设置为false
+  readonly reload = output();
+  readonly antTableComponent = contentChild(AntTableComponentToken);
+  readonly antTreeTableComponent = contentChild(AntTreeTableComponentToken);
   tableConfigVisible = false;
   tableSizeOptions: TableSizeItem[] = [
     { sizeName: '默认', selected: true, value: 'default' },
@@ -64,14 +63,23 @@ export class CardTableWrapComponent implements AfterContentInit {
     { sizeName: '紧凑', selected: false, value: 'small' }
   ];
   tableHeaders: TableHeader[] = [];
-  currentTableComponent!: AntTableComponentToken | AntTreeTableComponentToken;
+
+  // 当前包裹的table组件
+  currentTableComponent = computed(() => {
+    const tableComponent = this.antTableComponent() || this.antTreeTableComponent();
+    if (!tableComponent) {
+      throw new Error('没有antTableComponent或者antTreeTableComponent作为投影组件');
+    }
+    return tableComponent;
+  });
+
   allTableFieldChecked = false; // 设置里面全选列
   allTableFieldIndeterminate = false; // 设置里面全选列的半选状态
   copyHeader: TableHeader[] = []; // 缓存默认配置
 
   // 是否展示复选框
   changeTableCheckBoxShow(e: boolean): void {
-    this.currentTableComponent.tableConfig.showCheckbox = e;
+    this.currentTableComponent().tableConfig().showCheckbox = e;
     this.tableChangeDectction();
   }
 
@@ -79,7 +87,7 @@ export class CardTableWrapComponent implements AfterContentInit {
   tableSizeMenuClick(item: TableSizeItem): void {
     this.tableSizeOptions.forEach(tableSizeItem => (tableSizeItem.selected = false));
     item.selected = true;
-    this.currentTableComponent.tableSize = item.value;
+    this.currentTableComponent().tableSize = item.value;
   }
 
   // 配置中tableCheckbox是否全选
@@ -109,7 +117,7 @@ export class CardTableWrapComponent implements AfterContentInit {
         noFixedArray.push(item);
       }
     });
-    this.currentTableComponent.tableConfig.headers = [...fixedLeftArray, ...noFixedArray, ...fixedRightArray];
+    this.currentTableComponent().tableConfig().headers = [...fixedLeftArray, ...noFixedArray, ...fixedRightArray];
     this.tableChangeDectction();
   }
 
@@ -137,7 +145,7 @@ export class CardTableWrapComponent implements AfterContentInit {
 
   // 使子列表变更检测
   tableChangeDectction(): void {
-    this.currentTableComponent.tableChangeDectction();
+    this.currentTableComponent().tableChangeDectction();
   }
 
   // 判断列展示这个checkbox的状态
@@ -153,15 +161,13 @@ export class CardTableWrapComponent implements AfterContentInit {
     this.copyHeader.forEach(item => {
       this.tableHeaders.push({ ...item });
     });
-    this.currentTableComponent.tableConfig.headers = [...this.tableHeaders];
+    this.currentTableComponent().tableConfig().headers = [...this.tableHeaders];
     this.tableChangeDectction();
   }
 
   ngAfterContentInit(): void {
-    this.currentTableComponent = this.antTableComponent || this.antTreeTableComponent;
-
-    if (this.isNormalTable) {
-      this.tableHeaders = [...this.currentTableComponent.tableConfig.headers];
+    if (this.isNormalTable()) {
+      this.tableHeaders = [...this.currentTableComponent().tableConfig().headers];
       this.tableHeaders.forEach(item => {
         if (item.show === undefined) {
           item.show = true;

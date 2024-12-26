@@ -43,7 +43,7 @@ export interface AntTableConfig {
 
 export abstract class AntTableComponentToken {
   tableSize!: NzTableSize;
-  tableConfig!: AntTableConfig;
+  tableConfig!: InputSignal<AntTableConfig>;
 
   abstract tableChangeDectction(): void;
 }
@@ -59,20 +59,19 @@ export interface SortFile {
   styleUrls: ['./ant-table.component.less'],
   providers: [{ provide: AntTableComponentToken, useExisting: AntTableComponent }],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [NzTableModule, NzResizableModule, NgClass, NgTemplateOutlet, MapPipe, TableFiledPipe, ContextPipePipe]
 })
 export class AntTableComponent implements OnChanges {
   _dataList!: NzSafeAny[];
-  _tableConfig!: AntTableConfig;
-  _scrollConfig: { x: string; y: string } | {} = {};
   // 从业务组件中传入的缓存的已经选中的checkbox数据数组
-  @Input() checkedCashArrayFromComment: NzSafeAny[] = [];
+  readonly checkedCashArrayFromComment = input<NzSafeAny[]>([]);
 
+  // TODO: Skipped for migration because:
+  //  Accessor inputs cannot be migrated as they are too complex.
   @Input()
   set tableData(value: NzSafeAny[]) {
     this._dataList = value;
-    if (this.tableConfig.showCheckbox) {
+    if (this.tableConfig().showCheckbox) {
       this._dataList.forEach(item => {
         item['_checked'] = false;
       });
@@ -93,44 +92,36 @@ export class AntTableComponent implements OnChanges {
     return this._tableSize;
   }
 
-  @Input()
-  set tableConfig(value: AntTableConfig) {
-    this._tableConfig = value;
-    this.setScrollConfig(value);
-  }
+  tableConfig = input.required<AntTableConfig>();
 
-  get tableConfig(): AntTableConfig {
-    return this._tableConfig;
-  }
+  _scrollConfig = computed(() => {
+    return this.setScrollConfig(this.tableConfig());
+  });
 
-  @Output() readonly changePageIndex = new EventEmitter<NzTableQueryParams>();
-  @Output() readonly changePageSize = new EventEmitter<number>();
-  @Output() readonly selectedChange: EventEmitter<NzSafeAny[]> = new EventEmitter<NzSafeAny[]>();
-  @Output() readonly sortFn: EventEmitter<SortFile> = new EventEmitter<SortFile>();
+  readonly changePageIndex = output<NzTableQueryParams>();
+  readonly changePageSize = output<number>();
+  readonly selectedChange = output<NzSafeAny[]>();
+  readonly sortFn = output<SortFile>();
   indeterminate = false;
   allChecked = false;
   private cdr = inject(ChangeDetectorRef);
 
-  setScrollConfig(value: AntTableConfig): void {
-    if (value && !value.needNoScroll) {
-      // 默认x：100
-      this._scrollConfig = { x: '100px' };
-      let tempX = {};
-      if (value.xScroll !== undefined) {
-        tempX = { x: `${value.xScroll}px` };
-      }
-      let tempY = {};
-      if (value.yScroll !== undefined) {
-        tempY = { y: `${value.yScroll}px` };
-      }
-      this._scrollConfig = { ...this._scrollConfig, ...tempX, ...tempY };
-    } else {
-      this._scrollConfig = {};
+  setScrollConfig(value: AntTableConfig): { x: string; y: string } | {} {
+    if (!value || value.needNoScroll) {
+      return {};
     }
+    const scrollConfig: { x?: string; y?: string } = { x: '100px' };
+    if (value.xScroll !== undefined) {
+      scrollConfig.x = `${value.xScroll}px`;
+    }
+    if (value.yScroll !== undefined) {
+      scrollConfig.y = `${value.yScroll}px`;
+    }
+    return scrollConfig;
   }
 
   changeSort(tableHeader: TableHeader): void {
-    this.tableConfig.headers.forEach(item => {
+    this.tableConfig().headers.forEach(item => {
       if (item.field !== tableHeader.field) {
         item.sortDir = undefined;
       }
@@ -170,7 +161,7 @@ export class AntTableComponent implements OnChanges {
   }
 
   onResize({ width }: NzResizeEvent, col: string): void {
-    this.tableConfig.headers = this.tableConfig.headers.map(e =>
+    this.tableConfig().headers = this.tableConfig().headers.map(e =>
       e.title === col
         ? {
             ...e,
@@ -197,14 +188,14 @@ export class AntTableComponent implements OnChanges {
 
   checkFn(dataItem: NzSafeAny, isChecked: boolean): void {
     dataItem['_checked'] = isChecked;
-    const index = this.checkedCashArrayFromComment.findIndex(cashItem => this.findIndexFn(cashItem, dataItem));
+    const index = this.checkedCashArrayFromComment().findIndex(cashItem => this.findIndexFn(cashItem, dataItem));
     if (isChecked) {
       if (index === -1) {
-        this.checkedCashArrayFromComment.push(dataItem);
+        this.checkedCashArrayFromComment().push(dataItem);
       }
     } else {
       if (index !== -1) {
-        this.checkedCashArrayFromComment.splice(index, 1);
+        this.checkedCashArrayFromComment().splice(index, 1);
       }
     }
   }
@@ -212,7 +203,7 @@ export class AntTableComponent implements OnChanges {
   // 单选
   public checkRowSingle(isChecked: boolean, selectIndex: number): void {
     this.checkFn(this._dataList[selectIndex], isChecked);
-    this.selectedChange.emit(this.checkedCashArrayFromComment);
+    this.selectedChange.emit(this.checkedCashArrayFromComment());
     this.refreshStatus();
   }
 
@@ -221,14 +212,14 @@ export class AntTableComponent implements OnChanges {
     this._dataList.forEach(item => {
       this.checkFn(item, isChecked);
     });
-    this.selectedChange.emit(this.checkedCashArrayFromComment);
+    this.selectedChange.emit(this.checkedCashArrayFromComment());
     this.refreshStatus();
   }
 
   // 刷新复选框状态
   refreshStatus(): void {
     this._dataList.forEach(item => {
-      const index = this.checkedCashArrayFromComment.findIndex(cashItem => {
+      const index = this.checkedCashArrayFromComment().findIndex(cashItem => {
         return this.findIndexFn(cashItem, item);
       });
       item['_checked'] = index !== -1;

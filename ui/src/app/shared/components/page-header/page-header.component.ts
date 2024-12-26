@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Input, TemplateRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, TemplateRef, input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ThemeService } from '@store/common-store/theme.service';
@@ -25,13 +25,12 @@ export interface PageHeaderType {
 export class PageHeaderComponent {
   private themesService = inject(ThemeService);
   private router = inject(Router);
-
-  @Input() backTpl: TemplateRef<NzSafeAny> | undefined;
-  @Input() pageHeaderInfo: Partial<PageHeaderType> = {};
-  @Input() backUrl = '';
+  readonly backTpl = input<TemplateRef<NzSafeAny>>();
+  readonly pageHeaderInfo = input<Partial<PageHeaderType>>({});
+  readonly backUrl = input('');
   themesOptions$ = this.themesService.getThemesMode();
 
   back(): void {
-    this.router.navigateByUrl(this.backUrl);
+    this.router.navigateByUrl(this.backUrl());
   }
 }

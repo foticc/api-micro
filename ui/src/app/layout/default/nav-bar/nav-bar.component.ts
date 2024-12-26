@@ -1,5 +1,5 @@
 import { NgTemplateOutlet, AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Input, inject, DestroyRef, booleanAttribute } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, DestroyRef, booleanAttribute, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -27,10 +27,8 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
   imports: [NzMenuModule, NzNoAnimationModule, NgTemplateOutlet, NzButtonModule, NzIconModule, RouterLink, AsyncPipe, AuthDirective]
 })
 export class NavBarComponent implements OnInit {
-  @Input({ transform: booleanAttribute })
-  isMixinHead = false; // 是混合模式顶部导航
-  @Input({ transform: booleanAttribute })
-  isMixinLeft = false;
+  readonly isMixinHead = input(false, { transform: booleanAttribute }); // 是混合模式顶部导航
+  readonly isMixinLeft = input(false, { transform: booleanAttribute });
 
   private router = inject(Router);
   private userInfoService = inject(UserInfoStoreService);
@@ -84,6 +82,10 @@ export class NavBarComponent implements OnInit {
     this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),
+        filter((event: NavigationEnd) => {
+          // 忽略刷新tab时的占用路由跳转
+          return event.url !== '/default/refresh-empty';
+        }),
         tap(() => {
           this.subTheme$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
             // 主题切换为混合模式下，设置左侧菜单数据源

@@ -1,3 +1,4 @@
+@let tableConfig = this.tableConfig();
 <nz-table
   nzShowPagination
   nzShowQuickJumper
@@ -13,7 +14,7 @@
   [nzScroll]="tableConfig.needNoScroll ? {} : { x: '1100px' }"
   [nzShowTotal]="rangeTemplate"
   [nzSize]="tableSize"
-  [nzTotal]="tableConfig!.total"
+  [nzTotal]="tableConfig.total"
   (nzPageSizeChange)="onPageSizeChange($event)"
   (nzQueryParams)="onQueryParamsChange($event)"
 >

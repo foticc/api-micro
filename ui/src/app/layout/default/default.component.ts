@@ -1,10 +1,9 @@
 import { NgTemplateOutlet, NgClass, NgStyle } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild, AfterViewInit, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, AfterViewInit, inject, DestroyRef, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { fadeRouteAnimation } from '@app/animations/fade.animation';
 import { SettingDrawerComponent, Theme } from '@app/layout/default/setting-drawer/setting-drawer.component';
 import { CollapsedNavWidth, IsFirstLogin, SideNavWidth } from '@config/constant';
 import { DriverService } from '@core/services/common/driver.service';
@@ -32,7 +31,6 @@ import { ToolBarComponent } from './tool-bar/tool-bar.component';
   templateUrl: './default.component.html',
   styleUrls: ['./default.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [fadeRouteAnimation],
   imports: [
     TopProgressBarComponent,
     NzLayoutModule,
@@ -58,7 +56,7 @@ import { ToolBarComponent } from './tool-bar/tool-bar.component';
   ]
 })
 export class DefaultComponent implements OnInit, AfterViewInit {
-  @ViewChild('navDrawer') navDrawer!: NavDrawerComponent;
+  readonly navDrawer = viewChild.required<NavDrawerComponent>('navDrawer');
   SideNavWidth = SideNavWidth;
   CollapsedNavWidth = CollapsedNavWidth;
 
@@ -103,17 +101,12 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   changeCollapsed(isCollapsed: boolean): void {
     // 如果是over模式，点击左侧菜单，显示抽屉菜单
     if (this.isOverMode) {
-      this.navDrawer.showDraw();
+      this.navDrawer().showDraw();
       return;
     }
     this.isCollapsed = isCollapsed;
     // 设置左侧菜单是否折叠的状态
     this.themesService.setIsCollapsed(this.isCollapsed);
-  }
-
-  // 路由动画
-  prepareRoute(outlet: RouterOutlet): string {
-    return outlet?.activatedRouteData?.['key'];
   }
 
   judgeMarginTop(): string {

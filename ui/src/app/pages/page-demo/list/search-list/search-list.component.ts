@@ -1,9 +1,8 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, TemplateRef, inject, DestroyRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, TemplateRef, inject, DestroyRef, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterEvent, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
-import { fadeRouteAnimation } from '@app/animations/fade.animation';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
 import { SearchListStoreService } from '@store/biz-store-service/search-list/search-list-store.service';
@@ -22,17 +21,14 @@ interface TabInterface {
   selector: 'app-search-list',
   templateUrl: './search-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [fadeRouteAnimation],
   imports: [PageHeaderComponent, WaterMarkComponent, NzButtonModule, NzInputModule, NzWaveModule, NzTabsModule, RouterOutlet]
 })
 export class SearchListComponent {
-  @ViewChild('headerContent', { static: true }) headerContent!: TemplateRef<NzSafeAny>;
-  @ViewChild('headerFooter', { static: true }) headerFooter!: TemplateRef<NzSafeAny>;
+  readonly headerContent = viewChild.required<TemplateRef<NzSafeAny>>('headerContent');
+  readonly headerFooter = viewChild.required<TemplateRef<NzSafeAny>>('headerFooter');
   pageHeaderInfo: Partial<PageHeaderType> = {
     title: '搜索列表（文章）',
-    desc: this.headerContent,
-    breadcrumb: ['首页', '列表页', '查询表格'],
-    footer: this.headerFooter
+    breadcrumb: ['首页', '列表页', '查询表格']
   };
   currentSelTab = 0;
   destroyRef = inject(DestroyRef);
@@ -52,8 +48,8 @@ export class SearchListComponent {
       .subscribe(componentType => {
         this.pageHeaderInfo = {
           title: componentType,
-          desc: this.headerContent,
-          footer: this.headerFooter,
+          desc: this.headerContent(),
+          footer: this.headerFooter(),
           breadcrumb: ['首页', '列表页', componentType]
         };
         this.cdr.markForCheck();
@@ -70,10 +66,6 @@ export class SearchListComponent {
           });
         }
       });
-  }
-
-  prepareRoute(outlet: RouterOutlet): string {
-    return outlet?.activatedRouteData?.['key'];
   }
 
   to(item: TabInterface): void {
