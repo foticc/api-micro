@@ -60,6 +60,7 @@ export interface SortFile {
   styleUrls: ['./ant-table.component.less'],
   providers: [{ provide: AntTableComponentToken, useExisting: AntTableComponent }],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [NzTableModule, NzResizableModule, NgClass, NgTemplateOutlet, MapPipe, TableFiledPipe, ContextPipePipe]
 })
 export class AntTableComponent implements OnChanges {
@@ -166,7 +167,7 @@ export class AntTableComponent implements OnChanges {
   }
 
   private findIndexFn(cashItem: NzSafeAny, dataItem: NzSafeAny): boolean {
-    const keyField = this.tableConfig.keyField?.trim(); // 确保 keyField 有效且去除多余空白
+    const keyField = this.tableConfig().keyField?.trim(); // 确保 keyField 有效且去除多余空白
     if (!keyField) {
       return false; // 如果 keyField 无效，直接返回 false
     }

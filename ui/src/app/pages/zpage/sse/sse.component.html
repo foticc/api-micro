@@ -1,0 +1,15 @@
+<div class="p-16">
+  <nz-card class="m-t-15 b-r-8" [nzBodyStyle]="{ 'padding-bottom': 0 }">
+    <div class="full-with min-screen-full-height m-b-8">
+      <nz-timeline>
+        @for (item of msg; track item) {
+          <nz-timeline-item>{{ item }}</nz-timeline-item>
+        }
+      </nz-timeline>
+
+      <button nz-button nzType="primary" (click)="connect()">连接</button>
+      <button nz-button nzType="dashed" nzDanger (click)="break()">断开</button>
+      <button nz-button nzType="primary" nzDanger (click)="clear()">清空</button>
+    </div>
+  </nz-card>
+</div>
