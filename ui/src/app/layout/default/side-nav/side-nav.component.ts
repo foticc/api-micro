@@ -1,6 +1,4 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 
 import { ThemeService } from '@store/common-store/theme.service';
 
@@ -11,11 +9,11 @@ import { NavBarComponent } from '../nav-bar/nav-bar.component';
   templateUrl: './side-nav.component.html',
   styleUrls: ['./side-nav.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NavBarComponent, AsyncPipe]
+  imports: [NavBarComponent]
 })
 export class SideNavComponent {
   private themesService = inject(ThemeService);
-  themesOptions$ = this.themesService.getThemesMode();
-  isNightTheme$ = this.themesService.getIsNightTheme();
-  isCollapsed$: Observable<boolean> = this.themesService.getIsCollapsed();
+  $themesOptions = computed(() => this.themesService.$themesOptions());
+  $isNightTheme = computed(() => this.themesService.$isNightTheme());
+  $isCollapsed = computed(() => this.themesService.$isCollapsed());
 }

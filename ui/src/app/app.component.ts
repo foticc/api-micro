@@ -1,5 +1,4 @@
-import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -15,14 +14,14 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 @Component({
   selector: 'app-root',
   template: `
-    @if ((lockedState$ | async)!.locked) {
+    @if (lockedState()!.locked) {
       <app-lock-screen></app-lock-screen>
     }
     <nz-back-top></nz-back-top>
     <div class="full-height">
       <router-outlet></router-outlet>
     </div>
-    @if (loading$ | async) {
+    @if (loading()) {
       <div style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1001;background:rgba(24,144,255,0.1);">
         <div style="position:absolute;top: 50%;left:50%;margin:-16px 0 0 -16px;">
           <nz-spin nzSize="large"></nz-spin>
@@ -31,7 +30,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LockScreenComponent, NzBackTopModule, RouterOutlet, NzSpinModule, AsyncPipe]
+  imports: [LockScreenComponent, NzBackTopModule, RouterOutlet, NzSpinModule]
 })
 export class AppComponent implements OnInit, AfterViewInit {
   private preloader = inject(PreloaderService);
@@ -39,8 +38,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   private spinService = inject(SpinService);
   private router = inject(Router);
 
-  loading$ = this.spinService.getCurrentGlobalSpinStore();
-  lockedState$ = this.lockScreenStoreService.getLockScreenStore();
+  loading = computed(() => this.spinService.$globalSpinStore());
+  lockedState = computed(() => {
+    return this.lockScreenStoreService.lockScreenSignalStore();
+  });
   destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
@@ -50,7 +51,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(() => {
-        this.spinService.setCurrentGlobalSpinStore(false);
+        this.spinService.$globalSpinStore.set(false);
       });
   }
 

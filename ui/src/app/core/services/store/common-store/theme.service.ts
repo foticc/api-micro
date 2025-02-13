@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { effect, Injectable, signal } from '@angular/core';
 
 import { Theme, ThemeMode } from '@app/layout/default/setting-drawer/setting-drawer.component';
 
@@ -23,18 +22,18 @@ export interface SettingInterface {
 export type StyleTheme = 'default' | 'dark' | 'aliyun' | 'compact'; // 默认主题，暗黑主题，阿里云主题，紧凑主题
 
 // 主题风格
-export type StyleThemeInterface = {
-  [key in StyleTheme]: boolean;
-};
+export type StyleThemeInterface = Record<StyleTheme, boolean>;
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
-  private isNightTheme$ = new BehaviorSubject<boolean>(false); // 暗黑主题observable
-  private isCompactTheme$ = new BehaviorSubject<boolean>(false); // 紧凑主题
-  private isOverModeTheme$ = new BehaviorSubject<boolean>(false); // over模式，即拖动浏览器宽度，至菜单栏消失的状态
-  private themesMode$ = new BehaviorSubject<SettingInterface>({
+  // todo 跟$themeStyle有重复，日后优化
+  $isNightTheme = signal(false); // 暗黑主题
+  $isCompactTheme = signal(false); // 紧凑主题
+  $isOverModeTheme = signal(false); // over模式，即拖动浏览器宽度，至菜单栏消失的状态
+  $isCollapsed = signal(false); // 菜单收缩模式，拖动浏览器至菜单自动缩短成图标
+  $themesOptions = signal<SettingInterface>({
     theme: 'dark',
     color: '#1890FF',
     mode: 'side',
@@ -50,62 +49,10 @@ export class ThemeService {
     hasNavArea: true,
     hasNavHeadArea: true
   });
-  private styleThemeMode$ = new BehaviorSubject<StyleTheme>('default'); // 主题风格，暗黑，默认，紧凑，阿里云
-  private isCollapsed$ = new BehaviorSubject<boolean>(false); // 菜单收缩模式，拖动浏览器至菜单自动缩短成图标
-
-  // 获取主题参数
-  setThemesMode(mode: SettingInterface): void {
-    this.themesMode$.next(mode);
-  }
-
-  getThemesMode(): Observable<SettingInterface> {
-    return this.themesMode$.asObservable();
-  }
-
-  // 获取主题模式
-  setStyleThemeMode(mode: StyleTheme): void {
-    this.setIsNightTheme(mode === 'dark');
-    this.setIsCompactTheme(mode === 'compact');
-    this.styleThemeMode$.next(mode);
-  }
-
-  getStyleThemeMode(): Observable<StyleTheme> {
-    return this.styleThemeMode$.asObservable();
-  }
-
-  // 主题是否是暗黑主题
-  setIsNightTheme(isNight: boolean): void {
-    this.isNightTheme$.next(isNight);
-  }
-
-  getIsNightTheme(): Observable<boolean> {
-    return this.isNightTheme$.asObservable();
-  }
-
-  // 主题是否是紧凑主题
-  setIsCompactTheme(isNight: boolean): void {
-    this.isCompactTheme$.next(isNight);
-  }
-
-  getIsCompactTheme(): Observable<boolean> {
-    return this.isCompactTheme$.asObservable();
-  }
-
-  // 主题是否over侧边栏
-  setIsOverMode(isNight: boolean): void {
-    this.isOverModeTheme$.next(isNight);
-  }
-
-  getIsOverMode(): Observable<boolean> {
-    return this.isOverModeTheme$.asObservable();
-  }
-
-  // 菜单是否折叠
-  setIsCollapsed(isCollapsed: boolean): void {
-    this.isCollapsed$.next(isCollapsed);
-  }
-
-  getIsCollapsed(): Observable<boolean> {
-    return this.isCollapsed$.asObservable();
-  }
+  $themeStyle = signal<StyleTheme>('default'); // 主题风格，暗黑，默认，紧凑，阿里云
+  themeStyleChangeEffect = effect(() => {
+    const source = this.$themeStyle();
+    this.$isNightTheme.set(source === 'dark');
+    this.$isCompactTheme.set(source === 'compact');
+  });
 }

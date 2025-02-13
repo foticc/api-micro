@@ -1,5 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit, ChangeDetectionStrategy, inject, DestroyRef, computed } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -30,21 +29,22 @@ export class NormalLoginComponent implements OnInit {
   passwordVisible = false;
   password?: string;
   typeEnum = LoginType;
-  isOverModel = false;
+  isOverModel = computed(() => {
+    return this.login1StoreService.isLogin1OverModelSignalStore();
+  });
   destroyRef = inject(DestroyRef);
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private spinService = inject(SpinService);
   private login1StoreService = inject(Login1StoreService);
   private userInfoService = inject(UserInfoStoreService);
-  private cdr = inject(ChangeDetectorRef);
   private windowServe = inject(WindowService);
 
   submitForm(): void {
-    this.spinService.setCurrentGlobalSpinStore(true);
+    this.spinService.$globalSpinStore.set(true);
     this.windowServe.setSessionStorage(TokenKey, 'TokenPre + token');
     const userInfo = this.userInfoService.parsToken(TokenPre);
-    this.userInfoService.setUserInfo(userInfo);
+    this.userInfoService.$userInfo.set(userInfo);
     // if (!fnCheckForm(this.validateForm)) {
     //   return;
     // }
@@ -52,23 +52,16 @@ export class NormalLoginComponent implements OnInit {
       // 请查看src/app/pages/login/login-form/login-form.component.ts文件中的登录逻辑
       // 这里的登录逻辑只是做个展示示例
       this.router.navigateByUrl('default/dashboard/analysis').then(() => {
-        this.spinService.setCurrentGlobalSpinStore(false);
+        this.spinService.$globalSpinStore.set(false);
       });
     }, 100);
   }
 
   goOtherWay(type: LoginType): void {
-    this.login1StoreService.setLoginTypeStore(type);
+    this.login1StoreService.$loginTypeStore.set(type);
   }
 
   ngOnInit(): void {
-    this.login1StoreService
-      .getIsLogin1OverModelStore()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(res => {
-        this.isOverModel = res;
-        this.cdr.markForCheck();
-      });
     this.validateForm = this.fb.group({
       userName: [null, [Validators.required]],
       password: [null, [Validators.required]],

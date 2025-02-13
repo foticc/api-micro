@@ -1,6 +1,6 @@
 import { NgTemplateOutlet, AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, DestroyRef, booleanAttribute, input } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, DestroyRef, booleanAttribute, input, computed } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
@@ -42,13 +42,16 @@ export class NavBarComponent implements OnInit {
   routerPath = this.router.url;
   menus: Menu[] = [];
   copyMenus: Menu[] = [];
-  authCodeArray: string[] = [];
+  authCodeArray = computed(() => {
+    return this.userInfoService.$userInfo().authCode;
+  });
 
-  themesOptions$ = this.themesService.getThemesMode();
-  isNightTheme$ = this.themesService.getIsNightTheme();
-  isCollapsed$ = this.themesService.getIsCollapsed();
-  isOverMode$ = this.themesService.getIsOverMode();
-  leftMenuArray$ = this.splitNavStoreService.getSplitLeftNavArrayStore();
+  $isNightTheme = computed(() => this.themesService.$isNightTheme());
+  // todo signal最后要修正
+  themesOptions$ = toObservable(this.themesService.$themesOptions);
+  isCollapsed$ = toObservable(this.themesService.$isCollapsed);
+  isOverMode$ = toObservable(this.themesService.$isOverModeTheme);
+  leftMenuArray$ = toObservable(this.splitNavStoreService.$splitLeftNavArray);
   subTheme$: Observable<NzSafeAny>;
 
   themesMode: ThemeMode['key'] = 'side';
@@ -78,7 +81,6 @@ export class NavBarComponent implements OnInit {
     this.subMixinModeSideMenu();
     // 监听折叠菜单事件
     this.subIsCollapsed();
-    this.subAuth();
     this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),
@@ -148,7 +150,7 @@ export class NavBarComponent implements OnInit {
   setMixModeLeftMenu(): void {
     this.menus.forEach(item => {
       if (item.selected) {
-        this.splitNavStoreService.setSplitLeftNavArrayStore(item.children || []);
+        this.splitNavStoreService.$splitLeftNavArray.set(item.children || []);
       }
     });
   }
@@ -185,7 +187,7 @@ export class NavBarComponent implements OnInit {
       /*添加了权限版*/
       // 获取有权限的二级菜单集合（在左侧展示的）
       currentLeftNavArray = currentLeftNavArray.filter(item => {
-        return this.authCodeArray.includes(item.code!);
+        return this.authCodeArray().includes(item.code!);
       });
       // 如果第一个二级菜单，没有三级菜单
       if (currentLeftNavArray.length > 0 && !currentLeftNavArray[0].children) {
@@ -205,7 +207,7 @@ export class NavBarComponent implements OnInit {
       //   this.splitNavStoreService.setSplitLeftNavArrayStore(currentLeftNavArray);
       // }
     }
-    this.splitNavStoreService.setSplitLeftNavArrayStore(currentLeftNavArray);
+    this.splitNavStoreService.$splitLeftNavArray.set(currentLeftNavArray);
   }
 
   flatMenu(menus: Menu[], routePath: string): void {
@@ -285,13 +287,6 @@ export class NavBarComponent implements OnInit {
     this.clickMenuItem(this.menus);
     this.clickMenuItem(this.copyMenus);
     this.closeMenuOpen(this.menus);
-  }
-
-  subAuth(): void {
-    this.userInfoService
-      .getUserInfo()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(res => (this.authCodeArray = res.authCode));
   }
 
   // 监听混合模式下左侧菜单数据源
