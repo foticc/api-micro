@@ -31,19 +31,19 @@ export class CallbackComponent implements OnInit {
   }
 
   tryLogin(): void {
-    this.spinService.setCurrentGlobalSpinStore(true);
+    this.spinService.$globalSpinStore.set(true);
     this.auth2Service
       .tryLogin()
       .pipe(
         // 无论如何设置全局loading为false
         finalize(() => {
-          this.spinService.setCurrentGlobalSpinStore(false);
+          this.spinService.$globalSpinStore.set(false);
         }),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe({
         next: res => {
-          this.spinService.setCurrentGlobalSpinStore(false);
+          this.spinService.$globalSpinStore.set(false);
           if (res) {
             let token = this.auth2Service.accessToken();
             if (token) {

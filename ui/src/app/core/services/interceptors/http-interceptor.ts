@@ -46,6 +46,11 @@ export const httpInterceptorService: HttpInterceptorFn = (req, next) => {
   const copyReq = req.clone(httpConfig);
   return next(copyReq).pipe(
     filter(e => e.type !== 0),
-    catchError(error => handleError(error))
+    catchError(error => {
+      if (error.error && error.error.msg) {
+        message.error(error.error.msg);
+      }
+      return handleError(error);
+    })
   );
 };

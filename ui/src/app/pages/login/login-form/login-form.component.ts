@@ -89,7 +89,7 @@ export class LoginFormComponent implements OnInit {
 
   ngOnInit(): void {
     // 只要进入登录页面，就清除各种缓存
-    this.loginInOutService.loginOut();
+    // this.loginInOutService.loginOut();
     this.validateForm = this.fb.group({
       userName: ['admin', [Validators.required]],
       password: ['123456', [Validators.required]],

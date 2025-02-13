@@ -102,7 +102,7 @@ export class ModalWrapService {
       .getCurrentValue()
       .pipe(
         tap(modalValue => {
-          this.modalFullStatusStoreService.setModalFullStatusStore(false);
+          this.modalFullStatusStoreService.$modalFullStatusStore.set(false);
           if (!modalValue) {
             return of(false);
           } else {
