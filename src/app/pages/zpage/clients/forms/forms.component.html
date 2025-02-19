@@ -15,7 +15,12 @@
   <nz-form-item>
     <nz-form-label nzFor="clientSecret" [nzSm]="4" [nzXs]="24">密钥</nz-form-label>
     <nz-form-control [nzSm]="18" [nzXs]="24">
-      <input id="clientSecret" name="clientSecret" formControlName="clientSecret" nz-input placeholder="请输入描述" />
+      <nz-input-group [nzSuffix]="suffixTemplate">
+        <input id="clientSecret" name="clientSecret" formControlName="clientSecret" nz-input placeholder="请输入描述" [type]="passwordVisible ? 'text' : 'password'" />
+      </nz-input-group>
+      <ng-template #suffixTemplate>
+        <span nz-icon class="ant-input-password-icon" [nzType]="passwordVisible ? 'eye-invisible' : 'eye'" (click)="passwordVisible = !passwordVisible"></span>
+      </ng-template>
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
@@ -33,12 +38,11 @@
   <nz-form-item>
     <nz-form-label nzFor="clientAuthenticationMethods" [nzSm]="4" [nzXs]="24">认证方法</nz-form-label>
     <nz-form-control [nzSm]="18" [nzXs]="24">
-      <nz-radio-group id="clientAuthenticationMethods" formControlName="clientAuthenticationMethods">
-        <label nz-radio nzValue="A">A</label>
-        <label nz-radio nzValue="B">B</label>
-        <label nz-radio nzValue="C">C</label>
-        <label nz-radio nzValue="D">D</label>
-      </nz-radio-group>
+      <nz-select id="clientAuthenticationMethods" formControlName="clientAuthenticationMethods" nzMode="multiple" nzShowArrow="true">
+        @for (option of checkOptionsMethods; track option.value) {
+          <nz-option [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+        }
+      </nz-select>
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
@@ -51,7 +55,7 @@
     <nz-form-label nzFor="authorizationGrantTypes" [nzSm]="4" [nzXs]="24">授权方式</nz-form-label>
     <nz-form-control [nzSm]="18" [nzXs]="24">
       <nz-select id="authorizationGrantTypes" formControlName="authorizationGrantTypes" nzMode="multiple" nzShowArrow="true">
-        @for (option of checkOptionsOne; track option.value) {
+        @for (option of checkOptionsGrantTypes; track option.value) {
           <nz-option [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
         }
       </nz-select>

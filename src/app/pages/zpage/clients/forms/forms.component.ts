@@ -5,12 +5,12 @@ import { catchError } from 'rxjs/operators';
 
 import { fnCheckForm } from '@utils/tools';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
-import { NzCheckboxComponent } from 'ng-zorro-antd/checkbox';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzDatePickerComponent } from 'ng-zorro-antd/date-picker';
 import { NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLabelComponent } from 'ng-zorro-antd/form';
 import { NzColDirective, NzRowDirective } from 'ng-zorro-antd/grid';
-import { NzInputDirective } from 'ng-zorro-antd/input';
+import { NzIconDirective } from 'ng-zorro-antd/icon';
+import { NzInputDirective, NzInputGroupComponent } from 'ng-zorro-antd/input';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzRadioComponent, NzRadioGroupComponent } from 'ng-zorro-antd/radio';
 import { NzOptionComponent, NzSelectComponent } from 'ng-zorro-antd/select';
@@ -35,7 +35,9 @@ import { Clients, ClientService } from '../../api/client.service';
     NzRadioGroupComponent,
     NzRadioComponent,
     NzSelectComponent,
-    NzOptionComponent
+    NzOptionComponent,
+    NzIconDirective,
+    NzInputGroupComponent,
   ],
   templateUrl: './forms.component.html',
   styleUrl: './forms.component.less'
@@ -44,14 +46,21 @@ export class FormsComponent extends BasicConfirmModalComponent implements OnInit
   addEditForm!: FormGroup;
   private fb = inject(FormBuilder);
   private api = inject(ClientService);
+  passwordVisible = false;
 
   readonly nzModalData: Clients = inject(NZ_MODAL_DATA);
 
   override modalRef = inject(NzModalRef);
-  checkOptionsOne = [
-    { label: 'Apple', value: 'Apple', checked: true },
-    { label: 'Pear', value: 'Pear' },
-    { label: 'Orange', value: 'Orange' }
+  checkOptionsGrantTypes = [
+    { label: 'authorization_code', value: 'authorization_code', checked: true },
+    { label: 'refresh_token', value: 'refresh_token' },
+    { label: 'authorization_password', value: 'authorization_password' }
+  ];
+
+  checkOptionsMethods = [
+    { label: 'client_secret_basic', value: 'client_secret_basic', checked: true },
+    { label: 'client_secret_post', value: 'client_secret_post' },
+    { label: 'client_secret_jwt', value: 'client_secret_jwt' }
   ];
 
   getCurrentValue(): NzSafeAny {
@@ -70,7 +79,7 @@ export class FormsComponent extends BasicConfirmModalComponent implements OnInit
       clientId: [null, [Validators.required]],
       clientIdIssuedAt: [null, [Validators.required]],
       clientSecret: [null, [Validators.required]],
-      clientSecretExpiresAt: [null, [Validators.required]],
+      clientSecretExpiresAt: [null, []],
       clientName: [null, [Validators.required]],
       clientAuthenticationMethods: [null, [Validators.required]],
       authorizationGrantTypes: [null, [Validators.required]],
