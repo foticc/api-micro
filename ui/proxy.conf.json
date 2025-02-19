@@ -1,6 +1,6 @@
 {
   "/site/api": {
-    "target": "http://192.168.160.138:3000/",
+    "target": "http://127.0.0.1:3000/",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
@@ -8,7 +8,7 @@
     }
   },
   "/demo/api": {
-    "target": "http://localhost:8080/",
+    "target": "http://localhost:8000/",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {

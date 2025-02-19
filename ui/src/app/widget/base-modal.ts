@@ -2,7 +2,7 @@ import { DragDrop, DragRef } from '@angular/cdk/drag-drop';
 import { ComponentRef, DestroyRef, effect, inject, Injectable, Injector, Renderer2, RendererFactory2, Signal, TemplateRef, Type } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, of } from 'rxjs';
-import { first, tap } from 'rxjs/operators';
+import {first, tap} from 'rxjs/operators';
 
 import { GLOBAL_TPL_MODAL_ACTION_TOKEN } from '@app/tpl/global-modal-btn-tpl/global-modal-btn-tpl-token';
 import { GlobalModalBtnTplComponentToken } from '@app/tpl/global-modal-btn-tpl/global-modal-btn-tpl.component';
@@ -104,6 +104,9 @@ export class ModalWrapService {
         tap(modalValue => {
           this.modalFullStatusStoreService.$modalFullStatusStore.set(false);
           if (!modalValue) {
+            modalContentCompInstance.modalRef.updateConfig({
+              nzOkLoading: false
+            });
             return of(false);
           } else {
             return modalContentCompInstance.modalRef.destroy({ status: ModalBtnStatus.Ok, modalValue });

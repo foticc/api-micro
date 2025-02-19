@@ -79,7 +79,6 @@ export class ClientsComponent implements OnInit {
     this.dataList = [];
     this.api
       .getPage({
-        name: '123',
         page: e?.pageIndex,
         size: e?.pageSize
       })
@@ -88,7 +87,6 @@ export class ClientsComponent implements OnInit {
         this.dataList = content;
         this.tableConfig.loading = false;
         this.tableConfig.total = totalElements;
-        this.tableConfig.pageSize = totalElements;
       });
     /*-----实际业务请求http接口如下------*/
     // this.tableConfig.loading = true;
