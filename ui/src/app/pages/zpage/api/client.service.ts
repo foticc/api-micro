@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { BaseHttpService } from '@services/base-http.service';
 import * as qs from 'qs';
+import {AuthBaseHttpService} from '@app/pages/zpage/api/auth-base-http.service';
 
 interface QueryParams {
   name?: string;
@@ -40,13 +41,10 @@ export interface Clients {
 })
 export class ClientService {
   https = inject(HttpClient);
-  http = inject(BaseHttpService);
+  http = inject(AuthBaseHttpService);
 
   getPage(params: QueryParams): Observable<PageResult<Clients>> {
-    // return this.http.get('/demo/api/client/manager/page', params);
-    const param = new HttpParams({ fromString: qs.stringify(params) });
-    // @ts-ignore
-    return this.https.get('/demo/api/client/manager/page', { params: param });
+    return this.http.get('/client/manager/page', params);
   }
 
   getOne(id: string): Observable<Clients> {
@@ -62,6 +60,7 @@ export class ClientService {
   }
 
   delete(id: string): Observable<any> {
-    return this.http.post('/demo/api/client/manage/delete', { id: id });
+    // return this.http.post('/demo/api/client/manage/delete', { id: id });
+    return this.http.post(`/client/manager/delete?id=${id}`);
   }
 }

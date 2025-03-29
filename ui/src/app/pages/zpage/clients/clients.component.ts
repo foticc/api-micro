@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AntTableComponent, AntTableConfig, SortFile } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
@@ -10,7 +11,11 @@ import { NzBadgeComponent } from 'ng-zorro-antd/badge';
 import { NzButtonComponent } from 'ng-zorro-antd/button';
 import { NzCardComponent } from 'ng-zorro-antd/card';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
+import { NzWaveDirective } from 'ng-zorro-antd/core/wave';
+import { NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLabelComponent } from 'ng-zorro-antd/form';
+import { NzColDirective, NzRowDirective } from 'ng-zorro-antd/grid';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
+import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -19,14 +24,31 @@ import { FormsComponent } from './forms/forms.component';
 import { ClientService, Clients } from '../api/client.service';
 
 interface SearchParam {
-  ruleName: number;
+  name: string;
   desc: string;
 }
 
 @Component({
   selector: 'app-clients',
   standalone: true,
-  imports: [NzCardComponent, WaterMarkComponent, CardTableWrapComponent, NzBadgeComponent, AntTableComponent, NzIconDirective, NzButtonComponent],
+  imports: [
+    NzCardComponent,
+    CardTableWrapComponent,
+    NzBadgeComponent,
+    AntTableComponent,
+    NzIconDirective,
+    NzButtonComponent,
+    FormsModule,
+    NzColDirective,
+    NzFormControlComponent,
+    NzFormDirective,
+    NzFormItemComponent,
+    NzFormLabelComponent,
+    NzInputDirective,
+    NzRowDirective,
+    NzWaveDirective,
+    ReactiveFormsModule
+  ],
   templateUrl: './clients.component.html',
   styleUrl: './clients.component.less'
 })
@@ -75,18 +97,19 @@ export class ClientsComponent implements OnInit {
   }
 
   getDataList(e?: NzTableQueryParams): void {
-    this.tableConfig.loading = false;
+    this.tableLoading(true);
     this.dataList = [];
     this.api
       .getPage({
         page: e?.pageIndex,
-        size: e?.pageSize
+        size: e?.pageSize,
+        ...this.searchParam
       })
       .subscribe(page => {
         const { content, totalElements, number } = page;
         this.dataList = content;
-        this.tableConfig.loading = false;
         this.tableConfig.total = totalElements;
+        this.tableLoading(false);
       });
     /*-----实际业务请求http接口如下------*/
     // this.tableConfig.loading = true;
@@ -127,7 +150,7 @@ export class ClientsComponent implements OnInit {
       .getOne(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(res => {
-        this.modalWrapService.show<FormsComponent, Clients>(FormsComponent, { nzTitle: '查看', nzDraggable: false, nzOnOk: () => {} }, res).subscribe(res => {});
+        this.modalWrapService.open<FormsComponent, Clients>(FormsComponent, { nzTitle: '查看', nzDraggable: false, nzOnOk: () => {} }, res).subscribe(res => {});
       });
   }
 
@@ -178,9 +201,11 @@ export class ClientsComponent implements OnInit {
       nzOnOk: () => {
         this.tableLoading(true);
         /*注释的是模拟接口调用*/
-        this.api.delete(id).subscribe(res => {
-          this.getDataList();
-          this.tableLoading(false);
+        this.api.delete(id).subscribe({
+          next: _ => {
+            this.getDataList();
+          },
+          complete: () => this.tableLoading(false)
         });
       }
     });

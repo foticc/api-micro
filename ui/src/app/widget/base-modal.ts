@@ -243,4 +243,51 @@ export class ModalWrapService {
       })
     );
   }
+
+  createOpenModalConfig<T extends BasicConfirmModalComponent, U>(component: Type<T>, modalOptions: ModalOptions = {}, params?: U, wrapCls: string = ''): ModalOptions {
+    const defaultOptions: ModalOptions<NzSafeAny, U> = {
+      nzTitle: '',
+      nzContent: component,
+      nzCloseIcon: modalOptions.nzCloseIcon || this.btnTpl(),
+      nzMaskClosable: false,
+      nzFooter: [
+        {
+          label: '取消',
+          type: 'default',
+          show: true,
+          onClick: this.cancelCallback.bind(this)<T>
+        }
+      ],
+      nzOnCancel: () => {
+        return new Promise<ModalResponse>(resolve => {
+          resolve({ status: ModalBtnStatus.Cancel, modalValue: null });
+        });
+      },
+      nzClosable: true,
+      nzWidth: 720,
+      nzData: params // 参数中的属性将传入nzContent实例中
+    };
+    const newOptions = _.merge(defaultOptions, modalOptions);
+    newOptions.nzWrapClassName = `${newOptions.nzWrapClassName || ''} ${wrapCls}`;
+    return newOptions;
+  }
+
+
+  open<T extends BasicConfirmModalComponent, U>(component: Type<T>, modalOptions: ModalOptions = {}, params?: U): Observable<NzSafeAny> {
+    const wrapCls = this.getRandomCls();
+    const newOptions = this.createOpenModalConfig<T, U>(component, modalOptions, params, wrapCls);
+    const modalRef = this.bsModalService.create(newOptions);
+    let drag: DragRef | null;
+    modalRef.afterOpen.pipe(first(), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      drag = this.createDrag(wrapCls);
+    });
+
+    return modalRef.afterClose.pipe(
+      tap(() => {
+        drag!.dispose();
+        drag = null;
+        this.modalFullStatusStoreService.$modalFullStatusStore.set(false);
+      })
+    );
+  }
 }

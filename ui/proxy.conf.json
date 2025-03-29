@@ -1,18 +1,18 @@
 {
   "/site/api": {
-    "target": "http://127.0.0.1:3000/",
+    "target": "http://127.0.0.1:8001/",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
-      "^/site/api": ""
+      "^/site/api": "/micro"
     }
   },
   "/demo/api": {
-    "target": "http://localhost:8000/",
+    "target": "http://127.0.0.1:8001/",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
-      "^/demo/api": ""
+      "^/demo/api": "/auth"
     }
   }
 }

@@ -32,8 +32,6 @@ import { Clients, ClientService } from '../../api/client.service';
     NzRowDirective,
     ReactiveFormsModule,
     NzDatePickerComponent,
-    NzRadioGroupComponent,
-    NzRadioComponent,
     NzSelectComponent,
     NzOptionComponent,
     NzIconDirective,
