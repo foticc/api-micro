@@ -19,11 +19,6 @@ export default [
         path: 'register-form',
         data: { key: 'register-form', shouldDetach: 'no' },
         loadComponent: () => import('./register-form/register-form.component').then(m => m.RegisterFormComponent)
-      },
-      {
-        path: 'callback',
-        data: { key: 'callback', shouldDetach: 'no' },
-        loadComponent: () => import('./callback/callback.component').then(m => m.CallbackComponent)
       }
     ]
   }
