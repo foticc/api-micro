@@ -1,20 +1,32 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { PKCE_AUTH_CONFIG } from '@config/oauth2_config';
-import { OAuthService, LoginOptions } from 'angular-oauth2-oidc';
+import { OAuthService, LoginOptions, OAuthErrorEvent } from 'angular-oauth2-oidc';
 import { fromPromise } from 'rxjs/internal/observable/innerFrom';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthOauth2Service {
+
+  private isAuthenticatedSubject$ = new BehaviorSubject<boolean>(false);
+
+
   constructor(private oauthService: OAuthService) {
     this.oauthService.configure(PKCE_AUTH_CONFIG);
-    this.oauthService.setStorage(localStorage);
-    // this.oauthService.events.subscribe(res => {
-    //   console.log('event', res);
-    // });
+    this.oauthService.setStorage(sessionStorage);
+    this.oauthService.events.subscribe(event => {
+      if (event instanceof OAuthErrorEvent) {
+        console.error('OAuthErrorEvent Object:', event);
+      } else {
+        console.warn('OAuthEvent Object:', event);
+      }
+    });
+    this.oauthService.events.subscribe(_ => {
+      this.isAuthenticatedSubject$.next(this.oauthService.hasValidAccessToken());
+    });
+    this.isAuthenticatedSubject$.next(this.oauthService.hasValidAccessToken());
   }
 
   initCodeFlow(): void {

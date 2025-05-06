@@ -3,7 +3,17 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import zh from '@angular/common/locales/zh';
 import { ApplicationConfig, importProvidersFrom, provideExperimentalZonelessChangeDetection, inject, provideAppInitializer, EnvironmentProviders } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideRouter, RouteReuseStrategy, TitleStrategy, withComponentInputBinding, withHashLocation, withInMemoryScrolling, withPreloading, withViewTransitions } from '@angular/router';
+import {
+  provideRouter,
+  RouteReuseStrategy,
+  TitleStrategy,
+  withComponentInputBinding,
+  withDisabledInitialNavigation,
+  withHashLocation,
+  withInMemoryScrolling,
+  withPreloading,
+  withViewTransitions
+} from '@angular/router';
 
 
 import { DashboardOutline, FormOutline, MenuFoldOutline, MenuUnfoldOutline } from '@ant-design/icons-angular/icons';
@@ -112,7 +122,7 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({
         scrollPositionRestoration: 'top'
       }),
-      withHashLocation(), // 使用哈希路由
+      // withHashLocation(), // 使用哈希路由
       withComponentInputBinding() // 开启路由参数绑定到组件的输入属性,ng16新增特性
     ),
     importProvidersFrom(NzDrawerModule, NzModalModule),

@@ -20,12 +20,13 @@ export class CallbackComponent implements OnInit {
   destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
+    if (!this.auth2Service.isAuthenticated) {
+      this.router.navigateByUrl('/');
+    }
     // 设置全局loading
     this.route.queryParams.subscribe(params => {
       if (params && params['code'] && params['state']) {
         this.tryLogin();
-      } else {
-        this.router.navigateByUrl('/default/dashboard/analysis');
       }
     });
   }

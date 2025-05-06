@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --o --port 4201",
+    "start": "ng serve --o --port 4201 --host spring-oauth-client",
     "ng-high-memory-start": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng serve",
     "prettier": "prettier --write \"src/**/*.ts\" \"src/**/*.html\" \"src/**/*.less\" \"src/**/*.json\"",
     "build": "ng build --base-href=/ng-antd-admin/",
@@ -45,7 +45,7 @@
     "tslib": "^2.3.0",
     "uuid": "^9.0.0",
     "zxcvbn3": "^0.1.1",
-    "angular-oauth2-oidc": "^17.0.2"
+    "angular-oauth2-oidc": "^19.0.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.2.1",

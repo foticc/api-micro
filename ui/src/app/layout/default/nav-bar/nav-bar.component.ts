@@ -256,7 +256,8 @@ export class NavBarComponent implements OnInit {
   changeRoute(e: MouseEvent, menu: Menu): void {
     if (menu.newLinkFlag) {
       fnStopMouseEvent(e);
-      window.open(menu.path, '_blank');
+      // window.open(menu.path, '_blank');
+      this.router.navigate([menu.path]);
       return;
     }
     this.router.navigate([menu.path]);
