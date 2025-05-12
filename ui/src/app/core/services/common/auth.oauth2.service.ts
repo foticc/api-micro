@@ -15,7 +15,7 @@ export class AuthOauth2Service {
 
   constructor(private oauthService: OAuthService) {
     this.oauthService.configure(PKCE_AUTH_CONFIG);
-    this.oauthService.setStorage(sessionStorage);
+    this.oauthService.setStorage(localStorage);
     this.oauthService.events.subscribe(event => {
       if (event instanceof OAuthErrorEvent) {
         console.error('OAuthErrorEvent Object:', event);
