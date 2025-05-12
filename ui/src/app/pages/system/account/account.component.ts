@@ -93,12 +93,12 @@ export class AccountComponent implements OnInit {
   getDataList(e?: { pageIndex: number }): void {
     this.tableConfig.loading = true;
     const params: SearchCommonVO<NzSafeAny> = {
-      page: this.tableConfig.pageSize!,
-      size: e?.pageIndex || this.tableConfig.pageIndex!,
+      page: e?.pageIndex || this.tableConfig.pageIndex!,
+      size: this.tableConfig.pageSize!,
       filters: this.searchParam
     };
     this.dataService
-      .getAccount(params)
+      .getAccountPage(params)
       .pipe(
         finalize(() => {
           this.tableLoading(false);

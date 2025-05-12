@@ -56,7 +56,7 @@ export class AccountModalComponent extends BasicConfirmModalComponent implements
 
   getRoleList(): Promise<void> {
     return new Promise<void>(resolve => {
-      this.roleService.getRoles({ page: 0, size: 0 }).subscribe(({ content }) => {
+      this.roleService.getRoles({}).subscribe(content => {
         this.roleOptions = [];
         content.forEach(({ id, roleName }) => {
           const obj: OptionsInterface = {

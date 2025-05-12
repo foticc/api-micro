@@ -38,6 +38,10 @@ export interface UserPsd {
 export class AccountService {
   http = inject(BaseHttpService);
 
+  public getAccountPage(param: SearchCommonVO<User>): Observable<PageResult<User>> {
+    return this.http.post('/user/page', param);
+  }
+
   public getAccount(param: SearchCommonVO<User>): Observable<PageResult<User>> {
     return this.http.post('/user/list', param);
   }
@@ -55,7 +59,7 @@ export class AccountService {
   }
 
   public delAccount(ids: number[]): Observable<void> {
-    return this.http.post('/user/del/', { ids }, { needSuccessInfo: true });
+    return this.http.post('/user/delete', ids, { needSuccessInfo: true });
   }
 
   public editAccount(param: User): Observable<void> {

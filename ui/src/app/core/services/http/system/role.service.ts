@@ -46,8 +46,8 @@ export class RoleService {
     return this.http.post('/role/page', param);
   }
 
-  public getRoles(param: SearchCommonVO<Role>): Observable<PageResult<Role>> {
-    return this.http.post('/role/list', param);
+  public getRoles(params: any): Observable<Role[]> {
+    return this.http.post('/role/list', params);
   }
 
   public getRolesDetail(id: number): Observable<Role> {
@@ -59,7 +59,7 @@ export class RoleService {
   }
 
   public delRoles(ids: number[]): Observable<void> {
-    return this.http.post('/role/del', { ids }, { needSuccessInfo: true });
+    return this.http.post('/role/delete', ids, { needSuccessInfo: true });
   }
 
   public editRoles(param: Role): Observable<void> {
