@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AntTableComponent, AntTableConfig, SortFile } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { PageHeaderType } from '@shared/components/page-header/page-header.component';
-import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
 import { ModalBtnStatus, ModalWrapService } from '@widget/base-modal';
 import { NzBadgeComponent } from 'ng-zorro-antd/badge';
 import { NzButtonComponent } from 'ng-zorro-antd/button';
