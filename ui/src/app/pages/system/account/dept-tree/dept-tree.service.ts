@@ -73,15 +73,15 @@ export class DeptTreeService {
 
   initDate(): void {
     const params: SearchCommonVO<NzSafeAny> = {
-      pageSize: 0,
-      pageIndex: 0
+      page: 0,
+      size: 0
     };
     // todo 这段逻辑造成在用户管理列表点击退出按钮，会屏幕闪烁一下
     this.dataService
       .getDepts(params)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(deptList => {
-        this.TREE_DATA$.next(fnFlatDataHasParentToTree(deptList.list));
+        this.TREE_DATA$.next(fnFlatDataHasParentToTree(deptList.content));
       });
   }
 }

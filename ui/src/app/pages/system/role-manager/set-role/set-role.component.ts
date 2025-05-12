@@ -1,5 +1,5 @@
-import { NgTemplateOutlet, NgStyle } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, ViewEncapsulation, input } from '@angular/core';
+import { NgStyle, NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, input, OnInit, ViewEncapsulation } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { Menu } from '@core/services/types';
 import { MenusService } from '@services/system/menus.service';
 import { PutPermissionParam, RoleService } from '@services/system/role.service';
 import { FooterSubmitComponent } from '@shared/components/footer-submit/footer-submit.component';
-import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
+import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 import { fnAddTreeDataGradeAndLeaf, fnFlatDataHasParentToTree, fnFlattenTreeDataByDataList } from '@utils/treeTableTools';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -68,13 +68,13 @@ export class SetRoleComponent implements OnInit {
         concatMap(authCodeArr => {
           this.authCodeArr = authCodeArr;
           // 获取所有菜单
-          return this.menusService.getMenuList({ pageSize: 0, pageIndex: 0, filters: {} });
+          return this.menusService.getMenuList({ page: 0, size: 0, filters: {} });
         }),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(response => {
         // isOpen表示 节点是否展开
-        const menuArray: Array<Menu & { isOpen?: boolean; checked?: boolean }> = response.list;
+        const menuArray: Array<Menu & { isOpen?: boolean; checked?: boolean }> = response.content;
         menuArray.forEach(item => {
           item.isOpen = false;
           item.checked = this.authCodeArr.includes(item.code);

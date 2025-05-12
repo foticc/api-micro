@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 
-import { PageInfo, SearchCommonVO } from '../../types';
+import { PageResult, SearchCommonVO } from '../../types';
 import { BaseHttpService } from '../base-http.service';
 
 /*
@@ -42,7 +42,11 @@ export interface Role {
 export class RoleService {
   http = inject(BaseHttpService);
 
-  public getRoles(param: SearchCommonVO<Role>): Observable<PageInfo<Role>> {
+  public getRolePage(param: SearchCommonVO<Role>): Observable<PageResult<Role>> {
+    return this.http.post('/role/page', param);
+  }
+
+  public getRoles(param: SearchCommonVO<Role>): Observable<PageResult<Role>> {
     return this.http.post('/role/list', param);
   }
 

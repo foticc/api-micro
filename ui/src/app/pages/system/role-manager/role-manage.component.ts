@@ -7,9 +7,9 @@ import { finalize } from 'rxjs/operators';
 import { ActionCode } from '@app/config/actionCode';
 import { SearchCommonVO } from '@core/services/types';
 import { Role, RoleService } from '@services/system/role.service';
-import { AntTableConfig, AntTableComponent } from '@shared/components/ant-table/ant-table.component';
+import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
-import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
+import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 import { AuthDirective } from '@shared/directives/auth.directive';
 import { ModalBtnStatus } from '@widget/base-modal';
 import { RoleManageModalService } from '@widget/biz-widget/system/role-manage-modal/role-manage-modal.service';
@@ -32,6 +32,7 @@ interface SearchParam {
   selector: 'app-role-manage',
   templateUrl: './role-manage.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PageHeaderComponent,
     NzCardModule,
@@ -80,12 +81,12 @@ export class RoleManageComponent implements OnInit {
   getDataList(e?: { pageIndex: number }): void {
     this.tableConfig.loading = true;
     const params: SearchCommonVO<NzSafeAny> = {
-      pageSize: this.tableConfig.pageSize!,
-      pageIndex: e?.pageIndex || this.tableConfig.pageIndex!,
+      size: this.tableConfig.pageSize!,
+      page: e?.pageIndex || this.tableConfig.pageIndex!,
       filters: this.searchParam
     };
     this.dataService
-      .getRoles(params)
+      .getRolePage(params)
       .pipe(
         finalize(() => {
           this.tableLoading(false);
@@ -93,10 +94,10 @@ export class RoleManageComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(data => {
-        const { list, total, pageIndex } = data;
-        this.dataList = [...list];
-        this.tableConfig.total = total!;
-        this.tableConfig.pageIndex = pageIndex!;
+        const { content, page } = data;
+        this.dataList = [...content];
+        this.tableConfig.total = page.totalElements!;
+        this.tableConfig.pageIndex = page.number!;
         this.tableLoading(false);
         this.checkedCashArray = [...this.checkedCashArray];
       });

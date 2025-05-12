@@ -56,9 +56,9 @@ export class AccountModalComponent extends BasicConfirmModalComponent implements
 
   getRoleList(): Promise<void> {
     return new Promise<void>(resolve => {
-      this.roleService.getRoles({ pageIndex: 0, pageSize: 0 }).subscribe(({ list }) => {
+      this.roleService.getRoles({ page: 0, size: 0 }).subscribe(({ content }) => {
         this.roleOptions = [];
-        list.forEach(({ id, roleName }) => {
+        content.forEach(({ id, roleName }) => {
           const obj: OptionsInterface = {
             label: roleName,
             value: id!
@@ -72,14 +72,14 @@ export class AccountModalComponent extends BasicConfirmModalComponent implements
 
   getDeptList(): Promise<void> {
     return new Promise<void>(resolve => {
-      this.deptService.getDepts({ pageIndex: 0, pageSize: 0 }).subscribe(({ list }) => {
-        list.forEach(item => {
+      this.deptService.getDepts({ page: 0, size: 0 }).subscribe(({ content }) => {
+        content.forEach(item => {
           // @ts-ignore
           item.title = item.departmentName;
           // @ts-ignore
           item.key = item.id;
         });
-        this.deptNodes = fnAddTreeDataGradeAndLeaf(fnFlatDataHasParentToTree(list));
+        this.deptNodes = fnAddTreeDataGradeAndLeaf(fnFlatDataHasParentToTree(content));
         resolve();
       });
     });

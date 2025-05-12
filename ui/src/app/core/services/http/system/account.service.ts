@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { PageInfo, SearchCommonVO } from '../../types';
+import { PageResult, SearchCommonVO } from '../../types';
 import { BaseHttpService } from '../base-http.service';
 
 /*
@@ -38,7 +38,7 @@ export interface UserPsd {
 export class AccountService {
   http = inject(BaseHttpService);
 
-  public getAccount(param: SearchCommonVO<User>): Observable<PageInfo<User>> {
+  public getAccount(param: SearchCommonVO<User>): Observable<PageResult<User>> {
     return this.http.post('/user/list', param);
   }
 

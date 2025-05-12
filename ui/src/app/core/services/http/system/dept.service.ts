@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { PageInfo, SearchCommonVO } from '../../types';
+import { PageResult, SearchCommonVO } from '../../types';
 import { BaseHttpService } from '../base-http.service';
 
 /*
@@ -21,7 +21,7 @@ export interface Dept {
 export class DeptService {
   http = inject(BaseHttpService);
 
-  public getDepts(param: SearchCommonVO<Dept>): Observable<PageInfo<Dept>> {
+  public getDepts(param: SearchCommonVO<Dept>): Observable<PageResult<Dept>> {
     return this.http.post('/department/list', param);
   }
 

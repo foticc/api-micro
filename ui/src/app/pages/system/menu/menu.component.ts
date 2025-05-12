@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ChangeDetectorRef, inject, DestroyRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, TemplateRef, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
@@ -9,7 +9,7 @@ import { OptionsInterface, SearchCommonVO } from '@core/services/types';
 import { MenuListObj, MenusService } from '@services/system/menus.service';
 import { AntTableConfig, SortFile } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
-import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
+import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 import { TreeNodeInterface, TreeTableComponent } from '@shared/components/tree-table/tree-table.component';
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
 import { AuthDirective } from '@shared/directives/auth.directive';
@@ -102,8 +102,8 @@ export class MenuComponent implements OnInit {
   getDataList(sortFile?: SortFile): void {
     this.tableConfig.loading = true;
     const params: SearchCommonVO<NzSafeAny> = {
-      pageSize: 0,
-      pageIndex: 0,
+      size: 0,
+      page: 0,
       filters: this.searchParam
     };
     this.dataService
@@ -115,7 +115,7 @@ export class MenuComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(menuList => {
-        const target = fnFlatDataHasParentToTree(menuList.list, 'fatherId');
+        const target = fnFlatDataHasParentToTree(menuList.content, 'fatherId');
         this.dataList = fnFlattenTreeDataByDataList(target);
         console.log(sortFile);
         // 因为前段要对后端返回的数据进行处理，所以排序这里交给了前段来做

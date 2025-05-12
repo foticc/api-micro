@@ -22,32 +22,23 @@ export interface OptionsInterface {
 
 // 列表搜索
 export interface SearchCommonVO<T> {
-  pageIndex: number;
-  pageSize: number;
+  page: number;
+  size: number;
+  sort?: string;
   filters?: T;
 }
 
 // 分页
-export interface PageInfo<T> {
-  pageIndex: number;
-  pageSize: number;
-  size?: number;
-  orderBy?: string;
-  startRow?: number;
-  endRow?: number;
-  total: number;
-  pages?: number;
-  list: T[];
-  firstPage?: number;
-  prePage?: number;
-  nextPage?: number;
-  lastPage?: number;
-  isFirstPage?: boolean;
-  isLastPage?: boolean;
-  hasPreviousPage?: boolean;
-  hasNextPage?: boolean;
-  navigatePages?: number;
-  navigatepageIndexs?: number[];
+export interface PageInfo {
+  size: number;
+  number: number;
+  totalElements: number;
+  totalPages: number;
+}
+
+export interface PageResult<T> {
+  content: T[];
+  page: PageInfo;
 }
 
 // 动态组件
@@ -84,6 +75,6 @@ export interface Menu {
   visible?: boolean; // 是否可见
   children?: Menu[];
   code: string; // 权限码
-  role?:string;
+  role?: string;
   newLinkFlag?: 0 | 1; // 是否是新页
 }

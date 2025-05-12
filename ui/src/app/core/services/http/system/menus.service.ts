@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Menu, PageInfo, SearchCommonVO } from '@core/services/types';
+import { Menu, PageResult, SearchCommonVO } from '@core/services/types';
 import { BaseHttpService } from '@services/base-http.service';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 
@@ -24,7 +24,7 @@ export interface MenuListObj {
 export class MenusService {
   http = inject(BaseHttpService);
 
-  public getMenuList(param: SearchCommonVO<NzSafeAny>): Observable<PageInfo<Menu>> {
+  public getMenuList(param: SearchCommonVO<NzSafeAny>): Observable<PageResult<Menu>> {
     return this.http.post('/menu/list', param);
   }
 

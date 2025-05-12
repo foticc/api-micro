@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ChangeDetectorRef, inject, DestroyRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, TemplateRef, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,9 +7,9 @@ import { finalize } from 'rxjs/operators';
 import { ActionCode } from '@app/config/actionCode';
 import { OptionsInterface, SearchCommonVO } from '@core/services/types';
 import { AccountService, User } from '@services/system/account.service';
-import { AntTableConfig, AntTableComponent } from '@shared/components/ant-table/ant-table.component';
+import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
-import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
+import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 import { AuthDirective } from '@shared/directives/auth.directive';
 import { MapKeyType, MapPipe, MapSet } from '@shared/pipes/map.pipe';
 import { ModalBtnStatus } from '@widget/base-modal';
@@ -93,8 +93,8 @@ export class AccountComponent implements OnInit {
   getDataList(e?: { pageIndex: number }): void {
     this.tableConfig.loading = true;
     const params: SearchCommonVO<NzSafeAny> = {
-      pageSize: this.tableConfig.pageSize!,
-      pageIndex: e?.pageIndex || this.tableConfig.pageIndex!,
+      page: this.tableConfig.pageSize!,
+      size: e?.pageIndex || this.tableConfig.pageIndex!,
       filters: this.searchParam
     };
     this.dataService
@@ -106,10 +106,10 @@ export class AccountComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(data => {
-        const { list, total, pageIndex } = data;
-        this.dataList = [...list];
-        this.tableConfig.total = total!;
-        this.tableConfig.pageIndex = pageIndex!;
+        const { content, page } = data;
+        this.dataList = [...content];
+        this.tableConfig.total = page.totalElements!;
+        this.tableConfig.pageIndex = page.number!;
         this.tableLoading(false);
         this.checkedCashArray = [...this.checkedCashArray];
       });
