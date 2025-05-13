@@ -43,8 +43,7 @@ export class BaseHttpService {
   delete<T>(path: string, param?: NzSafeAny, config?: HttpCustomConfig): Observable<T> {
     config = config || { needSuccessInfo: false };
     const reqPath = this.getUrl(path, config);
-    const params = new HttpParams({ fromString: qs.stringify(param) });
-    return this.http.delete<ActionResult<T>>(reqPath, { params }).pipe(this.resultHandle<T>(config));
+    return this.http.delete<ActionResult<T>>(reqPath, { body: param }).pipe(this.resultHandle<T>(config));
   }
 
   post<T>(path: string, param?: NzSafeAny, config?: HttpCustomConfig): Observable<T> {

@@ -36,8 +36,8 @@ export class MenusService {
     return this.http.put('/menu/update', param, { needSuccessInfo: true });
   }
 
-  public delMenus(id: number): Observable<void> {
-    return this.http.post('/menu/del', { ids: [id] }, { needSuccessInfo: true });
+  public delMenus(ids: number[]): Observable<void> {
+    return this.http.delete('/menu/del', ids, { needSuccessInfo: true });
   }
 
   public getMenuDetail(id: number): Observable<MenuListObj> {

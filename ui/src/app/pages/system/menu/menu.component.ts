@@ -172,7 +172,7 @@ export class MenuComponent implements OnInit {
       nzOnOk: () => {
         this.tableLoading(true);
         this.dataService
-          .delMenus(id)
+          .delMenus([id])
           .pipe(
             finalize(() => {
               this.tableLoading(false);
