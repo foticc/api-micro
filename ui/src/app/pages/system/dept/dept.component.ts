@@ -101,7 +101,7 @@ export class DeptComponent implements OnInit {
       filters: this.searchParam
     };
     this.dataService
-      .getDepts(params)
+      .getDeptList(params)
       .pipe(
         finalize(() => {
           this.tableLoading(false);
@@ -109,7 +109,7 @@ export class DeptComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(deptList => {
-        const target = fnFlatDataHasParentToTree(deptList.content);
+        const target = fnFlatDataHasParentToTree(deptList);
         this.dataList = fnFlattenTreeDataByDataList(target);
         // 因为前段要对后端返回的数据进行处理，所以排序这里交给了前段来做
         if (sortFile) {

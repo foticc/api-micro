@@ -114,8 +114,8 @@ export class MenuComponent implements OnInit {
         }),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(menuList => {
-        const target = fnFlatDataHasParentToTree(menuList.content, 'fatherId');
+      .subscribe(list => {
+        const target = fnFlatDataHasParentToTree(list, 'fatherId');
         this.dataList = fnFlattenTreeDataByDataList(target);
         console.log(sortFile);
         // 因为前段要对后端返回的数据进行处理，所以排序这里交给了前段来做

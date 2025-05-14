@@ -72,14 +72,14 @@ export class AccountModalComponent extends BasicConfirmModalComponent implements
 
   getDeptList(): Promise<void> {
     return new Promise<void>(resolve => {
-      this.deptService.getDepts({ page: 0, size: 0 }).subscribe(({ content }) => {
-        content.forEach(item => {
+      this.deptService.getDeptList({ page: 0, size: 0 }).subscribe(list => {
+        list.forEach(item => {
           // @ts-ignore
           item.title = item.departmentName;
           // @ts-ignore
           item.key = item.id;
         });
-        this.deptNodes = fnAddTreeDataGradeAndLeaf(fnFlatDataHasParentToTree(content));
+        this.deptNodes = fnAddTreeDataGradeAndLeaf(fnFlatDataHasParentToTree(list));
         resolve();
       });
     });

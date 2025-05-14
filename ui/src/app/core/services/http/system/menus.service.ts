@@ -24,7 +24,7 @@ export interface MenuListObj {
 export class MenusService {
   http = inject(BaseHttpService);
 
-  public getMenuList(param: SearchCommonVO<NzSafeAny>): Observable<PageResult<Menu>> {
+  public getMenuList(param: SearchCommonVO<NzSafeAny>): Observable<Menu[]> {
     return this.http.post('/menu/list', param);
   }
 

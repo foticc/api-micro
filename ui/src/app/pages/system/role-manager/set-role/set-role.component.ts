@@ -74,7 +74,7 @@ export class SetRoleComponent implements OnInit {
       )
       .subscribe(response => {
         // isOpen表示 节点是否展开
-        const menuArray: Array<Menu & { isOpen?: boolean; checked?: boolean }> = response.content;
+        const menuArray: Array<Menu & { isOpen?: boolean; checked?: boolean }> = response;
         menuArray.forEach(item => {
           item.isOpen = false;
           item.checked = this.authCodeArr.includes(item.code);

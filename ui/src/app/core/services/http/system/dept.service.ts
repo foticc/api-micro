@@ -21,7 +21,7 @@ export interface Dept {
 export class DeptService {
   http = inject(BaseHttpService);
 
-  public getDepts(param: SearchCommonVO<Dept>): Observable<PageResult<Dept>> {
+  public getDeptList(param: SearchCommonVO<Dept>): Observable<Dept[]> {
     return this.http.post('/department/list', param);
   }
 
