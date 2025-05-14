@@ -146,12 +146,27 @@ export class DeptComponent implements OnInit {
         const param = { ...res.modalValue };
         param.fatherId = fatherId;
         this.tableLoading(true);
-        this.addEditData(param, 'addDepts');
+        this.addData(param);
       });
   }
 
-  addEditData(param: Dept, methodName: 'editDepts' | 'addDepts'): void {
-    this.dataService[methodName](param)
+  editData(id: number, param: Dept): void {
+    this.dataService
+      .editDepts(id, param)
+      .pipe(
+        finalize(() => {
+          this.tableLoading(false);
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(() => {
+        this.getDataList();
+      });
+  }
+
+  addData(param: Dept): void {
+    this.dataService
+      .addDepts(param)
       .pipe(
         finalize(() => {
           this.tableLoading(false);
@@ -211,7 +226,7 @@ export class DeptComponent implements OnInit {
             modalValue.id = id;
             modalValue.fatherId = fatherId;
             this.tableLoading(true);
-            this.addEditData(modalValue, 'editDepts');
+            this.editData(id, modalValue);
           });
       });
   }

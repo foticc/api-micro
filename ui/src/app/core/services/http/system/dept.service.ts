@@ -34,10 +34,10 @@ export class DeptService {
   }
 
   public delDepts(ids: number[]): Observable<void> {
-    return this.http.post('/department/del/', { ids }, { needSuccessInfo: true });
+    return this.http.delete('/department/delete', ids, { needSuccessInfo: true });
   }
 
-  public editDepts(param: Dept): Observable<void> {
-    return this.http.put('/department/update', param, { needSuccessInfo: true });
+  public editDepts(id: number, param: Dept): Observable<void> {
+    return this.http.put(`/department/update?id=${id}`, param, { needSuccessInfo: true });
   }
 }
