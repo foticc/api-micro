@@ -12,5 +12,5 @@ export const PKCE_AUTH_CONFIG: AuthConfig = {
   userinfoEndpoint: 'http://spring-oauth-server:8000/userinfo',
   requireHttps: false,
   showDebugInformation: true,
-  logoutUrl: 'http://spring-oauth-server:8000/connect/logout',
+  logoutUrl: 'http://spring-oauth-server:8000/connect/logout'
 };
