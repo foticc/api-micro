@@ -54,6 +54,7 @@ export class JudgeAuthGuardService {
   }
 
   getResult(code: string, authCodeArray: string[]): boolean | UrlTree {
+    console.log(authCodeArray);
     if (authCodeArray.includes(code)) {
       return true;
     } else {

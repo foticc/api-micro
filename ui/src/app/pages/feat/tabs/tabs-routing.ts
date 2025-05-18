@@ -7,7 +7,7 @@ export default [
   {
     path: 'example-detail',
     title: '演示详情',
-    data: { newTab: 'true', authCode: ActionCode.TabsDetail, key: 'example-detail' },
+    data: { newTab: 'true', key: 'example-detail' },
     loadComponent: () => import('./detail/detail.component').then(m => m.DetailComponent)
   }
 ] satisfies Route[];

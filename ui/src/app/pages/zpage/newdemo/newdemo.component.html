@@ -1,0 +1,14 @@
+<div class="p-8 inner-content">
+  <button nz-button nzType="primary" (click)="setMenu()">Primary Button</button>
+  <nz-tree
+    #nzTreeComponent
+    [nzData]="nodes"
+    nzCheckable
+    [nzShowIcon]="true"
+    nzVirtualHeight="600px"
+    (nzClick)="nzClick($event)"
+    (nzContextMenu)="nzClick($event)"
+    (nzCheckboxChange)="nzCheck($event)"
+    (nzExpandChange)="nzCheck($event)"
+  ></nz-tree>
+</div>

@@ -23,6 +23,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { SetRoleManagerService } from '@app/pages/zpage/newdemo/set-role-manager';
 
 interface SearchParam {
   roleName: string;
@@ -65,6 +66,7 @@ export class RoleManageComponent implements OnInit {
   private modalSrv = inject(NzModalService);
   private cdr = inject(ChangeDetectorRef);
   private modalService = inject(RoleManageModalService);
+  private setRoleManagerService = inject(SetRoleManagerService);
   private router = inject(Router);
   private message = inject(NzMessageService);
 
@@ -105,7 +107,18 @@ export class RoleManageComponent implements OnInit {
 
   // 设置权限
   setRole(id: number, roleName: string): void {
-    this.router.navigate(['/default/system/role-manager/set-role'], { queryParams: { id, roleName } });
+    // this.router.navigate(['/default/system/role-manager/set-role'], { queryParams: { id, roleName } });
+    this.setRoleManagerService
+      .show({ nzTitle: '设置权限', nzOkDisabled: true }, id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(res => {
+        if (!res || res.status === ModalBtnStatus.Cancel) {
+          return;
+        }
+        const param = { ...res.modalValue };
+        this.tableLoading(true);
+        this.addEditData(param, 'addRoles');
+      });
   }
 
   // 触发表格变更检测
