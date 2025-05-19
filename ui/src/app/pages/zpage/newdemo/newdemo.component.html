@@ -1,11 +1,16 @@
+<label nz-checkbox [(ngModel)]="isExpend" (ngModelChange)="expandOnChange($event)">展开/折叠</label>
+<label nz-checkbox [(ngModel)]="isAllChecked" (ngModelChange)="allCheckedOnChange($event)">全选择/取消</label>
+<button nz-button nzType="primary" (click)="setMenu()">
+  <nz-icon nzType="save" nzTheme="outline"/>
+</button>
 <div class="p-8 inner-content">
-  <button nz-button nzType="primary" (click)="setMenu()">Primary Button</button>
   <nz-tree
     #nzTreeComponent
     [nzData]="nodes"
     nzCheckable
+    nzAsyncData
+    [nzExpandAll]="isExpend"
     [nzShowIcon]="true"
-    nzVirtualHeight="600px"
     (nzClick)="nzClick($event)"
     (nzContextMenu)="nzClick($event)"
     (nzCheckboxChange)="nzCheck($event)"
