@@ -12,10 +12,11 @@ import { NzTreeComponent } from 'ng-zorro-antd/tree';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
 import { FormsModule } from '@angular/forms';
 import { NzCheckboxComponent } from 'ng-zorro-antd/checkbox';
+import { NzSkeletonComponent } from 'ng-zorro-antd/skeleton';
 
 @Component({
   selector: 'app-newdemo',
-  imports: [NzTreeComponent, NzButtonComponent, NzSpinComponent, NzIconDirective, FormsModule, NzCheckboxComponent],
+  imports: [NzTreeComponent, NzButtonComponent, NzSpinComponent, NzIconDirective, FormsModule, NzCheckboxComponent, NzSkeletonComponent],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './newdemo.component.html',

@@ -4,16 +4,18 @@
   <nz-icon nzType="save" nzTheme="outline"/>
 </button>
 <div class="p-8 inner-content">
-  <nz-tree
-    #nzTreeComponent
-    [nzData]="nodes"
-    nzCheckable
-    nzAsyncData
-    [nzExpandAll]="isExpend"
-    [nzShowIcon]="true"
-    (nzClick)="nzClick($event)"
-    (nzContextMenu)="nzClick($event)"
-    (nzCheckboxChange)="nzCheck($event)"
-    (nzExpandChange)="nzCheck($event)"
-  ></nz-tree>
+  <nz-skeleton [nzLoading]="isSpinning">
+    <nz-tree
+      #nzTreeComponent
+      [nzData]="nodes"
+      nzCheckable
+      nzAsyncData
+      [nzExpandAll]="isExpend"
+      [nzShowIcon]="true"
+      (nzClick)="nzClick($event)"
+      (nzContextMenu)="nzClick($event)"
+      (nzCheckboxChange)="nzCheck($event)"
+      (nzExpandChange)="nzCheck($event)"
+    ></nz-tree>
+  </nz-skeleton>
 </div>
