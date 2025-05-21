@@ -1,11 +1,10 @@
-import { ChangeDetectorRef, Component, DestroyRef, inject, TemplateRef, ViewChild, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 
 import { AcDetailService } from '@app/pages/zpage/api/acdetail.service';
 import { Clients } from '@app/pages/zpage/api/client.service';
 import { FormsComponent } from '@app/pages/zpage/clients/forms/forms.component';
-import { SearchCommonVO } from '@core/services/types';
 import { AntTableComponent, AntTableConfig, SortFile } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { PageHeaderType } from '@shared/components/page-header/page-header.component';
@@ -22,6 +21,7 @@ import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { TestMultiFormComponent } from '@app/pages/zpage/tvcms/test-multi-form/test-multi-form.component';
 
 interface SearchParam {
   name: string;
@@ -293,5 +293,11 @@ export class TvcmsComponent implements OnInit {
 
   ngOnInit(): void {
     this.initTable();
+  }
+
+  test(): void {
+    this.modalWrapService.show<TestMultiFormComponent, SearchParam>(TestMultiFormComponent, { nzTitle: '观澜' }).subscribe(res => {
+      console.log(res);
+    });
   }
 }
