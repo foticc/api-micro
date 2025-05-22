@@ -105,11 +105,11 @@ export class RoleManageComponent implements OnInit {
       });
   }
 
-  // 设置权限
+  // 设置菜单
   setRole(id: number, roleName: string): void {
     // this.router.navigate(['/default/system/role-manager/set-role'], { queryParams: { id, roleName } });
     this.setRoleManagerService
-      .show({ nzTitle: '设置权限', nzOkDisabled: true }, id)
+      .show({ nzTitle: '设置菜单', nzOkDisabled: true }, id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(res => {
         if (!res || res.status === ModalBtnStatus.Cancel) {

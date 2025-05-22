@@ -1,21 +1,22 @@
-<label nz-checkbox [(ngModel)]="isExpend" (ngModelChange)="expandOnChange($event)">展开/折叠</label>
-<label nz-checkbox [(ngModel)]="isAllChecked" (ngModelChange)="allCheckedOnChange($event)">全选择/取消</label>
-<button nz-button nzType="primary" (click)="setMenu()">
-  <nz-icon nzType="save" nzTheme="outline"/>
-</button>
-<div class="p-8 inner-content">
-  <nz-skeleton [nzLoading]="isSpinning">
-    <nz-tree
-      #nzTreeComponent
-      [nzData]="nodes"
-      nzCheckable
-      nzAsyncData
-      [nzExpandAll]="isExpend"
-      [nzShowIcon]="true"
-      (nzClick)="nzClick($event)"
-      (nzContextMenu)="nzClick($event)"
-      (nzCheckboxChange)="nzCheck($event)"
-      (nzExpandChange)="nzCheck($event)"
-    ></nz-tree>
-  </nz-skeleton>
+<div class="p-8 left-start-center flex-coloum">
+  <div class="full-with end-start-center">
+    <button nz-button nzType="primary" (click)="setMenu()">
+      <nz-icon nzType="save" nzTheme="outline"/>
+    </button>
+  </div>
+  <div class="flex-1">
+    <nz-skeleton [nzLoading]="isSpinning">
+      <nz-tree
+        #nzTreeComponent
+        [nzData]="nodes"
+        nzCheckable
+        [nzAsyncData]="true"
+        [nzShowIcon]="true"
+        (nzClick)="nzClick($event)"
+        (nzContextMenu)="nzClick($event)"
+        (nzCheckboxChange)="nzCheck($event)"
+        (nzExpandChange)="nzCheck($event)"
+      ></nz-tree>
+    </nz-skeleton>
+  </div>
 </div>
