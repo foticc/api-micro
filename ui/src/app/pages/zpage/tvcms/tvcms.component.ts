@@ -297,7 +297,9 @@ export class TvcmsComponent implements OnInit {
 
   test(): void {
     this.modalWrapService.show<TestMultiFormComponent, SearchParam>(TestMultiFormComponent, { nzTitle: '观澜' }).subscribe(res => {
-      console.log(res);
+      if (!res || res.status === ModalBtnStatus.Cancel) {
+        return;
+      }
     });
   }
 }

@@ -1,22 +1,23 @@
 import { Component, DestroyRef, forwardRef, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Observable, of } from 'rxjs';
 
+import { OptionsInterface } from '@core/services/types';
+import { ValidatorsService } from '@core/services/validators/validators.service';
+import { DeptService } from '@services/system/dept.service';
+import { RoleService } from '@services/system/role.service';
 import { fnCheckForm } from '@utils/tools';
+import { fnAddTreeDataGradeAndLeaf, fnFlatDataHasParentToTree } from '@utils/treeTableTools';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
+import { NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLabelComponent } from 'ng-zorro-antd/form';
 import { NzColDirective, NzRowDirective } from 'ng-zorro-antd/grid';
 import { NzInputDirective } from 'ng-zorro-antd/input';
-import { NzOptionComponent, NzSelectComponent } from 'ng-zorro-antd/select';
 import { NzRadioComponent, NzRadioGroupComponent } from 'ng-zorro-antd/radio';
+import { NzOptionComponent, NzSelectComponent } from 'ng-zorro-antd/select';
 import { NzSwitchComponent } from 'ng-zorro-antd/switch';
 import { NzTreeSelectComponent } from 'ng-zorro-antd/tree-select';
-import { ValidatorsService } from '@core/services/validators/validators.service';
-import { OptionsInterface } from '@core/services/types';
-import { RoleService } from '@services/system/role.service';
-import { fnAddTreeDataGradeAndLeaf, fnFlatDataHasParentToTree } from '@utils/treeTableTools';
-import { DeptService } from '@services/system/dept.service';
-import { NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
 
 // 不要在这里定义，这里只是写个例子
 interface WareHouseManageObj {
@@ -57,8 +58,8 @@ const EXE_COUNTER_VALUE_ACCESSOR = {
   styleUrl: './test-multi-form.component.less'
 })
 export class TestMultiFormComponent extends BasicConfirmModalComponent implements OnInit {
-  getCurrentValue(): NzSafeAny {
-    return 1;
+  getCurrentValue(): Observable<NzSafeAny> {
+    return of(1);
   }
 
   private fb = inject(FormBuilder);
