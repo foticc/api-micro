@@ -96,27 +96,6 @@ export class ModalWrapService {
       .subscribe();
   }
 
-  private confirmCallbackPromise<T extends BasicConfirmModalComponent>(modalContentCompInstance: T): Promise<void> {
-    this.modalCompVerification(modalContentCompInstance);
-    return modalContentCompInstance.modalRef.componentInstance
-      .getCurrentValue()
-      .pipe(
-        tap(modalValue => {
-          this.modalFullStatusStoreService.$modalFullStatusStore.set(false);
-          if (!modalValue) {
-            modalContentCompInstance.modalRef.updateConfig({
-              nzOkLoading: false
-            });
-            return of(false);
-          } else {
-            return modalContentCompInstance.modalRef.destroy({ status: ModalBtnStatus.Ok, modalValue });
-          }
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .toPromise();
-  }
-
   modalCompVerification(modalContentCompInstance: BasicConfirmModalComponent): void {
     if (!modalContentCompInstance.modalRef) {
       throwModalRefError();
@@ -201,9 +180,7 @@ export class ModalWrapService {
           label: '确认',
           type: 'primary',
           show: true,
-          autoLoading: true,
-          // onClick: this.confirmCallback.bind(this)<T> 转为确认按钮loading状态，autoLoading 为true并且onClick 返回Promise会自动转为loading
-          onClick: this.confirmCallbackPromise.bind(this)<T>
+          onClick: this.confirmCallback.bind(this)<T>
         },
         {
           label: '取消',
@@ -275,6 +252,89 @@ export class ModalWrapService {
   open<T extends BasicConfirmModalComponent, U>(component: Type<T>, modalOptions: ModalOptions = {}, params?: U): Observable<NzSafeAny> {
     const wrapCls = this.getRandomCls();
     const newOptions = this.createOpenModalConfig<T, U>(component, modalOptions, params, wrapCls);
+    const modalRef = this.bsModalService.create(newOptions);
+    let drag: DragRef | null;
+    modalRef.afterOpen.pipe(first(), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      drag = this.createDrag(wrapCls);
+    });
+
+    return modalRef.afterClose.pipe(
+      tap(() => {
+        drag!.dispose();
+        drag = null;
+        this.modalFullStatusStoreService.$modalFullStatusStore.set(false);
+      })
+    );
+  }
+
+  /*------------------------------------新增一些方法------------------------------------------------*/
+
+  // onClick: this.confirmCallback.bind(this)<T>
+
+  private confirmCallbackPromise<T extends BasicConfirmModalComponent>(modalContentCompInstance: T): Promise<void> {
+    this.modalCompVerification(modalContentCompInstance);
+    modalContentCompInstance.modalRef.updateConfig({
+      nzCancelDisabled: true
+    });
+    return modalContentCompInstance.modalRef.componentInstance
+      .getCurrentValue()
+      .pipe(
+        tap(modalValue => {
+          this.modalFullStatusStoreService.$modalFullStatusStore.set(false);
+          if (!modalValue) {
+            modalContentCompInstance.modalRef.updateConfig({
+              nzOkLoading: false
+            });
+            return of(false);
+          } else {
+            return modalContentCompInstance.modalRef.destroy({ status: ModalBtnStatus.Ok, modalValue });
+          }
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .toPromise();
+  }
+
+  // 创建对话框的配置项 转为确认按钮loading状态，autoLoading 为true并且onClick 返回Promise会自动转为loading
+  createModalConfigAsync<T extends BasicConfirmModalComponent, U>(component: Type<T>, modalOptions: ModalOptions = {}, params?: U, wrapCls: string = ''): ModalOptions {
+    const defaultOptions: ModalOptions<NzSafeAny, U> = {
+      nzTitle: '',
+      nzContent: component,
+      nzCloseIcon: modalOptions.nzCloseIcon || this.btnTpl(),
+      nzMaskClosable: false,
+      nzFooter: [
+        {
+          label: '确认',
+          type: 'primary',
+          show: true,
+          autoLoading: true,
+          onClick: this.confirmCallbackPromise.bind(this)<T>
+        },
+        {
+          label: '取消',
+          type: 'default',
+          show: true,
+          autoLoading: true,
+          onClick: this.cancelCallback.bind(this)<T>
+        }
+      ],
+      nzOnCancel: () => {
+        return new Promise<boolean>(resolve => {
+          resolve(true);
+        });
+      },
+      nzClosable: true,
+      nzWidth: 720,
+      nzData: params // 参数中的属性将传入nzContent实例中
+    };
+    const newOptions = _.merge(defaultOptions, modalOptions);
+    newOptions.nzWrapClassName = `${newOptions.nzWrapClassName || ''} ${wrapCls}`;
+    return newOptions;
+  }
+
+  showAsync<T extends BasicConfirmModalComponent, U>(component: Type<T>, modalOptions: ModalOptions = {}, params?: U): Observable<NzSafeAny> {
+    const wrapCls = this.getRandomCls();
+    const newOptions = this.createModalConfigAsync<T, U>(component, modalOptions, params, wrapCls);
     const modalRef = this.bsModalService.create(newOptions);
     let drag: DragRef | null;
     modalRef.afterOpen.pipe(first(), takeUntilDestroyed(this.destroyRef)).subscribe(() => {

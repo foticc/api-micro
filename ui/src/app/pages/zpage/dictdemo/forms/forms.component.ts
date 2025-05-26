@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { DictService } from '@app/pages/zpage/api/dict.service';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
+import { NzModalRef } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-forms',
@@ -15,6 +16,7 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
 })
 export class FormsComponent extends BasicConfirmModalComponent {
   private service = inject(DictService);
+  private ref = inject(NzModalRef);
 
   getCurrentValue(): NzSafeAny {
     return this.service

@@ -73,7 +73,7 @@ export class DictdemoComponent implements OnInit {
   allDel(): void {}
 
   add(): void {
-    this.modalService.show<FormsComponent, Dict>(FormsComponent).subscribe(res => {
+    this.modalService.showAsync<FormsComponent, Dict>(FormsComponent, { nzTitle: '测试啊' }).subscribe(res => {
       console.log(res);
     });
   }
