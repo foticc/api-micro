@@ -53,7 +53,7 @@
 </div>
 
 <ng-template #tableBtns>
-  <button class="m-r-8" nz-button nzType="primary" (click)="add(0)">
+  <button *appAuth="ActionCode.DeptAdd" class="m-r-8" nz-button nzType="primary" (click)="add(0)">
     <i nz-icon nzType="plus"></i>
     新建
   </button>

@@ -13,6 +13,7 @@ import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { NzSkeletonComponent } from 'ng-zorro-antd/skeleton';
 import { NzSpinComponent } from 'ng-zorro-antd/spin';
 import { NzTreeComponent } from 'ng-zorro-antd/tree';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-newdemo',
@@ -24,6 +25,7 @@ import { NzTreeComponent } from 'ng-zorro-antd/tree';
 })
 export class NewdemoComponent extends BasicConfirmModalComponent implements OnInit, AfterViewInit {
   private service: NnnService = inject(NnnService);
+  private messageService: NzMessageService = inject(NzMessageService);
 
   readonly roleId: number = inject(NZ_MODAL_DATA);
   destroyRef = inject(DestroyRef);
@@ -91,9 +93,12 @@ export class NewdemoComponent extends BasicConfirmModalComponent implements OnIn
       .map(m => {
         return Number(m.key);
       });
-    this.service.assignMenuToRole(this.roleId, flattenCanceledNodes).subscribe(res => {
-      console.log('bind');
-    });
+    this.service
+      .assignMenuToRole(this.roleId, flattenCanceledNodes)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(res => {
+        this.messageService.success('设置成功!');
+      });
   }
 
   getCurrentValue(): NzSafeAny {

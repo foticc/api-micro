@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
@@ -17,7 +17,7 @@ export class CallbackComponent implements OnInit {
   private router: Router = inject(Router);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private spinService = inject(SpinService);
-  destroyRef = inject(DestroyRef);
+  private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     if (!this.auth2Service.isAuthenticated) {
