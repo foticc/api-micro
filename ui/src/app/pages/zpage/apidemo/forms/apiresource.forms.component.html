@@ -1,0 +1,21 @@
+<form nz-form [formGroup]="addEditForm">
+  <nz-form-item>
+    <nz-form-label nzFor="method" nzRequired [nzSm]="4" [nzXs]="24">method</nz-form-label>
+    <nz-form-control nzErrorTip="method" [nzSm]="18" [nzXs]="24">
+      <input id="method" name="method" formControlName="method" nz-input placeholder="method"/>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label nzFor="path" nzRequired [nzSm]="4" [nzXs]="24">path</nz-form-label>
+    <nz-form-control nzErrorTip="path" [nzSm]="18" [nzXs]="24">
+      <input id="path" name="path" formControlName="path" nz-input placeholder="path"/>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label nzTooltipTitle="备注信息" nzFor="description" nzRequired [nzSm]="4" [nzXs]="24">description
+    </nz-form-label>
+    <nz-form-control nzErrorTip="description" [nzSm]="18" [nzXs]="24">
+      <input id="description" name="description" formControlName="description" nz-input placeholder="description"/>
+    </nz-form-control>
+  </nz-form-item>
+</form>

@@ -10,6 +10,6 @@ export default [
     path: 'demo',
     title: 'QWER',
     data: { key: 'demo' },
-    loadComponent: () => import('./dictdemo/dictdemo.component').then(m => m.DictdemoComponent)
+    loadComponent: () => import('./apidemo/apiresource.component').then(m => m.ApiResourceComponent)
   }
 ] satisfies Route[];
