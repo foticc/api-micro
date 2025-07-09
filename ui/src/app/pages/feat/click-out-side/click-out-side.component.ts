@@ -1,11 +1,11 @@
-import { DOCUMENT } from '@angular/common';
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, ElementRef, inject, DestroyRef, viewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, ElementRef, inject, DestroyRef, viewChild, DOCUMENT } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, merge, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { fnStopMouseEvent } from '@utils/tools';
+
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 
 @Component({

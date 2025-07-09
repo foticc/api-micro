@@ -3,17 +3,18 @@ import { FormsModule } from '@angular/forms';
 import { MatRippleModule } from '@angular/material/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
+import { ColorPickerDirective } from 'ngx-color-picker';
+
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
-import { ColorPickerModule } from 'ngx-color-picker';
 
 @Component({
   selector: 'app-ripple',
   templateUrl: './ripple.component.html',
   styleUrls: ['./ripple.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PageHeaderComponent, NzCardModule, NzCheckboxModule, FormsModule, NzInputNumberModule, ColorPickerModule, MatRippleModule]
+  imports: [PageHeaderComponent, NzCardModule, NzCheckboxModule, FormsModule, NzInputNumberModule, ColorPickerDirective, MatRippleModule]
 })
 export class RippleComponent {
   pageHeaderInfo: Partial<PageHeaderType> = {

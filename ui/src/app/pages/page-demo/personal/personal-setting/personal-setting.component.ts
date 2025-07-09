@@ -5,6 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AdComponent, DynamicComponent } from '@core/services/types';
 import { AdDirective } from '@shared/directives/ad.directive';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzGridModule } from 'ng-zorro-antd/grid';
@@ -33,10 +34,22 @@ export class PersonalSettingComponent implements OnInit {
   readonly adHost = viewChild.required(AdDirective);
   tabModel: NzMenuModeType = 'inline';
   settingComponent: TabInterface[] = [
-    { key: 'base', component: new DynamicComponent(BaseComponent, { label: '基本设置' }) },
-    { key: 'safe', component: new DynamicComponent(SafeComponent, { label: '安全设置' }) },
-    { key: 'bind', component: new DynamicComponent(BindComponent, { label: '账号绑定' }) },
-    { key: 'notice', component: new DynamicComponent(NoticeComponent, { label: '新消息通知' }) }
+    {
+      key: 'base',
+      component: new DynamicComponent(BaseComponent, { label: '基本设置' })
+    },
+    {
+      key: 'safe',
+      component: new DynamicComponent(SafeComponent, { label: '安全设置' })
+    },
+    {
+      key: 'bind',
+      component: new DynamicComponent(BindComponent, { label: '账号绑定' })
+    },
+    {
+      key: 'notice',
+      component: new DynamicComponent(NoticeComponent, { label: '新消息通知' })
+    }
   ];
   destroyRef = inject(DestroyRef);
   menus: Array<{ key: string; title: string; selected?: boolean }> = [
