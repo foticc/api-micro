@@ -7,9 +7,15 @@ export default [
   { path: 'cmscard', title: 'CMS-CARD', data: { key: 'card' }, loadComponent: () => import('./tvcmscard/tvcmscard.component').then(m => m.TvcmscardComponent) },
   { path: 'sse', title: 'Server-Sent Events', data: { key: 'sse' }, loadComponent: () => import('./sse/sse.component').then(m => m.SseComponent) },
   {
+    path: 'dict',
+    title: '数据字典',
+    data: { key: 'dict' },
+    loadComponent: () => import('./dict/dict.component').then(m => m.DictComponent)
+  },
+  {
     path: 'demo',
     title: 'QWER',
     data: { key: 'demo' },
-    loadComponent: () => import('./apidemo/apiresource.component').then(m => m.ApiResourceComponent)
+    loadComponent: () => import('./apidemo/api-resource.component').then(m => m.ApiResourceComponent)
   }
 ] satisfies Route[];

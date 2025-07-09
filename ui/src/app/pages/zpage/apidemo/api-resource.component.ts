@@ -1,31 +1,33 @@
-import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs/operators';
 
-import { Dict, DictService } from '@app/pages/zpage/api/dict.service';
-import { FormsComponent } from '@app/pages/zpage/dictdemo/forms/forms.component';
+import { ApiResource, ApiResourceService } from '@app/pages/zpage/apidemo/api-resource.service';
+import { FormsComponent } from '@app/pages/zpage/apidemo/forms/api-resource.forms.component';
 import { SearchCommonVO } from '@core/services/types';
 import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { AuthDirective } from '@shared/directives/auth.directive';
-import { ModalWrapService } from '@widget/base-modal';
+import { ModalBtnStatus, ModalWrapService } from '@widget/base-modal';
 import { NzButtonComponent } from 'ng-zorro-antd/button';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
 
 @Component({
-  selector: 'app-dictdemo',
+  selector: 'app-holiday',
   imports: [AntTableComponent, AuthDirective, CardTableWrapComponent, NzButtonComponent, NzIconDirective],
-  templateUrl: './dictdemo.component.html',
+  templateUrl: './api-resource.component.html',
   standalone: true,
-  styleUrl: './dictdemo.component.less'
+  styleUrl: './api-resource.component.less'
 })
-export class DictdemoComponent implements OnInit {
+export class ApiResourceComponent implements OnInit {
+  @ViewChild('operationTpl', { static: true }) operationTpl!: TemplateRef<NzSafeAny>;
+
   tableConfig!: AntTableConfig;
 
-  dataList: Dict[] = [];
+  dataList: ApiResource[] = [];
 
-  private dictService = inject(DictService);
+  private apiResourceService = inject(ApiResourceService);
   private cdr = inject(ChangeDetectorRef);
   private modalService = inject(ModalWrapService);
   destroyRef = inject(DestroyRef);
@@ -37,8 +39,8 @@ export class DictdemoComponent implements OnInit {
       size: this.tableConfig.pageSize!,
       filters: {}
     };
-    this.dictService
-      .getDictPage(params)
+    this.apiResourceService
+      .page(params)
       .pipe(
         finalize(() => {
           this.tableLoading(false);
@@ -73,8 +75,26 @@ export class DictdemoComponent implements OnInit {
   allDel(): void {}
 
   add(): void {
-    this.modalService.showAsync<FormsComponent, Dict>(FormsComponent, { nzTitle: '测试啊' }).subscribe(res => {
-      console.log(res);
+    this.modalService.showAsync<FormsComponent, ApiResource>(FormsComponent, { nzTitle: '测试啊' }).subscribe(res => {
+      if (!res || res.status === ModalBtnStatus.Cancel) {
+        return;
+      }
+      this.reloadTable();
+    });
+  }
+
+  del(id: number[]): void {
+    this.apiResourceService.delete(id).subscribe(res => {
+      this.reloadTable();
+    });
+  }
+
+  edit(id: any, ctx: any): void {
+    this.modalService.showAsync<FormsComponent, ApiResource>(FormsComponent, { nzTitle: '测试啊' }, ctx).subscribe(res => {
+      if (!res || res.status === ModalBtnStatus.Cancel) {
+        return;
+      }
+      this.reloadTable();
     });
   }
 
@@ -91,24 +111,34 @@ export class DictdemoComponent implements OnInit {
       showCheckbox: false,
       headers: [
         {
-          title: 'id',
+          title: '',
           field: 'id',
           width: 100
         },
+
         {
-          title: 'code',
-          width: 70,
-          field: 'code'
+          title: 'method',
+          field: 'method',
+          width: 100
+        },
+
+        {
+          title: 'path',
+          field: 'path',
+          width: 100
+        },
+
+        {
+          title: 'description',
+          field: 'description',
+          width: 100
         },
         {
-          title: 'value',
-          width: 100,
-          field: 'value'
-        },
-        {
-          title: 'desc',
-          width: 100,
-          field: 'desc'
+          title: '操作',
+          tdTemplate: this.operationTpl,
+          width: 120,
+          fixed: true,
+          fixedDir: 'right'
         }
       ],
       total: 0,

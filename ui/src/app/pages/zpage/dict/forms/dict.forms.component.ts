@@ -3,26 +3,26 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { ApiResourceService } from '@app/pages/zpage/apidemo/apiresource.service';
+import { DictService } from '@app/pages/zpage/dict/dict.service';
 import { fnCheckForm } from '@utils/tools';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
-import { NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLabelComponent } from 'ng-zorro-antd/form';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzColDirective } from 'ng-zorro-antd/grid';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-forms',
-  imports: [NzFormDirective, NzFormItemComponent, NzFormLabelComponent, NzFormControlComponent, ReactiveFormsModule, NzColDirective, NzInputDirective],
-  templateUrl: './apiresource.forms.component.html',
+  imports: [NzFormModule, ReactiveFormsModule, NzColDirective, NzInputDirective],
+  templateUrl: './dict.forms.component.html',
   standalone: true,
-  styleUrl: './apiresource.forms.component.less'
+  styleUrl: './dict.forms.component.less'
 })
-export class FormsComponent extends BasicConfirmModalComponent implements OnInit {
+export class DictFormsComponent extends BasicConfirmModalComponent implements OnInit {
   protected addEditForm!: FormGroup;
   private fb = inject(FormBuilder);
-  private service = inject(ApiResourceService);
+  private service = inject(DictService);
   private ref = inject(NzModalRef);
 
   getCurrentValue(): NzSafeAny {
@@ -42,9 +42,9 @@ export class FormsComponent extends BasicConfirmModalComponent implements OnInit
 
   initForm(): void {
     this.addEditForm = this.fb.group({
-      method: [null, [Validators.required]],
-      path: [null, [Validators.required]],
-      description: [null, [Validators.required, Validators.maxLength(200)]]
+      id: [null],
+      code: [null, [Validators.maxLength(100)]],
+      name: [null, [Validators.maxLength(255)]]
     });
   }
 }

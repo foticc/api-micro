@@ -25,8 +25,8 @@ export class ApiResourceService {
     return this.http.delete('/api/resource/delete', param);
   }
 
-  public update(param: ApiResource): Observable<ApiResource> {
-    return this.http.put('/api/resource/update', param);
+  public update(id: number, param: ApiResource): Observable<ApiResource> {
+    return this.http.put(`/api/resource/update?id=${id}`, param);
   }
 
   public getOne(id: string): Observable<ApiResource> {

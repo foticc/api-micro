@@ -2,8 +2,8 @@ import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, TemplateRef, 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs/operators';
 
-import { ApiResource, ApiResourceService } from '@app/pages/zpage/apidemo/apiresource.service';
-import { FormsComponent } from '@app/pages/zpage/apidemo/forms/apiresource.forms.component';
+import { DictItem, DictItemService } from '@app/pages/zpage/dict-item/dict-item.service';
+import { FormsComponent } from '@app/pages/zpage/dict-item/forms/dict-item.forms.component';
 import { SearchCommonVO } from '@core/services/types';
 import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
@@ -14,20 +14,20 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
 
 @Component({
-  selector: 'app-holiday',
+  selector: 'app-dict-item',
   imports: [AntTableComponent, AuthDirective, CardTableWrapComponent, NzButtonComponent, NzIconDirective],
-  templateUrl: './apiresource.component.html',
+  templateUrl: './dict-item.component.html',
   standalone: true,
-  styleUrl: './apiresource.component.less'
+  styleUrl: './dict-item.component.less'
 })
-export class ApiResourceComponent implements OnInit {
+export class DictItemComponent implements OnInit {
   @ViewChild('operationTpl', { static: true }) operationTpl!: TemplateRef<NzSafeAny>;
 
   tableConfig!: AntTableConfig;
 
-  dataList: ApiResource[] = [];
+  dataList: DictItem[] = [];
 
-  private apiResourceService = inject(ApiResourceService);
+  private apiService = inject(DictItemService);
   private cdr = inject(ChangeDetectorRef);
   private modalService = inject(ModalWrapService);
   destroyRef = inject(DestroyRef);
@@ -39,7 +39,7 @@ export class ApiResourceComponent implements OnInit {
       size: this.tableConfig.pageSize!,
       filters: {}
     };
-    this.apiResourceService
+    this.apiService
       .page(params)
       .pipe(
         finalize(() => {
@@ -75,7 +75,7 @@ export class ApiResourceComponent implements OnInit {
   allDel(): void {}
 
   add(): void {
-    this.modalService.showAsync<FormsComponent, ApiResource>(FormsComponent, { nzTitle: '测试啊' }).subscribe(res => {
+    this.modalService.showAsync<FormsComponent, DictItem>(FormsComponent, { nzTitle: '新增' }).subscribe(res => {
       if (!res || res.status === ModalBtnStatus.Cancel) {
         return;
       }
@@ -84,7 +84,7 @@ export class ApiResourceComponent implements OnInit {
   }
 
   del(id: number[]): void {
-    this.apiResourceService.delete(id).subscribe(res => {
+    this.apiService.delete(id).subscribe(res => {
       this.reloadTable();
     });
   }
@@ -108,22 +108,19 @@ export class ApiResourceComponent implements OnInit {
           field: 'id',
           width: 100
         },
-
         {
-          title: 'method',
-          field: 'method',
+          title: '',
+          field: 'label',
           width: 100
         },
-
         {
-          title: 'path',
-          field: 'path',
+          title: '',
+          field: 'value',
           width: 100
         },
-
         {
-          title: 'description',
-          field: 'description',
+          title: '',
+          field: 'dictId',
           width: 100
         },
         {

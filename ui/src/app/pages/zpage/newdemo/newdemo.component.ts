@@ -5,19 +5,17 @@ import { FormsModule } from '@angular/forms';
 import { NnnService } from '@app/pages/zpage/api/nnn.service';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
 import { NzButtonComponent } from 'ng-zorro-antd/button';
-import { NzCheckboxComponent } from 'ng-zorro-antd/checkbox';
 import { NzFormatEmitEvent, NzTreeNode, NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { NzSkeletonComponent } from 'ng-zorro-antd/skeleton';
-import { NzSpinComponent } from 'ng-zorro-antd/spin';
 import { NzTreeComponent } from 'ng-zorro-antd/tree';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-newdemo',
-  imports: [NzTreeComponent, NzButtonComponent, NzSpinComponent, NzIconDirective, FormsModule, NzCheckboxComponent, NzSkeletonComponent],
+  imports: [NzTreeComponent, NzButtonComponent, NzIconDirective, FormsModule, NzSkeletonComponent],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './newdemo.component.html',
