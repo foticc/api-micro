@@ -28,7 +28,7 @@ export class DictItemService {
     return this.http.put('/dict/item/update', param);
   }
 
-  public getOne(id: string): Observable<DictItem> {
+  public getOne(id: number): Observable<DictItem> {
     return this.http.get(`/dict/item/${id}`);
   }
 

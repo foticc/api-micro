@@ -1,27 +1,46 @@
-import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { JsonPipe } from '@angular/common';
+import { ChangeDetectorRef, Component, DestroyRef, effect, inject, input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs/operators';
 
+import { Dict } from '@app/pages/zpage/dict/dict.service';
 import { DictItem, DictItemService } from '@app/pages/zpage/dict-item/dict-item.service';
-import { FormsComponent } from '@app/pages/zpage/dict-item/forms/dict-item.forms.component';
-import { SearchCommonVO } from '@core/services/types';
+import { DictItemFormsComponent } from '@app/pages/zpage/dict-item/forms/dict-item.forms.component';
 import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { AuthDirective } from '@shared/directives/auth.directive';
 import { ModalBtnStatus, ModalWrapService } from '@widget/base-modal';
+
 import { NzButtonComponent } from 'ng-zorro-antd/button';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
 
 @Component({
   selector: 'app-dict-item',
-  imports: [AntTableComponent, AuthDirective, CardTableWrapComponent, NzButtonComponent, NzIconDirective],
-  templateUrl: './dict-item.component.html',
+  imports: [AntTableComponent, AuthDirective, CardTableWrapComponent, NzButtonComponent, NzIconDirective, JsonPipe],
+  template: `
+    <app-card-table-wrap [btnTpl]="tableBtns" [tableTitle]="''" (reload)="reloadTable()">
+      <app-ant-table [tableConfig]="tableConfig" [tableData]="dataList"></app-ant-table>
+      <ng-template #operationTpl let-ctx="$$dataItem" let-id="id">
+        <span class="operate-text" (click)="del([id])">删除</span>
+        <span class="operate-text" (click)="edit(id, ctx)">编辑</span>
+      </ng-template>
+    </app-card-table-wrap>
+    <ng-template #tableBtns>
+      <span> </span>
+      <button class="m-r-8" nz-button nzType="primary" (click)="add()">
+        <i nz-icon nzType="plus"></i>
+        新建
+      </button>
+    </ng-template>
+  `,
   standalone: true,
   styleUrl: './dict-item.component.less'
 })
 export class DictItemComponent implements OnInit {
   @ViewChild('operationTpl', { static: true }) operationTpl!: TemplateRef<NzSafeAny>;
+
+  readonly dict = input.required<Dict>();
 
   tableConfig!: AntTableConfig;
 
@@ -32,15 +51,19 @@ export class DictItemComponent implements OnInit {
   private modalService = inject(ModalWrapService);
   destroyRef = inject(DestroyRef);
 
-  getDataList(e?: { pageIndex: number }): void {
+  constructor() {
+    effect(() => {
+      const dict = this.dict();
+      if (dict && dict.id) {
+        this.getDataList(dict.id);
+      }
+    });
+  }
+
+  getDataList(id: number): void {
     this.tableConfig.loading = true;
-    const params: SearchCommonVO<NzSafeAny> = {
-      page: e?.pageIndex || this.tableConfig.pageIndex!,
-      size: this.tableConfig.pageSize!,
-      filters: {}
-    };
     this.apiService
-      .page(params)
+      .listByDictId(id)
       .pipe(
         finalize(() => {
           this.tableLoading(false);
@@ -48,10 +71,7 @@ export class DictItemComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(data => {
-        const { content, page } = data;
-        this.dataList = [...content];
-        this.tableConfig.total = page.totalElements!;
-        this.tableConfig.pageIndex = page.number!;
+        this.dataList = [...data];
         this.tableLoading(false);
       });
   }
@@ -68,14 +88,8 @@ export class DictItemComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  changePageSize(e: number): void {
-    this.tableConfig.pageSize = e;
-  }
-
-  allDel(): void {}
-
   add(): void {
-    this.modalService.showAsync<FormsComponent, DictItem>(FormsComponent, { nzTitle: '新增' }).subscribe(res => {
+    this.modalService.showAsync<DictItemFormsComponent, DictItem>(DictItemFormsComponent, { nzTitle: '新增' }).subscribe(res => {
       if (!res || res.status === ModalBtnStatus.Cancel) {
         return;
       }
@@ -89,14 +103,21 @@ export class DictItemComponent implements OnInit {
     });
   }
 
-  edit(id: any, ctx: any): void {}
+  edit(id: number, ctx: DictItem): void {
+    this.apiService.getOne(id).subscribe(res => {
+      console.log(res);
+    });
+  }
 
   ngOnInit(): void {
     this.initTable();
   }
 
   reloadTable(): void {
-    this.getDataList();
+    const id = this.dict()?.id;
+    if (id) {
+      this.getDataList(id);
+    }
   }
 
   private initTable(): void {

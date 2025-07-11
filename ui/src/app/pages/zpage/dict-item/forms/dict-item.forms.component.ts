@@ -11,6 +11,7 @@ import { NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLab
 import { NzColDirective } from 'ng-zorro-antd/grid';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
+import { Dict } from '@app/pages/zpage/dict/dict.service';
 
 @Component({
   selector: 'app-forms',
@@ -25,7 +26,7 @@ export class DictItemFormsComponent extends BasicConfirmModalComponent implement
   private service = inject(DictItemService);
   private ref = inject(NzModalRef);
 
-  readonly dictId: number = inject(NZ_MODAL_DATA);
+  readonly dict: Dict = inject(NZ_MODAL_DATA);
 
   getCurrentValue(): NzSafeAny {
     if (!fnCheckForm(this.addEditForm)) {

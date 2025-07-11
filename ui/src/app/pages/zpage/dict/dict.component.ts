@@ -1,3 +1,5 @@
+import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { NgClass } from '@angular/common';
 import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -5,10 +7,13 @@ import { finalize } from 'rxjs/operators';
 
 import { Dict, DictService } from '@app/pages/zpage/dict/dict.service';
 import { DictFormsComponent } from '@app/pages/zpage/dict/forms/dict.forms.component';
-import { DictItem, DictItemService } from '@app/pages/zpage/dict-item/dict-item.service';
+import { DictItemComponent } from '@app/pages/zpage/dict-item/dict-item.component';
 import { DictItemFormsComponent } from '@app/pages/zpage/dict-item/forms/dict-item.forms.component';
 import { SearchCommonVO } from '@core/services/types';
+import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/ant-table.component';
+import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { ModalBtnStatus, ModalWrapService } from '@widget/base-modal';
+
 import { NzBadgeComponent } from 'ng-zorro-antd/badge';
 import { NzButtonComponent } from 'ng-zorro-antd/button';
 import { NzCardComponent } from 'ng-zorro-antd/card';
@@ -20,6 +25,7 @@ import { NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLab
 import { NzColDirective, NzRowDirective } from 'ng-zorro-antd/grid';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
 import { NzInputDirective } from 'ng-zorro-antd/input';
+import { NzListModule } from 'ng-zorro-antd/list';
 import { NzMenuDirective, NzMenuItemComponent } from 'ng-zorro-antd/menu';
 import { NzTableModule } from 'ng-zorro-antd/table';
 
@@ -28,7 +34,7 @@ interface SearchParam {
 }
 
 @Component({
-  selector: 'app-holiday',
+  selector: 'app-dict',
   imports: [
     NzIconDirective,
     NzTableModule,
@@ -48,7 +54,15 @@ interface SearchParam {
     NzFormLabelComponent,
     NzInputDirective,
     NzRowDirective,
-    NzWaveDirective
+    NzWaveDirective,
+    CardTableWrapComponent,
+    AntTableComponent,
+    NzListModule,
+    NgClass,
+    CdkVirtualScrollViewport,
+    CdkFixedSizeVirtualScroll,
+    CdkVirtualForOf,
+    DictItemComponent
   ],
   templateUrl: './dict.component.html',
   standalone: true,
@@ -59,20 +73,18 @@ export class DictComponent implements OnInit {
 
   searchParam: Partial<SearchParam> = {};
   dataList: Dict[] = [];
-  dataList2: DictItem[] = [];
-
-  expandId = -1;
+  selectDict!: Dict;
+  tableConfig!: AntTableConfig;
 
   private dictService = inject(DictService);
-  private dictItemService = inject(DictItemService);
   private cdr = inject(ChangeDetectorRef);
   private modalService = inject(ModalWrapService);
-  destroyRef = inject(DestroyRef);
+  private destroyRef = inject(DestroyRef);
 
   getDataList(e?: { pageIndex: number }): void {
     const params: SearchCommonVO<NzSafeAny> = {
       page: 1,
-      size: 20,
+      size: 1000,
       filters: this.searchParam
     };
     this.dictService
@@ -86,6 +98,7 @@ export class DictComponent implements OnInit {
       .subscribe(data => {
         const { content, page } = data;
         this.dataList = [...content];
+        this.selectDict = content[0];
         this.tableLoading(false);
       });
   }
@@ -100,8 +113,6 @@ export class DictComponent implements OnInit {
     this.dataList = [...this.dataList];
     this.cdr.detectChanges();
   }
-
-  changePageSize(e: number): void {}
 
   allDel(): void {}
 
@@ -120,30 +131,12 @@ export class DictComponent implements OnInit {
     });
   }
 
-  edit(id: any, ctx: any): void {}
-
   ngOnInit(): void {
     this.reloadTable();
   }
 
   reloadTable(): void {
     this.getDataList();
-  }
-
-  fetchItemList(dictId: number): void {
-    this.dictItemService.listByDictId(dictId).subscribe(res => {
-      this.dataList2 = [...res];
-      this.tableChangeDectction();
-    });
-  }
-
-  expandChange($event: boolean, id: number): void {
-    this.expandId = id;
-    if ($event) {
-      this.fetchItemList(id);
-    } else {
-      this.dataList2 = [];
-    }
   }
 
   addItem(id: number): void {
@@ -153,5 +146,9 @@ export class DictComponent implements OnInit {
   resetForm(): void {
     this.searchParam = {};
     this.getDataList({ pageIndex: 1 });
+  }
+
+  select(item: Dict): void {
+    this.selectDict = item;
   }
 }
