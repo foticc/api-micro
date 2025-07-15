@@ -3,14 +3,14 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { DictService } from '@app/pages/zpage/dict/dict.service';
+import { Dict, DictService } from '@app/pages/zpage/dict/dict.service';
 import { fnCheckForm } from '@utils/tools';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzColDirective } from 'ng-zorro-antd/grid';
 import { NzInputDirective } from 'ng-zorro-antd/input';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-forms',
@@ -23,7 +23,11 @@ export class DictFormsComponent extends BasicConfirmModalComponent implements On
   protected addEditForm!: FormGroup;
   private fb = inject(FormBuilder);
   private service = inject(DictService);
-  private ref = inject(NzModalRef);
+  override modalRef = inject(NzModalRef);
+
+  readonly nzModalData: Dict = inject(NZ_MODAL_DATA);
+
+  isEdit = false;
 
   getCurrentValue(): NzSafeAny {
     if (!fnCheckForm(this.addEditForm)) {
@@ -37,7 +41,11 @@ export class DictFormsComponent extends BasicConfirmModalComponent implements On
   }
 
   ngOnInit(): void {
+    this.isEdit = !!this.nzModalData;
     this.initForm();
+    if (this.isEdit) {
+      this.addEditForm.patchValue(this.nzModalData);
+    }
   }
 
   initForm(): void {

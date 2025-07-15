@@ -1,9 +1,9 @@
 <div class="normal-table-wrap">
   <div nz-row [nzGutter]="[10, 16]">
     <div nz-col [nzLg]="6" [nzMd]="24" [nzSm]="24" [nzXl]="6" [nzXs]="24" [nzXXl]="6">
-      <nz-card nzHoverable nzTitle="数据" [nzBodyStyle]="{ padding: 1 }">
-        <cdk-virtual-scroll-viewport class="scroll-viewport" itemSize="30">
-          <nz-list>
+      <nz-card nzHoverable nzTitle="" [nzBodyStyle]="{ padding: 1 }" [nzExtra]="tableBtns">
+        <nz-list [nzHeader]="searchBar" [nzLoading]="isLoading">
+          <cdk-virtual-scroll-viewport class="scroll-viewport" itemSize="30">
             @for (item of dataList; track item.id) {
               <nz-list-item [ngClass]="{ 'selected-item': item.id === selectDict.id }" (click)="select(item)">
                 <ng-container>
@@ -13,14 +13,14 @@
                   <!--                {{ item.code }}-->
                   <ul nz-list-item-actions>
                     <nz-list-item-action>
-                      <a>edit</a>
+                      <a (click)="edit(item)">编辑</a>
                     </nz-list-item-action>
                   </ul>
                 </ng-container>
               </nz-list-item>
             }
-          </nz-list>
-        </cdk-virtual-scroll-viewport>
+          </cdk-virtual-scroll-viewport>
+        </nz-list>
       </nz-card>
     </div>
     <div nz-col [nzLg]="18" [nzMd]="24" [nzSm]="24" [nzXl]="18" [nzXs]="24" [nzXXl]="18">
@@ -28,14 +28,22 @@
     </div>
   </div>
 
+  <ng-template #searchBar>
+    <nz-input-group nzSize="default" [nzPrefix]="prefixTemplateSearch">
+      <input type="text" ngModel nz-input nzSize="small" placeholder="Search" (ngModelChange)="changeSearch($event)"/>
+    </nz-input-group>
+  </ng-template>
+
+  <ng-template #prefixTemplateSearch>
+    <nz-icon nzType="search"/>
+  </ng-template>
+
   <ng-template #tableBtns>
-    <button class="m-r-8" nz-button nzType="primary" (click)="add()">
-      <i nz-icon nzType="plus"></i>
-      新建
+    <button class="m-r-8" nz-button nzType="default" (click)="reloadTable()">
+      <i nz-icon nzType="reload"></i>
     </button>
-    <button nz-button nzType="default" (click)="allDel()">
-      <i nz-icon nzType="delete"></i>
-      批量删除
+    <button nz-button nzType="default" (click)="add()">
+      <i nz-icon nzType="plus"></i>
     </button>
   </ng-template>
 </div>

@@ -24,7 +24,7 @@ import { NzDropDownDirective, NzDropdownMenuComponent } from 'ng-zorro-antd/drop
 import { NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLabelComponent } from 'ng-zorro-antd/form';
 import { NzColDirective, NzRowDirective } from 'ng-zorro-antd/grid';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
-import { NzInputDirective } from 'ng-zorro-antd/input';
+import { NzInputDirective, NzInputGroupComponent, NzInputGroupWhitSuffixOrPrefixDirective } from 'ng-zorro-antd/input';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzMenuDirective, NzMenuItemComponent } from 'ng-zorro-antd/menu';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -62,7 +62,9 @@ interface SearchParam {
     CdkVirtualScrollViewport,
     CdkFixedSizeVirtualScroll,
     CdkVirtualForOf,
-    DictItemComponent
+    DictItemComponent,
+    NzInputGroupComponent,
+    NzInputGroupWhitSuffixOrPrefixDirective
   ],
   templateUrl: './dict.component.html',
   standalone: true,
@@ -81,12 +83,15 @@ export class DictComponent implements OnInit {
   private modalService = inject(ModalWrapService);
   private destroyRef = inject(DestroyRef);
 
+  isLoading: boolean = false;
+
   getDataList(e?: { pageIndex: number }): void {
     const params: SearchCommonVO<NzSafeAny> = {
       page: 1,
       size: 1000,
       filters: this.searchParam
     };
+    this.tableLoading(true);
     this.dictService
       .page(params)
       .pipe(
@@ -104,6 +109,7 @@ export class DictComponent implements OnInit {
   }
 
   tableLoading(isLoading: boolean): void {
+    this.isLoading = isLoading;
     this.tableChangeDectction();
   }
 
@@ -114,11 +120,9 @@ export class DictComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  allDel(): void {}
-
   add(): void {
-    this.modalService.showAsync<DictFormsComponent, Dict>(DictFormsComponent, { nzTitle: '新增' }).subscribe(res => {
-      if (!res || res.status === ModalBtnStatus.Cancel) {
+    this.modalService.showAsync<DictFormsComponent, Dict>(DictFormsComponent, { nzTitle: '新增' }).subscribe(({ modalValue, status }) => {
+      if (status === ModalBtnStatus.Cancel) {
         return;
       }
       this.reloadTable();
@@ -140,7 +144,12 @@ export class DictComponent implements OnInit {
   }
 
   addItem(id: number): void {
-    this.modalService.showAsync<DictItemFormsComponent, number>(DictItemFormsComponent, { nzTitle: '添加' }, id).subscribe(res => {});
+    this.modalService.showAsync<DictItemFormsComponent, number>(DictItemFormsComponent, { nzTitle: '添加' }, id).subscribe(({ modalValue, status }) => {
+      if (status === ModalBtnStatus.Cancel) {
+        return;
+      }
+      this.reloadTable();
+    });
   }
 
   resetForm(): void {
@@ -150,5 +159,13 @@ export class DictComponent implements OnInit {
 
   select(item: Dict): void {
     this.selectDict = item;
+  }
+
+  edit(item: Dict): void {
+    this.modalService.showAsync<DictFormsComponent, Dict>(DictFormsComponent, { nzTitle: '编辑' }, item).subscribe(res => {});
+  }
+
+  changeSearch($event: string): void {
+    console.log($event);
   }
 }

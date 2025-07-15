@@ -3,19 +3,20 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+import { Dict } from '@app/pages/zpage/dict/dict.service';
 import { DictItemService } from '@app/pages/zpage/dict-item/dict-item.service';
 import { fnCheckForm } from '@utils/tools';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
+
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
-import { NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLabelComponent } from 'ng-zorro-antd/form';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzColDirective } from 'ng-zorro-antd/grid';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
-import { Dict } from '@app/pages/zpage/dict/dict.service';
 
 @Component({
   selector: 'app-forms',
-  imports: [NzFormDirective, NzFormItemComponent, NzFormLabelComponent, NzFormControlComponent, ReactiveFormsModule, NzColDirective, NzInputDirective],
+  imports: [NzFormModule, ReactiveFormsModule, NzColDirective, NzInputDirective],
   templateUrl: './dict-item.forms.component.html',
   standalone: true,
   styleUrl: './dict-item.forms.component.less'
@@ -24,7 +25,7 @@ export class DictItemFormsComponent extends BasicConfirmModalComponent implement
   protected addEditForm!: FormGroup;
   private fb = inject(FormBuilder);
   private service = inject(DictItemService);
-  private ref = inject(NzModalRef);
+  override modalRef = inject(NzModalRef);
 
   readonly dict: Dict = inject(NZ_MODAL_DATA);
 
@@ -44,11 +45,12 @@ export class DictItemFormsComponent extends BasicConfirmModalComponent implement
   }
 
   initForm(): void {
+    const dictId = this.dict.id;
     this.addEditForm = this.fb.group({
       id: [null, []],
       label: [null, [Validators.maxLength(255)]],
       value: [null, [Validators.maxLength(255)]],
-      dictId: [this.dictId, [Validators.required]]
+      dictId: [dictId, [Validators.required]]
     });
   }
 }

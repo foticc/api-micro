@@ -89,7 +89,7 @@ export class DictItemComponent implements OnInit {
   }
 
   add(): void {
-    this.modalService.showAsync<DictItemFormsComponent, DictItem>(DictItemFormsComponent, { nzTitle: '新增' }).subscribe(res => {
+    this.modalService.showAsync<DictItemFormsComponent, Dict>(DictItemFormsComponent, { nzTitle: '新增' }, this.dict()).subscribe(res => {
       if (!res || res.status === ModalBtnStatus.Cancel) {
         return;
       }
@@ -125,23 +125,18 @@ export class DictItemComponent implements OnInit {
       showCheckbox: false,
       headers: [
         {
-          title: '',
+          title: 'id',
           field: 'id',
           width: 100
         },
         {
-          title: '',
+          title: '字典名称',
           field: 'label',
           width: 100
         },
         {
-          title: '',
+          title: '字典值',
           field: 'value',
-          width: 100
-        },
-        {
-          title: '',
-          field: 'dictId',
           width: 100
         },
         {

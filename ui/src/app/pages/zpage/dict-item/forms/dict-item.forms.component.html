@@ -1,21 +1,14 @@
 <form nz-form [formGroup]="addEditForm">
-  {{ dictId }}
   <nz-form-item>
-    <nz-form-label nzFor="label" nzRequired [nzSm]="4" [nzXs]="24"></nz-form-label>
+    <nz-form-label nzFor="label" nzRequired [nzSm]="4" [nzXs]="24">字典名称</nz-form-label>
     <nz-form-control nzErrorTip="label" [nzSm]="18" [nzXs]="24">
       <input id="label" name="label" formControlName="label" nz-input placeholder="label"/>
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-    <nz-form-label nzFor="value" nzRequired [nzSm]="4" [nzXs]="24"></nz-form-label>
+    <nz-form-label nzFor="value" nzRequired [nzSm]="4" [nzXs]="24">字典值</nz-form-label>
     <nz-form-control nzErrorTip="value" [nzSm]="18" [nzXs]="24">
       <input id="value" name="value" formControlName="value" nz-input placeholder="value"/>
-    </nz-form-control>
-  </nz-form-item>
-  <nz-form-item>
-    <nz-form-label nzFor="dictId" nzRequired [nzSm]="4" [nzXs]="24"></nz-form-label>
-    <nz-form-control nzErrorTip="dictId" [nzSm]="18" [nzXs]="24">
-      <input id="dictId" name="dictId" formControlName="dictId" nz-input placeholder="dictId"/>
     </nz-form-control>
   </nz-form-item>
 </form>
