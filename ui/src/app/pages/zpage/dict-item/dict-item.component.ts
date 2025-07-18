@@ -19,7 +19,7 @@ import { NzIconDirective } from 'ng-zorro-antd/icon';
   selector: 'app-dict-item',
   imports: [AntTableComponent, AuthDirective, CardTableWrapComponent, NzButtonComponent, NzIconDirective, JsonPipe],
   template: `
-    <app-card-table-wrap [btnTpl]="tableBtns" [tableTitle]="''" (reload)="reloadTable()">
+    <app-card-table-wrap [btnTpl]="tableBtns" [tableTitle]="name" (reload)="reloadTable()">
       <app-ant-table [tableConfig]="tableConfig" [tableData]="dataList"></app-ant-table>
       <ng-template #operationTpl let-ctx="$$dataItem" let-id="id">
         <span class="operate-text" (click)="del([id])">删除</span>
@@ -27,7 +27,6 @@ import { NzIconDirective } from 'ng-zorro-antd/icon';
       </ng-template>
     </app-card-table-wrap>
     <ng-template #tableBtns>
-      <span> </span>
       <button class="m-r-8" nz-button nzType="primary" (click)="add()">
         <i nz-icon nzType="plus"></i>
         新建
@@ -41,6 +40,8 @@ export class DictItemComponent implements OnInit {
   @ViewChild('operationTpl', { static: true }) operationTpl!: TemplateRef<NzSafeAny>;
 
   readonly dict = input.required<Dict>();
+
+  name: string = '';
 
   tableConfig!: AntTableConfig;
 
@@ -56,6 +57,7 @@ export class DictItemComponent implements OnInit {
       const dict = this.dict();
       if (dict && dict.id) {
         this.getDataList(dict.id);
+        this.name = dict.name;
       }
     });
   }

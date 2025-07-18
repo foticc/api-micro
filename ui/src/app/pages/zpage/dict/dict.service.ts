@@ -33,6 +33,7 @@ export class DictService {
   }
 
   public page(param: SearchCommonVO<Dict>): Observable<PageResult<Dict>> {
+    param.sort = 'id,desc';
     return this.http.post('/dict/page', param);
   }
 }

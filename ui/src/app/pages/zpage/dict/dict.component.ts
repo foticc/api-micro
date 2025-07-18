@@ -27,6 +27,7 @@ import { NzIconDirective } from 'ng-zorro-antd/icon';
 import { NzInputDirective, NzInputGroupComponent, NzInputGroupWhitSuffixOrPrefixDirective } from 'ng-zorro-antd/input';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzMenuDirective, NzMenuItemComponent } from 'ng-zorro-antd/menu';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableModule } from 'ng-zorro-antd/table';
 
 interface SearchParam {
@@ -79,6 +80,7 @@ export class DictComponent implements OnInit {
   tableConfig!: AntTableConfig;
 
   private dictService = inject(DictService);
+  private modalSrv = inject(NzModalService);
   private cdr = inject(ChangeDetectorRef);
   private modalService = inject(ModalWrapService);
   private destroyRef = inject(DestroyRef);
@@ -129,9 +131,24 @@ export class DictComponent implements OnInit {
     });
   }
 
-  del(id: number[]): void {
-    this.dictService.delete(id).subscribe(res => {
-      this.reloadTable();
+  delete(item: Dict): void {
+    this.modalSrv.confirm({
+      nzTitle: '确定要删除吗？',
+      nzContent: '删除后不可恢复',
+      nzOnOk: () => {
+        this.tableLoading(true);
+        this.dictService
+          .delete([item.id])
+          .pipe(
+            finalize(() => {
+              this.tableLoading(false);
+            }),
+            takeUntilDestroyed(this.destroyRef)
+          )
+          .subscribe(() => {
+            this.reloadTable();
+          });
+      }
     });
   }
 

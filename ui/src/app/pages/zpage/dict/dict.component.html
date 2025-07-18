@@ -13,7 +13,12 @@
                   <!--                {{ item.code }}-->
                   <ul nz-list-item-actions>
                     <nz-list-item-action>
-                      <a (click)="edit(item)">编辑</a>
+                      <button nz-button nzShape="circle" nzSize="small" nzType="text" (click)="edit(item)">
+                        <i nz-icon nzType="edit"></i>
+                      </button>
+                      <button nz-button nzShape="circle" nzSize="small" nzType="text" (click)="delete(item)">
+                        <i nz-icon nzType="delete"></i>
+                      </button>
                     </nz-list-item-action>
                   </ul>
                 </ng-container>
