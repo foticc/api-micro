@@ -9,6 +9,7 @@ import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { AuthDirective } from '@shared/directives/auth.directive';
 import { ModalBtnStatus, ModalWrapService } from '@widget/base-modal';
+
 import { NzButtonComponent } from 'ng-zorro-antd/button';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
@@ -89,7 +90,7 @@ export class ApiResourceComponent implements OnInit {
     });
   }
 
-  edit(id: any, ctx: any): void {
+  edit(id: number, ctx: ApiResource): void {
     this.modalService.showAsync<FormsComponent, ApiResource>(FormsComponent, { nzTitle: '测试啊' }, ctx).subscribe(res => {
       if (!res || res.status === ModalBtnStatus.Cancel) {
         return;
@@ -108,7 +109,7 @@ export class ApiResourceComponent implements OnInit {
 
   private initTable(): void {
     this.tableConfig = {
-      showCheckbox: false,
+      showCheckbox: true,
       headers: [
         {
           title: '',

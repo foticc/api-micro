@@ -7,7 +7,7 @@ import { ApiResource, ApiResourceService } from '@app/pages/zpage/apidemo/api-re
 import { fnCheckForm } from '@utils/tools';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
-import { NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLabelComponent } from 'ng-zorro-antd/form';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzColDirective } from 'ng-zorro-antd/grid';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
@@ -15,7 +15,7 @@ import { DictSelectComponent, SelectModel } from '@app/pages/zpage/apidemo/selec
 
 @Component({
   selector: 'app-forms',
-  imports: [NzFormDirective, NzFormItemComponent, NzFormLabelComponent, NzFormControlComponent, ReactiveFormsModule, NzColDirective, NzInputDirective, DictSelectComponent],
+  imports: [NzFormModule, ReactiveFormsModule, NzColDirective, NzInputDirective, DictSelectComponent],
   templateUrl: './api-resource.forms.component.html',
   standalone: true,
   styleUrl: './api-resource.forms.component.less'
