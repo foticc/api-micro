@@ -1,7 +1,11 @@
 <div class="normal-table-wrap">
   <app-card-table-wrap [btnTpl]="tableBtns" [tableTitle]="'资源列表'" (reload)="reloadTable()">
-    <app-ant-table [tableConfig]="tableConfig" [tableData]="dataList" (changePageIndex)="getDataList($event)"
-                   (changePageSize)="changePageSize($event)"></app-ant-table>
+    <app-ant-table
+      [tableConfig]="tableConfig"
+      [tableData]="dataList"
+      (changePageIndex)="getDataList($event)"
+      (changePageSize)="changePageSize($event)"
+    ></app-ant-table>
     <ng-template #operationTpl let-ctx="$$dataItem" let-id="id">
       <span class="operate-text" (click)="del([id])">删除</span>
       <span class="operate-text" (click)="edit(id, ctx)">编辑</span>

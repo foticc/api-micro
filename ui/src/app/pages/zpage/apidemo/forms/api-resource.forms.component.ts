@@ -4,14 +4,15 @@ import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { ApiResource, ApiResourceService } from '@app/pages/zpage/apidemo/api-resource.service';
+import { DictSelectComponent, SelectModel } from '@app/pages/zpage/apidemo/select/select.component';
 import { fnCheckForm } from '@utils/tools';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
+
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzColDirective } from 'ng-zorro-antd/grid';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
-import { DictSelectComponent, SelectModel } from '@app/pages/zpage/apidemo/select/select.component';
 
 @Component({
   selector: 'app-forms',
@@ -53,7 +54,6 @@ export class FormsComponent extends BasicConfirmModalComponent implements OnInit
     if (this.isEdit) {
       this.addEditForm.patchValue(this.nzModalData);
     }
-    console.log(this.nzModalData);
   }
 
   initForm(): void {
@@ -67,16 +67,20 @@ export class FormsComponent extends BasicConfirmModalComponent implements OnInit
 
   methodValues: SelectModel[] = [
     {
-      value: 'get',
-      label: 'get'
+      value: 'GET',
+      label: 'GET'
     },
     {
-      value: 'post',
-      label: 'post'
+      value: 'POST',
+      label: 'POST'
     },
     {
-      value: 'put',
-      label: 'put'
+      value: 'PUT',
+      label: 'PUT'
+    },
+    {
+      value: 'DELETE',
+      label: 'DELETE'
     }
   ];
 }

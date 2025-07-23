@@ -5,7 +5,7 @@ import { finalize } from 'rxjs/operators';
 import { ApiResource, ApiResourceService } from '@app/pages/zpage/apidemo/api-resource.service';
 import { FormsComponent } from '@app/pages/zpage/apidemo/forms/api-resource.forms.component';
 import { SearchCommonVO } from '@core/services/types';
-import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/ant-table.component';
+import { AntTableComponent, AntTableConfig, SortFile } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { AuthDirective } from '@shared/directives/auth.directive';
 import { ModalBtnStatus, ModalWrapService } from '@widget/base-modal';
@@ -109,10 +109,9 @@ export class ApiResourceComponent implements OnInit {
 
   private initTable(): void {
     this.tableConfig = {
-      showCheckbox: true,
       headers: [
         {
-          title: '',
+          title: 'id',
           field: 'id',
           width: 100
         },
@@ -147,5 +146,16 @@ export class ApiResourceComponent implements OnInit {
       pageSize: 10,
       pageIndex: 1
     };
+  }
+
+  changeSort(event: SortFile): void {
+    console.log(event);
+  }
+
+  checkedCashArray: ApiResource[] = [];
+
+  selectedChecked(event: ApiResource[]): void {
+    this.checkedCashArray = [...event];
+    console.log(this.checkedCashArray);
   }
 }
