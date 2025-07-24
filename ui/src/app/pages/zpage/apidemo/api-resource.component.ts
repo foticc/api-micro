@@ -1,8 +1,9 @@
 import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 
-import { ApiResource, ApiResourceService } from '@app/pages/zpage/apidemo/api-resource.service';
+import { ApiResource, ApiResourceQuery, ApiResourceService } from '@app/pages/zpage/apidemo/api-resource.service';
 import { FormsComponent } from '@app/pages/zpage/apidemo/forms/api-resource.forms.component';
 import { SearchCommonVO } from '@core/services/types';
 import { AntTableComponent, AntTableConfig, SortFile } from '@shared/components/ant-table/ant-table.component';
@@ -11,12 +12,35 @@ import { AuthDirective } from '@shared/directives/auth.directive';
 import { ModalBtnStatus, ModalWrapService } from '@widget/base-modal';
 
 import { NzButtonComponent } from 'ng-zorro-antd/button';
+import { NzCardComponent } from 'ng-zorro-antd/card';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
+import { NzWaveDirective } from 'ng-zorro-antd/core/wave';
+import { NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLabelComponent } from 'ng-zorro-antd/form';
+import { NzColDirective, NzRowDirective } from 'ng-zorro-antd/grid';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
+import { NzInputDirective } from 'ng-zorro-antd/input';
+import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
-  selector: 'app-holiday',
-  imports: [AntTableComponent, AuthDirective, CardTableWrapComponent, NzButtonComponent, NzIconDirective],
+  selector: 'app-apiresource',
+  imports: [
+    AntTableComponent,
+    AuthDirective,
+    CardTableWrapComponent,
+    NzButtonComponent,
+    NzIconDirective,
+    FormsModule,
+    NzCardComponent,
+    NzColDirective,
+    NzFormControlComponent,
+    NzFormDirective,
+    NzFormItemComponent,
+    NzFormLabelComponent,
+    NzInputDirective,
+    NzRowDirective,
+    NzWaveDirective,
+    ReactiveFormsModule
+  ],
   templateUrl: './api-resource.component.html',
   standalone: true,
   styleUrl: './api-resource.component.less'
@@ -28,8 +52,11 @@ export class ApiResourceComponent implements OnInit {
 
   dataList: ApiResource[] = [];
 
+  searchParam: Partial<ApiResourceQuery> = {};
+
   private apiResourceService = inject(ApiResourceService);
   private cdr = inject(ChangeDetectorRef);
+  private modalSrv = inject(NzModalService);
   private modalService = inject(ModalWrapService);
   destroyRef = inject(DestroyRef);
 
@@ -38,7 +65,7 @@ export class ApiResourceComponent implements OnInit {
     const params: SearchCommonVO<NzSafeAny> = {
       page: e?.pageIndex || this.tableConfig.pageIndex!,
       size: this.tableConfig.pageSize!,
-      filters: {}
+      filters: { ...this.searchParam }
     };
     this.apiResourceService
       .page(params)
@@ -84,9 +111,24 @@ export class ApiResourceComponent implements OnInit {
     });
   }
 
-  del(id: number[]): void {
-    this.apiResourceService.delete(id).subscribe(res => {
-      this.reloadTable();
+  delete(id: number[]): void {
+    this.modalSrv.confirm({
+      nzTitle: '确定要删除吗？',
+      nzContent: '删除后不可恢复',
+      nzOnOk: () => {
+        this.tableLoading(true);
+        this.apiResourceService
+          .delete(id)
+          .pipe(
+            finalize(() => {
+              this.tableLoading(false);
+            }),
+            takeUntilDestroyed(this.destroyRef)
+          )
+          .subscribe(() => {
+            this.reloadTable();
+          });
+      }
     });
   }
 
@@ -105,6 +147,11 @@ export class ApiResourceComponent implements OnInit {
 
   reloadTable(): void {
     this.getDataList();
+  }
+
+  resetForm(): void {
+    this.searchParam = {};
+    this.getDataList({ pageIndex: 1 });
   }
 
   private initTable(): void {
@@ -136,7 +183,7 @@ export class ApiResourceComponent implements OnInit {
         {
           title: '操作',
           tdTemplate: this.operationTpl,
-          width: 120,
+          width: 30,
           fixed: true,
           fixedDir: 'right'
         }

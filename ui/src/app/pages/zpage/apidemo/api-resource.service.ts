@@ -11,6 +11,11 @@ export interface ApiResource {
   description: string;
 }
 
+export interface ApiResourceQuery {
+  path: string;
+  method: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })

@@ -17,5 +17,11 @@ export default [
     title: 'QWER',
     data: { key: 'demo' },
     loadComponent: () => import('./apidemo/api-resource.component').then(m => m.ApiResourceComponent)
+  },
+  {
+    path: 'table',
+    title: 'Table',
+    data: { key: 'Table' },
+    loadComponent: () => import('./demo-table/demo-table').then(m => m.DemoTable)
   }
 ] satisfies Route[];

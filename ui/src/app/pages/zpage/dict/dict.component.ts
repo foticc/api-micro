@@ -10,7 +10,7 @@ import { DictFormsComponent } from '@app/pages/zpage/dict/forms/dict.forms.compo
 import { DictItemComponent } from '@app/pages/zpage/dict-item/dict-item.component';
 import { DictItemFormsComponent } from '@app/pages/zpage/dict-item/forms/dict-item.forms.component';
 import { SearchCommonVO } from '@core/services/types';
-import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/ant-table.component';
+import { AntTableConfig } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { ModalBtnStatus, ModalWrapService } from '@widget/base-modal';
 
@@ -57,12 +57,10 @@ interface SearchParam {
     NzRowDirective,
     NzWaveDirective,
     CardTableWrapComponent,
-    AntTableComponent,
     NzListModule,
     NgClass,
     CdkVirtualScrollViewport,
     CdkFixedSizeVirtualScroll,
-    CdkVirtualForOf,
     DictItemComponent,
     NzInputGroupComponent,
     NzInputGroupWhitSuffixOrPrefixDirective
