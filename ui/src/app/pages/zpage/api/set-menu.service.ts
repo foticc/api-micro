@@ -2,7 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BaseHttpService } from '@services/base-http.service';
-import { NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
+
+import { NzTreeNode, NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
 
 export interface NewRole {
   id?: number;
@@ -20,14 +21,14 @@ export interface MenuTree {
 @Injectable({
   providedIn: 'root'
 })
-export class NnnService {
+export class SetMenuService {
   http = inject(BaseHttpService);
 
-  public getRoles(params: any): Observable<NewRole[]> {
+  public getRoles(params: number): Observable<NewRole[]> {
     return this.http.post('/role/list', params);
   }
 
-  public getMenuTree(id: any): Observable<NzTreeNodeOptions[]> {
+  public getMenuTree(id: number): Observable<NzTreeNode[]> {
     return this.http.post(`/menu/tree?id=${id}`, {});
   }
 

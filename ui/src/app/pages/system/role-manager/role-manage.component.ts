@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 
 import { ActionCode } from '@app/config/actionCode';
+import { SetRoleManagerService } from '@app/pages/zpage/set-menu-modal/set-role-manager';
 import { SearchCommonVO } from '@core/services/types';
 import { Role, RoleService } from '@services/system/role.service';
 import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/ant-table.component';
@@ -24,7 +25,6 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { SetRoleManagerService } from '@app/pages/zpage/newdemo/set-role-manager';
 
 interface SearchParam {
   roleName: string;
@@ -116,9 +116,7 @@ export class RoleManageComponent implements OnInit {
         if (!res || res.status === ModalBtnStatus.Cancel) {
           return;
         }
-        const param = { ...res.modalValue };
         this.tableLoading(true);
-        this.addEditData(param, 'addRoles');
       });
   }
 

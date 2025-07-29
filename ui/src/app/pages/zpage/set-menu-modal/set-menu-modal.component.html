@@ -1,20 +1,23 @@
 <div class="p-8 flex-column">
   <div class="full-with end-start-center">
     <button nz-button nzType="primary" (click)="setMenu()">
-      <nz-icon nzType="save" nzTheme="outline" />
+      <nz-icon nzTheme="outline" nzType="save" />
     </button>
   </div>
   <div class="flex-1">
     <nz-skeleton [nzLoading]="isSpinning">
       <nz-tree
         #nzTreeComponent
-        [nzData]="nodes"
         nzCheckable
-        [nzAsyncData]="true"
+        [nzAsyncData]="nzAsyncData"
+        [nzCheckedKeys]="nzCheckedKeys"
+        [nzData]="nodes"
+        [nzExpandAll]="true"
+        [nzExpandedKeys]="nzCheckedKeys"
         [nzShowIcon]="true"
+        (nzCheckboxChange)="nzCheck($event)"
         (nzClick)="nzClick($event)"
         (nzContextMenu)="nzClick($event)"
-        (nzCheckboxChange)="nzCheck($event)"
         (nzExpandChange)="nzCheck($event)"
       ></nz-tree>
     </nz-skeleton>

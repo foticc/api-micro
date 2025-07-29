@@ -1,9 +1,9 @@
 import { inject, Injectable, Type } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { NewdemoComponent } from '@app/pages/zpage/newdemo/newdemo.component';
+import { SetMenuModalComponent } from '@app/pages/zpage/set-menu-modal/set-menu-modal.component';
 import { ModalResponse, ModalWrapService } from '@widget/base-modal';
-import { RoleManageModalComponent } from '@widget/biz-widget/system/role-manage-modal/role-manage-modal.component';
+
 import { ModalOptions } from 'ng-zorro-antd/modal';
 
 @Injectable({
@@ -12,11 +12,11 @@ import { ModalOptions } from 'ng-zorro-antd/modal';
 export class SetRoleManagerService {
   private modalWrapService = inject(ModalWrapService);
 
-  protected getContentComponent(): Type<NewdemoComponent> {
-    return NewdemoComponent;
+  protected getContentComponent(): Type<SetMenuModalComponent> {
+    return SetMenuModalComponent;
   }
 
   public show(modalOptions: ModalOptions = {}, modalData: number): Observable<ModalResponse> {
-    return this.modalWrapService.open<NewdemoComponent, number>(this.getContentComponent(), modalOptions, modalData);
+    return this.modalWrapService.open<SetMenuModalComponent, number>(this.getContentComponent(), modalOptions, modalData);
   }
 }
