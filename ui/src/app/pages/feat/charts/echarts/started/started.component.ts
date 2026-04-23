@@ -1,6 +1,6 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { ComponentPortal, ComponentType, Portal, PortalModule } from '@angular/cdk/portal';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EventsChartsComponent } from '@app/pages/feat/charts/echarts/started/events-charts/events-charts.component';
@@ -10,6 +10,7 @@ import { LoadingChartsComponent } from '@app/pages/feat/charts/echarts/started/l
 import { MergeChartsComponent } from '@app/pages/feat/charts/echarts/started/merge-charts/merge-charts.component';
 import { SimpleChartComponent } from '@app/pages/feat/charts/echarts/started/simple-chart/simple-chart.component';
 import { ThemeChartsComponent } from '@app/pages/feat/charts/echarts/started/theme-charts/theme-charts.component';
+
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzTabsModule, NzTabPosition } from 'ng-zorro-antd/tabs';
@@ -23,7 +24,7 @@ type targetComp = EventsChartsComponent | InitOptsChartsComponent | InstanceOpts
   imports: [NzCardModule, NzTabsModule, PortalModule]
 })
 export class StartedComponent implements OnInit {
-  tabPosition: NzTabPosition = 'left';
+  tabPosition = signal<NzTabPosition>('left');
   componentPortal?: ComponentPortal<targetComp>;
   selectedPortal!: Portal<NzSafeAny>;
   tabArray: Array<{ label: string; value: ComponentType<targetComp> }> = [
@@ -36,7 +37,6 @@ export class StartedComponent implements OnInit {
     { label: 'ECharts Instance', value: InstanceOptsChartsComponent }
   ];
   private destroyRef = inject(DestroyRef);
-  private cdr = inject(ChangeDetectorRef);
   private breakpointObserver = inject(BreakpointObserver);
 
   to(tabIndex: number): void {
@@ -51,8 +51,7 @@ export class StartedComponent implements OnInit {
       .observe(['(max-width: 767px)'])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(result => {
-        this.tabPosition = result.matches ? 'top' : 'left';
-        this.cdr.markForCheck();
+        this.tabPosition.set(result.matches ? 'top' : 'left');
       });
   }
 }

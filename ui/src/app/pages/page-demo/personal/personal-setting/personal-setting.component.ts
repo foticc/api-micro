@@ -1,10 +1,11 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { NgClass } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, DestroyRef, viewChild } from '@angular/core';
+
+import { Component, OnInit, ChangeDetectionStrategy, inject, DestroyRef, viewChild, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AdComponent, DynamicComponent } from '@core/services/types';
 import { AdDirective } from '@shared/directives/ad.directive';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzGridModule } from 'ng-zorro-antd/grid';
@@ -25,18 +26,30 @@ interface TabInterface {
 @Component({
   selector: 'app-personal-setting',
   templateUrl: './personal-setting.component.html',
-  styleUrls: ['./personal-setting.component.less'],
+  styleUrl: './personal-setting.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NzCardModule, NgClass, NzMenuModule, NzButtonModule, NzGridModule, NzTypographyModule, AdDirective_1]
+  imports: [NzCardModule, NzMenuModule, NzButtonModule, NzGridModule, NzTypographyModule, AdDirective_1]
 })
 export class PersonalSettingComponent implements OnInit {
   readonly adHost = viewChild.required(AdDirective);
-  tabModel: NzMenuModeType = 'inline';
+  tabModel = signal<NzMenuModeType>('inline');
   settingComponent: TabInterface[] = [
-    { key: 'base', component: new DynamicComponent(BaseComponent, { label: '基本设置' }) },
-    { key: 'safe', component: new DynamicComponent(SafeComponent, { label: '安全设置' }) },
-    { key: 'bind', component: new DynamicComponent(BindComponent, { label: '账号绑定' }) },
-    { key: 'notice', component: new DynamicComponent(NoticeComponent, { label: '新消息通知' }) }
+    {
+      key: 'base',
+      component: new DynamicComponent(BaseComponent, { label: '基本设置' })
+    },
+    {
+      key: 'safe',
+      component: new DynamicComponent(SafeComponent, { label: '安全设置' })
+    },
+    {
+      key: 'bind',
+      component: new DynamicComponent(BindComponent, { label: '账号绑定' })
+    },
+    {
+      key: 'notice',
+      component: new DynamicComponent(NoticeComponent, { label: '新消息通知' })
+    }
   ];
   destroyRef = inject(DestroyRef);
   menus: Array<{ key: string; title: string; selected?: boolean }> = [
@@ -64,7 +77,6 @@ export class PersonalSettingComponent implements OnInit {
   currentTitle: string = this.menus[0].title;
 
   private breakpointObserver = inject(BreakpointObserver);
-  private cdr = inject(ChangeDetectorRef);
 
   to(item: { key: string; title: string; selected?: boolean }): void {
     const selMenu = this.settingComponent.find(({ key }) => {
@@ -82,8 +94,7 @@ export class PersonalSettingComponent implements OnInit {
       .observe(['(max-width: 767px)'])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(result => {
-        this.tabModel = result.matches ? 'horizontal' : 'inline';
-        this.cdr.markForCheck();
+        this.tabModel.set(result.matches ? 'horizontal' : 'inline');
       });
   }
 

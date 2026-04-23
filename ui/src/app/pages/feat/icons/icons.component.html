@@ -3,12 +3,10 @@
 <div class="normal-table-wrap">
   <nz-card nzTitle="图标选择器">
     <button class="m-b-8" nz-button nzType="primary" (click)="visible = !visible">打开图标选择器</button>
-    <nz-input-group [nzAddOnAfter]="selIcon">
-      <input disabled nz-input [placeholder]="'点击右侧图标选择图标，这句话有点绕'" [(ngModel)]="seletedIcon" />
-    </nz-input-group>
-    <ng-template #selIcon>
-      <app-icon-sel [visible]="visible" (selIcon)="seletedIcon = $event"></app-icon-sel>
-    </ng-template>
+    <nz-input-wrapper>
+      <input disabled nz-input placeholder="点击右侧图标选择图标，这句话有点绕" [(ngModel)]="seletedIcon" />
+      <app-icon-sel nzInputAddonAfter [visible]="visible" (selIcon)="seletedIcon = $event"></app-icon-sel>
+    </nz-input-wrapper>
   </nz-card>
 
   <nz-card nzTitle="zorro官网直接用">
@@ -22,16 +20,17 @@
 
   <nz-card nzTitle="使用material图标（第一个是基本图标，第二个是svg图标）">
     <div class="space-between">
-      <mat-icon aria-hidden="false" aria-label="Example home icon">home</mat-icon>
-      <mat-icon aria-hidden="false" aria-label="Example thumbs up SVG icon" svgIcon="thumbs-up"></mat-icon>
+      <!--      <mat-icon aria-hidden="false" aria-label="Example home icon">home</mat-icon>-->
+      <!--      <mat-icon aria-hidden="false" aria-label="Example thumbs up SVG icon" svgIcon="thumbs-up"></mat-icon>-->
+      <div class="space-between"> 移除对material的引用，请在v20及以下版本上查看演示代码 </div>
     </div>
   </nz-card>
 
   <nz-card nzTitle="彩色图标">
     <div class="space-around">
-      <i class="example" nz-icon [nzTheme]="'twotone'" [nzType]="'smile'"></i>
-      <i class="example" nz-icon [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'" [nzType]="'heart'"></i>
-      <i class="example" nz-icon [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'" [nzType]="'check-circle'"></i>
+      <i class="example" nz-icon nzTheme="twotone" nzType="smile"></i>
+      <i class="example" nz-icon nzTheme="twotone" nzTwotoneColor="#eb2f96" nzType="heart"></i>
+      <i class="example" nz-icon nzTheme="twotone" nzTwotoneColor="#52c41a" nzType="check-circle"></i>
     </div>
   </nz-card>
 
@@ -77,8 +76,8 @@
 
   <nz-card nzTitle="引入阿里图标库的图标,在这里需要先从图标库网站生成对应js,引入load-ali-icon-cdn.service.ts">
     <div class="space-around">
-      <i class="example" nz-icon [nzIconfont]="'icon-medium'"></i>
-      <i class="example" nz-icon [nzIconfont]="'icon-mel-help'"></i>
+      <i class="example" nz-icon nzIconfont="icon-medium"></i>
+      <i class="example" nz-icon nzIconfont="icon-mel-help"></i>
     </div>
   </nz-card>
 </div>

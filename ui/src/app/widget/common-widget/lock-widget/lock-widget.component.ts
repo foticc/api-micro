@@ -8,6 +8,7 @@ import { WindowService } from '@core/services/common/window.service';
 import { LockScreenFlag, LockScreenStoreService } from '@store/common-store/lock-screen-store.service';
 import { fnCheckForm, fnEncrypt } from '@utils/tools';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
+
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
@@ -21,7 +22,7 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
 @Component({
   selector: 'app-lock-widget',
   templateUrl: './lock-widget.component.html',
-  styleUrls: ['./lock-widget.component.less'],
+  styleUrl: './lock-widget.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NzAvatarModule, FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzButtonModule, NzInputModule, NzIconModule, NzWaveModule]
 })

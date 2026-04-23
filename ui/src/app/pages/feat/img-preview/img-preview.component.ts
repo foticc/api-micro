@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzImageService, NzImageModule } from 'ng-zorro-antd/image';
@@ -9,7 +10,7 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 @Component({
   selector: 'app-img-preview',
   templateUrl: './img-preview.component.html',
-  styleUrls: ['./img-preview.component.less'],
+  styleUrl: './img-preview.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PageHeaderComponent, NzImageModule, NzSpaceModule, NzButtonModule, NzWaveModule]
 })

@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, DestroyRef, signal, effect,
 
 import { SideNavWidth } from '@app/config/constant';
 import { ThemeService } from '@store/common-store/theme.service';
+
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 
@@ -10,7 +11,7 @@ import { SideNavComponent } from '../side-nav/side-nav.component';
 @Component({
   selector: 'app-nav-drawer',
   templateUrl: './nav-drawer.component.html',
-  styleUrls: ['./nav-drawer.component.less'],
+  styleUrl: './nav-drawer.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NzDrawerModule, NzLayoutModule, SideNavComponent]
 })

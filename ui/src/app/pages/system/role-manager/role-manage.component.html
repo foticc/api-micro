@@ -15,7 +15,7 @@
         </div>
         <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXl]="8" [nzXs]="24" [nzXXl]="8"></div>
         <div class="text-right p-0 m-b-10" nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXl]="8" [nzXs]="24" [nzXXl]="8">
-          <button nz-button [nzType]="'primary'" (click)="getDataList({ pageIndex: 1 })">
+          <button nz-button nzType="primary" (click)="getDataList({ pageIndex: 1 })">
             <i nz-icon nzType="search"></i>
             搜索
           </button>
@@ -29,8 +29,8 @@
   </nz-card>
 
   <app-card-table-wrap [btnTpl]="tableBtns" [tableTitle]="'角色列表'" (reload)="reloadTable()">
-    <app-ant-table [tableConfig]="tableConfig" [tableData]="dataList" (changePageIndex)="getDataList($event)" (changePageSize)="changePageSize($event)"></app-ant-table>
-    <ng-template #operationTpl let-id="id" let-roleName="roleName" let-$$dataItem="$$dataItem">
+    <app-ant-table [tableConfig]="tableConfig()" [tableData]="dataList()" (changePageIndex)="getDataList($event)" (changePageSize)="changePageSize($event)"></app-ant-table>
+    <ng-template #operationTpl let-$$dataItem="$$dataItem" let-id="id" let-roleName="roleName">
       <span class="operate-text" (click)="setRole(id, roleName)">设置权限</span>
       <span *appAuth="ActionCode.RoleManagerEdit" class="operate-text" (click)="edit(id, $$dataItem)">编辑</span>
       <span *appAuth="ActionCode.RoleManagerDel" class="operate-text" (click)="del(id)">删除</span>

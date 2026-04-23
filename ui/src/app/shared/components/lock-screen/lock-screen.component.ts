@@ -12,6 +12,7 @@ import { WindowService } from '@core/services/common/window.service';
 import { LockScreenStoreService } from '@store/common-store/lock-screen-store.service';
 import { fnCheckForm, fnEncrypt } from '@utils/tools';
 import { getDay } from 'date-fns';
+
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
@@ -25,9 +26,8 @@ import { ChangNumberToChinesePipe } from '../../pipes/chang-number-to-chinese.pi
 @Component({
   selector: 'app-lock-screen',
   templateUrl: './lock-screen.component.html',
-  styleUrls: ['./lock-screen.component.less'],
+  styleUrl: './lock-screen.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [NzIconModule, NzButtonModule, NzGridModule, NzAvatarModule, FormsModule, NzFormModule, ReactiveFormsModule, NzInputModule, ChangNumberToChinesePipe, AsyncPipe, DatePipe]
 })
 export class LockScreenComponent implements OnInit {

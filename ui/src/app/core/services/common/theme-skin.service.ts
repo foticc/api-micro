@@ -1,5 +1,4 @@
-import { DOCUMENT } from '@angular/common';
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, DOCUMENT } from '@angular/core';
 
 import { StyleTheme, ThemeService } from '@store/common-store/theme.service';
 
@@ -49,7 +48,7 @@ export class ThemeSkinService {
             .filter(item => item !== this.$currentStyleTheme())
             .forEach(item => {
               setTimeout(() => {
-                this.removeUnusedTheme(<StyleTheme>item);
+                this.removeUnusedTheme(item as StyleTheme);
               }, 1);
             });
 

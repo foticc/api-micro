@@ -8,6 +8,7 @@ import { WindowService } from '@core/services/common/window.service';
 import { Login1StoreService } from '@store/biz-store-service/other-login/login1-store.service';
 import { SpinService } from '@store/common-store/spin.service';
 import { UserInfoStoreService } from '@store/common-store/userInfo-store.service';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
@@ -20,7 +21,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 @Component({
   selector: 'app-normal-login',
   templateUrl: './normal-login.component.html',
-  styleUrls: ['./normal-login.component.less'],
+  styleUrl: './normal-login.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzInputModule, NzButtonModule, NzIconModule, NzCheckboxModule, NzWaveModule, NzDividerModule]
 })

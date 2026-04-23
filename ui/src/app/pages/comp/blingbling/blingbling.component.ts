@@ -1,12 +1,14 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
+
 import { NzCardComponent } from 'ng-zorro-antd/card';
 
 @Component({
   selector: 'app-blingbling',
   imports: [PageHeaderComponent, NzCardComponent],
   templateUrl: './blingbling.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './blingbling.component.less'
 })
 export class BlingblingComponent {

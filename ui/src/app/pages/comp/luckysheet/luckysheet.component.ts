@@ -5,9 +5,8 @@ import { LazyService } from '@core/services/common/lazy.service';
 @Component({
   selector: 'app-luckysheet',
   templateUrl: './luckysheet.component.html',
-  styleUrls: ['./luckysheet.component.less'],
+  styleUrl: './luckysheet.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true
 })
 export class LuckysheetComponent implements AfterViewInit {
   private lazyService = inject(LazyService);

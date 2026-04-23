@@ -7,6 +7,7 @@ import { FooterSubmitComponent } from '@shared/components/footer-submit/footer-s
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
 import { fnCheckForm } from '@utils/tools';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
@@ -22,7 +23,7 @@ import { WarehouseManageFormComponent as WarehouseManageFormComponent_1 } from '
 @Component({
   selector: 'app-advanced',
   templateUrl: './advanced.component.html',
-  styleUrls: ['./advanced.component.less'],
+  styleUrl: './advanced.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,

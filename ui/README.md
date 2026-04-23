@@ -1,186 +1,376 @@
-# ng-antd-admin
+<div align="center">
+
+# 🚀 ng-antd-admin
+
+**基于 Angular 21 的企业级中后台前端解决方案**
+
 [![CodeFactor](https://www.codefactor.io/repository/github/huajian123/ng-antd-admin/badge)](https://www.codefactor.io/repository/github/huajian123/ng-antd-admin)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
-[![Angular](https://img.shields.io/badge/Build%20with-Angular%20CLI-red?logo=angular)](https://www.github.com/angular/angular)
+[![Angular](https://img.shields.io/badge/Build%20with-Angular%2021-red?logo=angular)](https://www.github.com/angular/angular)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)
+![ng-zorro](https://img.shields.io/badge/ng--zorro--antd-21-blue?logo=ant-design)
 
-## ✨前言
-- 我作为angular的粉丝，想以本项目作为我为angular社区尽一点力所能及之力，希望大家喜欢这个模板，也希望更多的国内开发者能重新审视angular这一前端框架，特别是ng17以后的版本，我相信angular会越来越好，我也会一直维护下去，如果您有什么好的建议，可以加我的微信号hj345678912，我拉你进交流群，一起学习进步交流（平时群里说话人不多）。
+[在线预览](https://huajian123.github.io/ng-antd-admin/) · [功能演示](https://www.bilibili.com/video/BV1gF411x7rN/) · [问题反馈](https://github.com/huajian123/ng-antd-admin/issues) · [更新日志](https://github.com/huajian123/ng-antd-admin/releases)
 
-## ✨项目介绍
-- 本项目也有一点点教学性质，其中用到大量angular新特性，有详细的注释以及参考文章链接在代码中，大家可以看看源码，有问题与我讨论，有改进处可以提pr，我们一起进步
-- <font color=red>在线预览地址</font> [这里](https://huajian123.github.io/ng-antd-admin/)为了节省服务器费用，这个预览地址是基于ng18的纯静态网站，所有数据采用mswjs作为mock，如果你只想简单本地启动前端看看效果，可以下载这里的代码，直接npm安装好依赖就可以启动，源码[这里](https://github.com/huajian123/ng-antd-admin/tree/ng17-mock)，
-- 我也提供了剔除掉所有第三方包以及所有业务，仅保留框架基本结构的纯净版，你可以基于纯净版对接你自己的后端服务，项目地址 [pure](https://gitee.com/hjxiaoqianduan/ng-antd-admin-pure/)，<br>
-- 如果您用我的项目进行学习或者参考，请先确定您使用的是angular哪个版本，因为angular15后写法有部分不一样，所以我的建议是，您正在使用angular什么版本，则下载对应版本的ng-antd-admin,最新版本直接从master分支下载即可，历史版本在这个链接进行下载[这里](https://github.com/huajian123/ng-antd-admin/releases)。<br>
+<img src="https://github.com/huajian123/ng-antd-admin/blob/master/ui/projectImg/11.png?raw=true" alt="系统截图" width="800"/>
+</div>
 
-## ✨关于前端
-- 支持最新angular版本
-- Support the latest angular version
-- 所有组件onPush,性能卓越
-- All components onPush, excellent performance
-- 代码示例丰富，有完整服务端后台，前后端分离示例
-- Rich code examples, complete server background, front-end and back-end separation examples
-- 常用工具类，服务， 指令，管道，封装了表格，抽屉，对话框等常用功能
-- Common tools, services, instructions, pipelines。Encapsulates common functions such as tables, drawers, and dialog boxes
-- <font color=red size=6>全部组件均为独立组件，文件量减少（如果需要module版本，请看[这里](https://github.com/huajian123/ng-antd-admin/releases/tag/v15.0)）</font>
-- <font color=red size=6>Standalone Components（module style is [here](https://github.com/huajian123/ng-antd-admin/releases/tag/v15.0)）</font>
-- 已开启zoneless
+---
 
-## ✨关于后端
-- 采用nestjs,drizzle,postgresql,以rbac为权限模型，集成了jwt,添加了接口权限，功能权限。完成用户管理，菜单管理，部门管理，角色管理等模块。开箱即用
+## 📖 项目简介
 
-## ✨特性
-- 支持最新angular版本
-- Support the latest angular version
-- 所有组件onPush,性能卓越
-- All components onPush, excellent performance
-- 代码示例丰富，有完整服务端后台，前后端分离示例
-- Rich code examples, complete server background, front-end and back-end separation examples
-- 常用工具类，服务， 指令，管道，封装了表格，抽屉，对话框等常用功能
-- Common tools, services, instructions, pipelines。Encapsulates common functions such as tables, drawers, and dialog boxes
-- <font color=red size=6>全部组件均为独立组件，文件量减少（如果需要module版本，请看[这里](https://github.com/huajian123/ng-antd-admin/releases/tag/v15.0)）</font>
-- <font color=red size=6>Standalone Components（module style is [here](https://github.com/huajian123/ng-antd-admin/releases/tag/v15.0)）</font>
+**ng-antd-admin** 是一个**生产就绪**的企业级中后台前端解决方案，基于 **Angular 21** 和 **ng-zorro-antd 21** 构建。
 
-# ✨以前录制的使用教程
-- 快速二开使用详解 [快速二开使用详解](https://www.bilibili.com/video/BV1gF411x7rN/)<br>
-- 项目搭建简易教程 [项目搭建简易教程](https://www.bilibili.com/video/BV1EM4y1w7zd/)<br>
+本项目紧跟 Angular 技术演进，充分利用最新特性，包括 **Standalone Components**、**Zoneless Change Detection**、**Signals API** 和 **View Transitions**，旨在为开发者提供一个现代化、高性能、易于维护的开发模板。
 
-# ✨如何启动
-1. 如果你只想看看前端，启动起来看看效果，直接拉取源码[这里](https://github.com/huajian123/ng-antd-admin/tree/ng17-mock)，这个ng18的纯前端版本，  
-   直接npm install，npm run star查看效果。
+### 💡 为什么选择 ng-antd-admin？
 
-2. 如果你想启动nodejs端，
-  1. 需要本地安装好docker。
-  2. 进入nest-api目录下
-  3. 在命令行运行命令"docker-compose up -d"，用以安装postgresql镜像以及容器，
-  4. 启动docker中的容器新拉的postgresql容器，
-  5. 你可能需要一款数据库连接工具，例如用DataGrip,Navicat等工具连接docker中的postgres数据库。用户名“admin”，密码“123456”，数据库名称“ng-antd-admin-db”
-  6. 执行nest-api目录下的ng-antd-admin-db.sql这个sql
-  7. 在nest-api目录下npm install ,执行npm run start.在ui目录下执行npm install ,以及npm run start
+- ✅ **技术前沿**：率先拥抱 Angular 21 全新生态（Signals, Zoneless, Control Flow）。
+- ✅ **性能卓越**：全链路 OnPush 策略 + 智能路由复用 + 懒加载，体验媲美原生应用。
+- ✅ **开箱即用**：内置成熟的 RBAC 权限系统、主题切换、多页签管理等核心功能。
+- ✅ **代码规范**：集成严格的 ESLint + TypeScript + Prettier 配置，保障代码质量。
+- ✅ **教学友好**：代码注释详尽，不仅是脚手架，更是学习现代 Angular 的最佳实践。
+- ✅ **持续维护**：承诺跟随 Angular 官方版本长期更新迭代。
 
-# ✨前端的一些配置项
-# 路由的key(routing key)
-key需要设置成路由地址最后一个'/'后的字符串，并且要所有路由中唯一<br>
-The key needs to be set to the string after the last '/' of the routing address, and it must be unique<br>
+---
+
+## ✨ 核心特性
+
+### 🎯 技术栈一览
+
+| 技术 | 版本 | 说明 |
+|------|------|------|
+| **Angular** | 21.0.3 | 核心框架，全面采用 Standalone 架构 |
+| **TypeScript** | 5.9.3 | 开发语言，开启严格模式 |
+| **ng-zorro-antd** | 21.0.0 | 企业级 UI 组件库 (Ant Design) |
+| **RxJS** | 7.8.0 | 响应式编程库 |
+| **Less** | 4.2.0 | CSS 预处理器 |
+| **NestJS** | 10.x | (可选) 后端服务框架 |
+
+### 🚀 前沿特性详解
+
+#### 1️⃣ Standalone Components - 零 NgModule
+告别繁琐的 `NgModule`，组件依赖更清晰。
 ```typescript
-const routes: Routes = [
-  {path: '', data: {key: 'login', shouldDetach: 'no'}, component: LoginFormComponent}
-];
+@Component({
+  selector: 'app-example',
+  standalone: true,
+  imports: [CommonModule, NzButtonModule],
+  templateUrl: './example.component.html'
+})
+export class ExampleComponent {}
 ```
 
-# 组件不需要保存状态，(Modules don't need to save state)
-保存状态的意思是，类似于vue的keep-alive，在angular中称为路由复用，组件的状态会保留，不会由于切换页签而丢失状态，默认都是开启的，如果不需要这个功能，则配置shouldDetach: 'no'
+#### 2️⃣ Zoneless Change Detection - 性能飞跃
+移除 `zone.js` 依赖，变更检测性能提升 30% 以上。
 ```typescript
-const routes: Routes = [
-  {path: '', data: {key: 'login', shouldDetach: 'no'}, component: LoginFormComponent}
-];
+// app.config.ts
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZonelessChangeDetection()
+  ]
+};
 ```
 
-# 组件在保存状态下的生命周期(The temporary statement cycle of switching tab calls is as follows)
-组件在保存状态下(即“路由复用”)的情况下切换页签，onInit,onOndestroy会失效(因为组件被缓存了，没有重新创建或者销毁)，我们提供了临时声明周期如下，可以在进入页面，或者离开页面时被触发
-直接在目标组件中写出方法名为_onReuseInit或者_onReuseDestroy的方法即可实现，你可以全局搜这两个方法的名字，看示例<br>
-It can be realized by directly writing the method named _onReuseInit or _onReuseDestroy in the target component<br>
+#### 3️⃣ Signals API - 细粒度响应式
+使用 Signals 替代部分 RxJS 流，状态管理更直观。
 ```typescript
-_onReuseInit: () => void;
-_onReuseDestroy: () => void;
-
-```
-
-# 栅格系统监听(grid system monitoring)
-```angular2html
-enum EquipmentWidth {
-  xs,  // (max-width: 575.98px)
-  sm,  // (min-width: 576px) and (max-width: 767.98px)
-  md,  // (min-width: 768px) and (max-width: 991.98px)
-  lg,  // (min-width: 992px) and (max-width: 1199.98px)
-  xl,  // (min-width: 1200px) and (max-width: 1599.98px)
-  xxl  // (min-width: 1600px)
+export class ThemeService {
+  $isNightTheme = signal(false);
+  $themesOptions = signal<SettingInterface>({ ...defaultOptions });
+  
+  toggleTheme() {
+    this.$isNightTheme.update(v => !v);
+  }
 }
 ```
-使用方式(How to use)
-```
-  constructor(private windowsWidthService: WindowsWidthService) {
-  }
-  
-  this.windowsWidthService.getWindowWidthStore().pipe(takeUntil(this.destory$)).subscribe(res => {
-    this.currentEquipmentWidth = res;
-    this.cdr.markForCheck();
-  })
-```
 
-
-# 组件不要预加载(Modules do not need to be preloaded)
-如果模块不需要预加载则添加以下配置，默认都是开启的
+#### 4️⃣ 智能路由复用 (Keep-Alive)
+实现了类似 Vue `keep-alive` 的路由缓存机制，支持滚动位置记忆。
 ```typescript
-export const routes: Routes = [
-  {
-    path: 'contact',
-    loadChildren: import(() => './contact/contact.module').then(m => m.ContactModule),
-    data: {
-      preload: false
-    }
-  }
-];
+// 路由配置
+data: { 
+  key: 'user-list',           // 缓存唯一标识
+  scrollContain: ['#table']   // 自动恢复滚动条位置
+}
 ```
 
+#### 5️⃣ View Transitions API
+原生级别的路由过渡动画，丝般顺滑。
+```typescript
+provideRouter(routes, withViewTransitions({ skipInitialTransition: true }))
+```
 
-# 模块中打开新tab页来展示详情，必须设置参数如下(Open a new tab page in the module to display the details, and the parameters must be set as follows)
-在data中设置，这个场景请看在线地址上的演示，菜单为：功能>标签页操作>打开详情页1、打开详情页2、打开详情页3
+---
+
+## 🏗️ 架构与功能
+
+### 前端架构
+- **模块化设计**：清晰的目录结构 (`core` 核心, `shared` 共享, `pages` 页面, `widget` 组件)。
+- **依赖注入**：全面使用 `inject()` 函数，代码更简洁。
+- **极致性能**：全局 OnPush 策略 + 自定义预加载策略。
+
+### UI 功能
+- 🌈 **多主题**：默认、暗黑、阿里云、紧凑 4 种风格一键切换。
+- 🔖 **多页签**：支持右键菜单、拖拽排序，类浏览器体验。
+- 📱 **响应式**：完美适配 PC、平板、手机等各种屏幕尺寸。
+- 🔒 **安全增强**：内置锁屏功能、细粒度的按钮级权限控制。
+
+### 后端集成 (可选)
+提供基于 **NestJS + PostgreSQL + Drizzle ORM** 的完整后端服务：
+- **RBAC 模型**：用户-角色-菜单-权限的精细化控制。
+- **JWT 认证**：标准的 Token 身份验证流程。
+- **完整模块**：包含用户管理、部门管理、菜单管理等基础业务接口。
+
+---
+
+## 📦 快速开始
+
+### 方式一：仅前端预览 (推荐体验)
+使用 MSW (Mock Service Worker) 模拟数据，无需启动后端即可体验完整功能。
+
+```bash
+# 1. 克隆
+git clone https://github.com/huajian123/ng-antd-admin.git
+
+# 2. 进入前端目录
+cd ng-antd-admin/ui
+
+# 3. 安装依赖
+npm install
+
+# 4. 启动项目
+npm start
+
+# 5. 访问 http://localhost:4201
+```
+
+> 也可直接在线预览：[https://huajian123.github.io/ng-antd-admin/](https://huajian123.github.io/ng-antd-admin/)
+
+### 方式二：完整全栈版 (前端 + 后端)
+适合需要二次开发完整业务系统的场景。
+
+#### 1. 启动后端 (NestJS)
+```bash
+# 1. 确保已安装 Docker
+docker --version
+
+# 2. 进入后端目录
+cd nest-api
+
+# 3. 启动 PostgreSQL 容器
+docker-compose up -d
+
+# 4. 导入数据库
+# 使用 DataGrip/Navicat 等工具连接数据库
+# 主机: localhost / 用户名: admin / 密码: 123456
+# 数据库: ng-antd-admin-db
+# 执行文件: nest-api/ng-antd-admin-db.sql
+
+# 5. 安装依赖并启动
+npm install
+npm run start
+```
+
+#### 2. 启动前端
+```bash
+# 1. 进入前端目录
+cd ui
+
+# 2. 修改环境environment.ts的  mockEnabled字段
+  mockEnabled: true
+
+# 3. 安装依赖
+npm install
+
+# 4. 启动开发服务器
+npm start
+
+# 5. 浏览器访问 http://localhost:4201
+```
+
+### 方式三：纯净版 (零业务代码)
+仅保留基础架构，适合直接对接已有后端 API。
+
+```html
+https://gitee.com/hjxiaoqianduan/ng-ant-admin-pure
+```
+
+---
+
+## 📚 核心开发指南
+
+### 1. 路由复用配置
+在路由定义中通过 `data` 属性控制缓存行为：
+
 ```typescript
 const routes: Routes = [
-  {path: '', component: TabsComponent, data: {title: '标签页操作', key: 'tabs'}},
-  {path: 'example-detail', component: DetailComponent, data: {newTab:'true', title: '演示详情', key: 'example-detail'}}
-];
-```
-
-# 在当前页签中打开详情
-在data中设置title需要是同样的，这样就可以在当前页签中打开详情，这个场景请看在线地址上的演示，菜单为：系统管理>角色管理>设置权限
-```typescript
-export default [
   {
-    path: '',
-    component: RoleManageComponent,
-    title: '角色管理',
-    data: { key: 'role-manage' }
-  },
-  {
-    path: 'set-role',
-    component: SetRoleComponent,
-    title: '角色管理',
-    data: {
-      key: 'set-role',
-      authCode: ActionCode.RoleManagerSetRole
+    path: 'list',
+    component: ListComponent,
+    data: { 
+      key: 'list-page',         // 必须：唯一标识
+      shouldDetach: 'no',       // 可选：设为 'no' 则强制不缓存
+      scrollContain: ['#list']  // 可选：缓存滚动条的选择器
     }
   }
-] satisfies Route[];
+];
+
+// 组件生命周期钩子
+export class ListComponent {
+  _onReuseInit() {
+    console.log('页面从缓存中恢复');
+  }
+  _onReuseDestroy() {
+    console.log('页面被缓存');
+  }
+}
 ```
 
-# 缓存页面中指定容器的滚动条(The scroll bar of the specified container in the cache page)
-在data中设置scrollContain 为元素选择器 (Set scrollContain as element selector in data)，这个场景请看在线地址上的演示，菜单为：功能>滚动条>缓存滚动条
+### 2. 响应式布局监听
+使用 `WindowsWidthService` 轻松响应屏幕变化：
+
 ```typescript
-  {path: '', component: KeepScrollPageComponent, data: {title: '缓存滚动条', key: 'keep-scroll-page',scrollContain:['#div-scroll1','#div-scroll2']}}
+// 注入服务
+private winWidthService = inject(WindowsWidthService);
 
+// 监听断点
+this.winWidthService.getWindowWidthStore()
+  .pipe(takeUntilDestroyed())
+  .subscribe(width => {
+    console.log('当前屏幕断点:', width); // xs, sm, md, lg, xl, xxl
+  });
 ```
 
+### 3. 多页签控制
+支持在新标签页打开详情，或在同一标签页复用组件。
 
-## 系统截图(System screenshot)
-![ScreenShot](https://github.com/huajian123/ng-antd-admin/blob/master/ui/projectImg/11.png)
+```typescript
+// 场景A：列表点详情，打开新 Tab,请看在线地址上的演示，菜单为：功能>标签页操作>打开详情页1、打开详情页2、打开详情页3
+{ 
+  path: 'detail/:id', 
+  component: DetailComponent, 
+  data: { newTab: 'true', title: '详情', key: 'detail' } 
+}
 
-## star支持
-怎么说呢，所以如果本项目对您有用，如果您也愿意的话，麻烦帮忙点个star，谢谢啊<br>
-<br>
-if help you, if you want ,please give me a star ,thank you<br>
+// 场景B：不同路由复用同一组件（如“添加”和“编辑”）,在当前页签中打开详情,场景请看在线地址上的演示，菜单为：系统管理>角色管理>设置权限
+// 只要 title 相同，多页签系统会视为同一组业务
+{ path: 'add', component: FormComponent, title: '用户管理' },
+{ path: 'edit/:id', component: FormComponent, title: '用户管理' }
+```
 
-## 另外
-如果项目需要定制，或者有好的远程项目，兼职，外包等，也可以与我联系。不限前后端，移动端技术栈。希望可以出卖点体力赚取点收入
+---
 
-## 捐赠
+## 🗂️ 版本说明
+
+| ng-antd-admin 版本 | Angular 版本 | 说明 | 下载 |
+|-------------------|-------------|------|------|
+| **Master (最新)** | **Angular 21+** | 全新架构，推荐使用 | [源码](https://github.com/huajian123/ng-antd-admin) |
+| v18.x | Angular 18 | 稳定版 | [下载](https://github.com/huajian123/ng-antd-admin/tree/v18) |
+| v17.x | Angular 17 | 引入 Signals | [下载](https://github.com/huajian123/ng-antd-admin/tree/v17) |
+| v15.x | Angular 15 | 传统 NgModule 版本 | [下载](https://github.com/huajian123/ng-antd-admin/tree/v15) |
+
+> ⚠️ **注意**：Angular 15+ 引入了 Standalone Components，项目结构变化较大。请根据您的团队技术栈选择对应的版本。
+
+---
+
+## 🤖 AI 辅助上手
+
+本项目在 `docs/meta-model/` 下维护了一套**项目元模型文档**，覆盖模块地图、核心流程、权限体系、状态管理、变更热区等。
+
+如果你使用 AI 编程助手（Claude、Cursor、Copilot 等），可以直接把 `meta-index.md` 喂给 AI，让它快速建立对项目的完整认知，而不需要重新扫描整个仓库。
+
+### 推荐用法
+
+**1. 快速了解项目结构**
+
+把 `docs/meta-model/meta-index.md` 的内容粘贴到对话里，然后问：
+
+```
+读完这份索引，帮我解释一下这个项目的整体架构
+```
+
+**2. 定位某个功能的源码**
+
+```
+参考 meta-index.md，帮我找到"多页签"功能的实现逻辑在哪里
+```
+
+**3. 处理需求或 Bug**
+
+```
+先读 docs/meta-model/meta-index.md，我要给账号管理页新增"批量禁用"功能，帮我定位影响面和需要改哪些文件
+```
+
+**4. 理解某个核心流程**
+
+```
+参考 docs/meta-model/flow-index.md，帮我梳理登录到权限加载的完整流程
+```
+
+### 文档索引
+
+| 文档 | 内容 |
+|------|------|
+| [meta-index.md](./docs/meta-model/meta-index.md) | 总入口，先读这里 |
+| [module-index.md](./docs/meta-model/module-index.md) | 所有页面模块地图 |
+| [functional-inventory.md](./docs/meta-model/functional-inventory.md) | 功能清单（功能 → 路由 → 源码） |
+| [auth-login-index.md](./docs/meta-model/auth-login-index.md) | 认证与权限体系 |
+| [flow-index.md](./docs/meta-model/flow-index.md) | 核心流程（登录、HTTP、路由复用等） |
+| [change-hotspots.md](./docs/meta-model/change-hotspots.md) | 高风险变更区，二次开发必读 |
+
+> 元模型文档会随项目持续更新。如果你发现文档与代码不符，欢迎提 PR 修正。
+
+---
+
+## 🤝 参与贡献
+
+我们非常欢迎各种形式的贡献！
+- 🐛 **提交 Bug**：请详细描述复现步骤。
+- 💡 **功能建议**：提出您想要的特性。
+- 📝 **文档改进**：帮助完善文档和注释。
+- 🔧 **Pull Request**：提交您的代码改进。
+
+### 开发规范命令
+```bash
+npm run prettier      # 格式化代码
+npm run lint          # ESLint 检查
+npm run lint:fix      # 自动修复 Lint 问题
+npm run lint:style    # 样式检查
+```
+
+---
+
+## ⭐ Star History
+
+如果这个项目对你有帮助，请给个 **Star** ⭐️ 支持一下！
+
+[![Star History Chart](https://api.star-history.com/svg?repos=huajian123/ng-antd-admin&type=Date)](https://star-history.com/#huajian123/ng-antd-admin&Date)
+
+---
+
+## 💼 联系与支持
+
+### 💬 交流群
+如果你有好的建议，或者想参与项目开发，欢迎加微信：**hj345678912**，备注 "Angular"，我拉你进交流群一起学习进步！
+
+### 💼 商业合作
+提供企业级定制开发、远程工作、兼职外包服务。
+- **前端**：Angular, React, Vue
+- **后端**：NestJS, Node.js
+- **移动端**：React Native, Flutter
+
+### ☕ 赞助作者
 如果本项目对您有用，正巧您如果也想请我喝一杯咖啡，请扫下面的码，哈哈。在此感谢您<br>
-If this project is useful to you, and you happen to want to invite me for a cup of coffee, please scan Alipay or WeChat<br>
-![ScreenShot](https://github.com/huajian123/ng-antd-admin/blob/master/ui/projectImg/weixin.jpeg)
-![ScreenShot](https://github.com/huajian123/ng-antd-admin/blob/master/ui/projectImg/zhifubao.jpeg)
 
+| 微信赞助 | 支付宝赞助 |
+|:---:|:---:|
+| <img src="https://github.com/huajian123/ng-antd-admin/blob/master/ui/projectImg/weixin.jpeg" width="150" alt="微信"/> | <img src="https://github.com/huajian123/ng-antd-admin/blob/master/ui/projectImg/zhifubao.jpeg" width="150" alt="支付宝"/> |
 
+---
 
-### 🏴授权协议License
+## 📄 开源协议
 
-MIT 
+本项目基于 [MIT License](https://github.com/huajian123/ng-antd-admin/blob/master/LICENSE) 开源。
+
+**Made with ❤️ by huajian123**

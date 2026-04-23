@@ -1,0 +1,134 @@
+# Angular Signals Overview
+
+Signals are the foundation of reactivity in modern Angular applications. A **signal** is a wrapper around a value that notifies interested consumers when that value changes.
+
+## Writable Signals (`signal`)
+
+Use `signal()` to create state that can be directly updated.
+
+```ts
+import {signal} from '@angular/core';
+
+// Create a writable signal
+const count = signal(0);
+
+// Read the value (always requires calling the getter function)
+console.log(count());
+
+// Update the value directly
+count.set(3);
+
+// Update based on the previous value
+count.update((value) => value + 1);
+```
+
+### Exposing as Readonly
+
+When exposing state from a service, it is a best practice to expose a readonly version to prevent external mutation.
+
+```ts
+private readonly _count = signal(0);
+// Consumers can read this, but cannot call .set() or .update()
+readonly count = this._count.asReadonly();
+```
+
+## Computed Signals (`computed`)
+
+Use `computed()` to create read-only signals that derive their value from other signals.
+
+- **Lazily Evaluated**: The derivation function doesn't run until the computed signal is read.
+- **Memoized**: The result is cached. It only recalculates when one of the signals it depends on changes.
+- **Dynamic Dependencies**: Only the signals _actually read_ during the derivation are tracked.
+
+```ts
+import {signal, computed} from '@angular/core';
+
+const count = signal(0);
+const doubleCount = computed(() => count() * 2);
+
+// doubleCount automatically updates when count changes.
+```
+
+## Reactive Contexts
+
+A **reactive context** is a runtime state where Angular monitors signal reads to establish a dependency.
+
+Angular automatically enters a reactive context when evaluating:
+
+- `computed` signals
+- `effect` callbacks
+- `linkedSignal` computations
+- Component templates
+
+### Untracked Reads (`untracked`)
+
+If you need to read a signal inside a reactive context _without_ creating a dependency (so that the context doesn't re-run when the signal changes), use `untracked()`.
+
+```ts
+import {effect, untracked} from '@angular/core';
+
+effect(() => {
+  // This effect only runs when currentUser changes.
+  // It does NOT run when counter changes, even though counter is read here.
+  console.log(`User: ${currentUser()}, Count: ${untracked(counter)}`);
+});
+```
+
+### Async Operations in Reactive Contexts
+
+The reactive context is only active for **synchronous** code. Signal reads after an `await` will not be tracked. **Always read signals before asynchronous boundaries.**
+
+```ts
+// ❌ INCORRECT: theme() is not tracked because it is read after await
+effect(async () => {
+  const data = await fetchUserData();
+  console.log(theme());
+});
+
+// ✅ CORRECT: Read the signal before the await
+effect(async () => {
+  const currentTheme = theme();
+  const data = await fetchUserData();
+  console.log(currentTheme);
+});
+```
+
+## When NOT to Use Signals
+
+Signals are for **reactive state** — values that change over time and need to notify consumers. Do not wrap static, never-changing data in a signal.
+
+```ts
+// ❌ UNNECESSARY: this value never changes, signal adds no value
+readonly pageHeaderInfo = signal<Partial<PageHeaderType>>({
+  title: '基础组件',
+  breadcrumb: ['首页', '组件', '基础组件'],
+});
+
+// ✅ CORRECT: use a plain readonly property for static configuration
+readonly pageHeaderInfo: Partial<PageHeaderType> = {
+  title: '基础组件',
+  breadcrumb: ['首页', '组件', '基础组件'],
+};
+```
+
+Using `signal()` on static data misleads readers into thinking the value will change, and adds unnecessary overhead with no benefit.
+
+## When to Use Signals
+
+The correct question to ask is: **"Is this component state? Does it change over time? Does the view need to reflect that change?"**
+
+If all three answers are yes, use a signal. The decision has nothing to do with whether change detection would otherwise trigger — that is the wrong criterion.
+
+```ts
+// ✅ USE signal: value changes, view reflects it
+iconsStrShowArray = signal<IconItem[]>([]);
+pageObj = signal({ pageSize: 50, pageIndex: 1 });
+
+// ❌ DO NOT use signal just because markForCheck() was previously needed
+// markForCheck() being present does not mean signal is required —
+// it may simply mean the old code had unnecessary or broken calls.
+```
+
+### Common mistake to avoid
+
+Do **not** decide whether to use `signal` based on whether change detection needs to be triggered. In Zoneless mode, event bindings already schedule change detection automatically. The right reason to use `signal` is that the value is **mutable state that the view depends on**.

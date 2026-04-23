@@ -1,0 +1,221 @@
+@import 'mixin';
+.kanban-container {
+  min-height: calc(100vh - 200px);
+}
+
+// 顶部工具栏
+.kanban-toolbar {
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+
+  .add-btn-text {
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+}
+
+// 看板主体：三列横排
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  align-items: start;
+
+  @media (max-width: 1200px) {
+    gap: 12px;
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+// 列头卡片
+.col-header-card {
+  border-radius: 8px 8px 0 0 !important;
+  margin-bottom: 0 !important;
+  border-bottom: none !important;
+
+  ::ng-deep .ant-card-body {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+}
+
+// 列内容区卡片
+.col-body-card {
+  border-radius: 0 0 8px 8px !important;
+  border-top: none !important;
+  margin-top: 0 !important;
+
+  ::ng-deep .ant-card-body {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+}
+
+// 列内容区（drop zone）
+.col-body {
+  min-height: 200px;
+  padding: 8px;
+
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &.cdk-drop-list-dragging .task-card:not(.cdk-drag-placeholder) {
+    transition: all 0.2s;
+  }
+
+  &.cdk-drop-list-receiving {
+    background: #e6f4ff;
+    border-color: #1890ff;
+  }
+}
+
+// 空状态
+.col-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 0;
+  opacity: 0.3;
+  font-size: 12px;
+
+  span[nz-icon] {
+    font-size: 28px;
+  }
+}
+
+// 任务卡片
+.themeMixin({
+  :host {
+    .task-card {
+      border-left: 3px solid transparent !important;
+      border-radius: 8px !important;
+      cursor: grab;
+      transition: all 0.2s;
+
+      ::ng-deep .ant-card-body {
+        padding: 10px 12px;
+      }
+
+      &:hover {
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+
+        .delete-btn {
+          opacity: 1;
+        }
+      }
+
+      &:active {
+        cursor: grabbing;
+      }
+
+      &.overdue {
+        ::ng-deep .ant-card-body {
+          background: @warning-color;
+        }
+      }
+    }
+  }
+});
+
+.task-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// 标题行
+.task-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.task-title {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  flex: 1;
+  word-break: break-word;
+
+  &.done-title {
+    text-decoration: line-through;
+    opacity: 0.5;
+  }
+}
+
+.delete-btn {
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+
+  @media (max-width: 768px) {
+    opacity: 1;
+  }
+}
+
+// 描述
+.task-desc {
+  font-size: 12px;
+  opacity: 0.55;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+// 底部标签
+.task-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+
+  nz-tag {
+    margin: 0;
+    font-size: 11px;
+  }
+}
+
+// 拖拽占位
+.drag-placeholder {
+  border: 2px dashed #1890ff;
+  border-radius: 8px;
+  min-height: 60px;
+  opacity: 0.6;
+}
+
+// 拖拽预览
+.drag-preview {
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  max-width: 280px;
+
+  .drag-preview-title {
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
+.cdk-drag-animating {
+  transition: all 0.2s;
+}

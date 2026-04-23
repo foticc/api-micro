@@ -1,6 +1,5 @@
 import { CdkDrag } from '@angular/cdk/drag-drop';
-import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, OnInit, Renderer2, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, OnInit, Renderer2, signal, DOCUMENT } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -11,6 +10,7 @@ import { ThemeSkinService } from '@core/services/common/theme-skin.service';
 import { WindowService } from '@core/services/common/window.service';
 import { SettingInterface, StyleTheme, StyleThemeInterface, ThemeService } from '@store/common-store/theme.service';
 import { fnFormatToHump } from '@utils/tools';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzConfigService } from 'ng-zorro-antd/core/config';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -18,7 +18,7 @@ import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
 interface NormalModel {
   image?: string;
@@ -48,9 +48,9 @@ type SettingKey = Exclude<keyof SettingInterface, ExcludedKeys>;
 @Component({
   selector: 'app-setting-drawer',
   templateUrl: './setting-drawer.component.html',
-  styleUrls: ['./setting-drawer.component.less'],
+  styleUrl: './setting-drawer.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CdkDrag, NzIconModule, NzButtonModule, NzDrawerModule, NzToolTipModule, NzDividerModule, NzListModule, NzSwitchModule, FormsModule]
+  imports: [CdkDrag, NzIconModule, NzButtonModule, NzDrawerModule, NzTooltipModule, NzDividerModule, NzListModule, NzSwitchModule, FormsModule]
 })
 export class SettingDrawerComponent implements OnInit {
   private themesService = inject(ThemeService);

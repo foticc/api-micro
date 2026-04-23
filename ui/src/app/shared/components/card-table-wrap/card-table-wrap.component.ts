@@ -1,21 +1,22 @@
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
-import { NgTemplateOutlet, NgStyle } from '@angular/common';
-import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, Input, TemplateRef, input, output, contentChild, computed } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, TemplateRef, input, output, contentChild, computed } from '@angular/core';
 
 import { AntTreeTableComponentToken } from '@shared/components/tree-table/tree-table.component';
 import { ScreenLessHiddenDirective } from '@shared/directives/screen-less-hidden.directive';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzTableSize } from 'ng-zorro-antd/table';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
 import { AntTableComponentToken, TableHeader } from '../ant-table/ant-table.component';
 
@@ -37,16 +38,15 @@ interface TableSizeItem {
     NzIconModule,
     NzButtonModule,
     NzPopoverModule,
-    NzToolTipModule,
-    NzDropDownModule,
+    NzTooltipModule,
+    NzDropdownModule,
     NzMenuModule,
     CdkDropList,
     CdkDrag,
     CdkDragHandle,
     NzCheckboxModule,
-    NgStyle,
     ScreenLessHiddenDirective
-  ]
+]
 })
 export class CardTableWrapComponent implements AfterContentInit {
   readonly tableTitle = input<string | TemplateRef<NzSafeAny>>();
@@ -78,8 +78,7 @@ export class CardTableWrapComponent implements AfterContentInit {
 
   // 是否展示复选框
   changeTableCheckBoxShow(e: boolean): void {
-    this.currentTableComponent().tableConfig().showCheckbox = e;
-    this.tableChangeDectction();
+    this.currentTableComponent().updateTableConfig(c => ({ ...c, showCheckbox: e }));
   }
 
   // 大中小表格密度
@@ -96,7 +95,7 @@ export class CardTableWrapComponent implements AfterContentInit {
       this.allTableFieldIndeterminate = false;
     }
     this.tableHeaders.forEach(item => (item.show = e));
-    this.tableChangeDectction();
+    this.currentTableComponent().updateTableConfig(c => ({ ...c, headers: [...this.tableHeaders] }));
   }
 
   // 设置固定左侧还是右侧
@@ -116,8 +115,7 @@ export class CardTableWrapComponent implements AfterContentInit {
         noFixedArray.push(item);
       }
     });
-    this.currentTableComponent().tableConfig().headers = [...fixedLeftArray, ...noFixedArray, ...fixedRightArray];
-    this.tableChangeDectction();
+    this.currentTableComponent().updateTableConfig(c => ({ ...c, headers: [...fixedLeftArray, ...noFixedArray, ...fixedRightArray] }));
   }
 
   dropTableConfig(event: CdkDragDrop<string[]>): void {
@@ -139,12 +137,7 @@ export class CardTableWrapComponent implements AfterContentInit {
   changeSignalCheck(e: boolean, item: TableHeader): void {
     item.show = e;
     this.judgeAllChecked();
-    this.tableChangeDectction();
-  }
-
-  // 使子列表变更检测
-  tableChangeDectction(): void {
-    this.currentTableComponent().tableChangeDectction();
+    this.currentTableComponent().updateTableConfig(c => ({ ...c, headers: [...this.tableHeaders] }));
   }
 
   // 判断列展示这个checkbox的状态
@@ -160,8 +153,7 @@ export class CardTableWrapComponent implements AfterContentInit {
     this.copyHeader.forEach(item => {
       this.tableHeaders.push({ ...item });
     });
-    this.currentTableComponent().tableConfig().headers = [...this.tableHeaders];
-    this.tableChangeDectction();
+    this.currentTableComponent().updateTableConfig(c => ({ ...c, headers: [...this.tableHeaders] }));
   }
 
   ngAfterContentInit(): void {

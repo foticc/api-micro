@@ -1,9 +1,12 @@
-import { NgClass } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ElementRef, OnDestroy, ChangeDetectorRef, inject, output, viewChild, computed } from '@angular/core';
+
+import { Component, OnInit, ChangeDetectionStrategy, ElementRef, OnDestroy, inject, output, viewChild, computed, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { timer } from 'rxjs';
 
 import { fnGetRandomNum } from '@app/utils/tools';
 import { ThemeService } from '@store/common-store/theme.service';
+
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -16,16 +19,16 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.less'],
+  styleUrl: './chat.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NzCardModule, NzTypographyModule, NzGridModule, NzAvatarModule, NzResultModule, NzIconModule, NzButtonModule, FormsModule, ReactiveFormsModule, NzInputModule, NgClass]
+  imports: [NzCardModule, NzTypographyModule, NzGridModule, NzAvatarModule, NzResultModule, NzIconModule, NzButtonModule, FormsModule, ReactiveFormsModule, NzInputModule]
 })
 export class ChatComponent implements OnInit, OnDestroy {
   readonly myScrollContainer = viewChild.required<ElementRef>('scrollMe');
   readonly changeShows = output<boolean>();
   validateForm!: FormGroup;
-  messageArray: Array<{ msg: string; dir: 'left' | 'right'; isReaded: boolean }> = [];
-  isSending = false;
+  messageArray = signal<Array<{ msg: string; dir: 'left' | 'right'; isReaded: boolean }>>([]);
+  isSending = signal(false);
   show = false;
   randomReport: string[] = [
     '抱歉我现在有事不在 等一下也不想理你',
@@ -99,12 +102,12 @@ export class ChatComponent implements OnInit, OnDestroy {
     '闭关修炼中'
   ];
   themeService = inject(ThemeService);
+  destroyRef = inject(DestroyRef);
 
   readonly $themeStyle = computed(() => {
     return this.themeService.$themeStyle();
   });
   private fb = inject(FormBuilder);
-  private cdr = inject(ChangeDetectorRef);
 
   ngOnDestroy(): void {
     console.log('客服功能销毁了');
@@ -137,27 +140,29 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.clearMsgInput();
       return;
     }
-    this.messageArray.push({ msg, dir: 'right', isReaded: false });
+    this.messageArray.update(arr => [...arr, { msg, dir: 'right', isReaded: false }]);
     this.clearMsgInput();
 
-    setTimeout(() => {
-      this.isSending = true;
-      this.messageArray.forEach(item => {
-        if (item.dir === 'right') {
-          item.isReaded = true;
-        }
-      });
-      this.cdr.markForCheck();
-    }, 1000);
+    // Use RxJS timer instead of setTimeout
+    timer(1000).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.isSending.set(true);
+      this.messageArray.update(arr =>
+        arr.map(item => item.dir === 'right' ? { ...item, isReaded: true } : item)
+      );
+      // Signal automatically triggers change detection
+    });
 
-    setTimeout(() => {
+    timer(3000).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       const index = fnGetRandomNum(0, this.randomReport.length);
-      this.messageArray.push({ msg: this.randomReport[index], dir: 'left', isReaded: false });
-
-      this.isSending = false;
+      this.messageArray.update(arr => [...arr, {
+        msg: this.randomReport[index],
+        dir: 'left',
+        isReaded: false
+      }]);
+      this.isSending.set(false);
       this.scrollToBottom();
-      this.cdr.detectChanges();
-    }, 3000);
+      // Signal automatically triggers change detection
+    });
   }
 
   ngOnInit(): void {

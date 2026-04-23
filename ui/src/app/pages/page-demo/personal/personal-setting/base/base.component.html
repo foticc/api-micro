@@ -1,6 +1,6 @@
 <div nz-row>
-  <div nz-col [nzLg]="24" [nzMd]="24" [nzOrder]="formOrder" [nzSm]="24" [nzXl]="12" [nzXs]="24" [nzXXl]="12">
-    <form nz-form [formGroup]="validateForm" [nzLayout]="'vertical'" (ngSubmit)="submitForm()">
+  <div nz-col [nzLg]="24" [nzMd]="24" [nzOrder]="formOrder()" [nzSm]="24" [nzXl]="12" [nzXs]="24" [nzXXl]="12">
+    <form nz-form [formGroup]="validateForm" nzLayout="vertical" (ngSubmit)="submitForm()">
       <nz-form-item>
         <nz-form-label nzFor="email" nzRequired nzSpan="24">邮箱</nz-form-label>
         <nz-form-control nzErrorTip="请输入邮箱" nzSpan="24">
@@ -73,12 +73,12 @@
       </nz-form-item>
     </form>
   </div>
-  <div class="avatar" nz-col [ngClass]="{ 'is-full': formOrder === 1 }" [nzLg]="24" [nzMd]="24" [nzOrder]="avatarOrder" [nzSm]="24" [nzXl]="12" [nzXs]="24" [nzXXl]="12">
-    @if (formOrder === 0) {
+  <div class="avatar" nz-col [class.is-full]="formOrder() === 1" [nzLg]="24" [nzMd]="24" [nzOrder]="avatarOrder()" [nzSm]="24" [nzXl]="12" [nzXs]="24" [nzXXl]="12">
+    @if (formOrder() === 0) {
       <div class="m-b-8">头像</div>
     }
     <div class="avatar-wrap">
-      <nz-avatar class="m-b-8" [nzSize]="144" [nzSrc]="'imgs/default_face.png'"></nz-avatar>
+      <nz-avatar class="m-b-8" [nzSize]="144" nzSrc="imgs/default_face.png"></nz-avatar>
       <div class="upload">
         <nz-upload nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76" [nzHeaders]="{ authorization: 'authorization-text' }" (nzChange)="handleChange($event)">
           <button nz-button>

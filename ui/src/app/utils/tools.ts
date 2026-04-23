@@ -4,9 +4,10 @@ import { ActivatedRouteSnapshot } from '@angular/router';
 import { LockScreenFlag } from '@store/common-store/lock-screen-store.service';
 // import CryptoJS from 'crypto-js';
 import { endOfDay, startOfDay } from 'date-fns';
+import { v4 as uuidv4 } from 'uuid';
+
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { silentEvent } from 'ng-zorro-antd/core/util';
-import { v4 as uuidv4 } from 'uuid';
 
 /*获取1到100之间的随机整数 this.randomNum(1,101)*/
 const fnGetRandomNum = function getRandomNum(m: number, n: number): number {
@@ -55,16 +56,6 @@ const fnStopMouseEvent = function stopMouseEvent(e: MouseEvent): void {
   silentEvent(e);
   // e.stopPropagation();
   // e.preventDefault();
-};
-
-// 数组对象去重
-const fnRemoveDouble = function removeDouble<T>(list: NzSafeAny[], col: NzSafeAny): T {
-  const obj = {};
-  return list.reduce((cur, next) => {
-    // @ts-ignore
-    obj[next[col]] ? '' : (obj[next[col]] = true && cur.push(next));
-    return cur;
-  }, []);
 };
 
 // 获取路由复用缓存的key，为key+param的形式：login{name:xxx}
@@ -130,7 +121,11 @@ const fnEncrypt = function encrypt(word: NzSafeAny, keyStr: string): string {
 
 // 解密
 const fnDecrypt = function decrypt(word: NzSafeAny, keyStr: string): LockScreenFlag {
-  return JSON.parse(word);
+  try {
+    return JSON.parse(word);
+  } catch {
+    return { locked: false, password: '', beforeLockPath: '' };
+  }
   // const bytes = CryptoJS.AES.decrypt(word, keyStr);
   // return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 };
@@ -147,7 +142,7 @@ const fnEndOfDay = function EndOfDay(time: number): number {
 // weak-theme 转换为 weakTheme
 // https://blog.csdn.net/weixin_39238200/article/details/125665052
 const fnFormatToHump = function formatToHump(value: string): string {
-  return value.replace(/\-(\w)/g, (_, letter) => letter.toUpperCase());
+  return value.replace(/-(\w)/g, (_, letter) => letter.toUpperCase());
 };
 
 export {
@@ -162,7 +157,6 @@ export {
   fnCheckForm,
   fnStopMouseEvent,
   getDeepReuseStrategyKeyFn,
-  fnRemoveDouble,
   fnGetRandomNum,
   fnStartOfDay,
   fnEndOfDay,

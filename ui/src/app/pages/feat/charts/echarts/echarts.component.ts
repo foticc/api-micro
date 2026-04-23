@@ -1,13 +1,14 @@
 import { ComponentPortal, ComponentType, Portal, PortalModule } from '@angular/cdk/portal';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, TemplateRef, inject, viewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, AfterViewInit, TemplateRef, inject, viewChild, signal} from '@angular/core';
 
 import { AdvancedComponent } from '@app/pages/feat/charts/echarts/advanced/advanced.component';
 import { SeriesComponent } from '@app/pages/feat/charts/echarts/series/series.component';
 import { StartedComponent } from '@app/pages/feat/charts/echarts/started/started.component';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
+import { NGX_ECHARTS_CONFIG, NgxEchartsModule } from 'ngx-echarts';
+
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
-import { NGX_ECHARTS_CONFIG, NgxEchartsModule } from 'ngx-echarts';
 
 enum TabEnum {
   Started,
@@ -38,18 +39,15 @@ export class EchartsComponent implements OnInit, AfterViewInit {
   readonly headerFooter = viewChild.required<TemplateRef<NzSafeAny>>('headerFooter');
 
   tabEnum = TabEnum;
-  currentSelTab: number = this.tabEnum.Started;
+  currentSelTab = signal<number>(this.tabEnum.Started);
   componentArray: Array<ComponentType<targetComp>> = [StartedComponent, AdvancedComponent, SeriesComponent];
   componentPortal?: ComponentPortal<targetComp>;
   selectedPortal!: Portal<NzSafeAny>;
 
-  private cdr = inject(ChangeDetectorRef);
-
   to(tabIndex: TabEnum): void {
-    this.currentSelTab = tabIndex;
+    this.currentSelTab.set(tabIndex);
     this.componentPortal = new ComponentPortal(this.componentArray[tabIndex]);
     this.selectedPortal = this.componentPortal;
-    this.cdr.detectChanges();
   }
 
   ngOnInit(): void {

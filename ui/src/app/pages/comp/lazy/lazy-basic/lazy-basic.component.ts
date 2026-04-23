@@ -3,13 +3,14 @@ import { Component, ChangeDetectionStrategy, AfterViewInit, inject, viewChild } 
 import { LazyServiceService } from '@app/pages/comp/lazy/lazy-service.service';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { AdDirective } from '@shared/directives/ad.directive';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 
 @Component({
   selector: 'app-lazy-basic',
   templateUrl: './lazy-basic.component.html',
-  styleUrls: ['./lazy-basic.component.less'],
+  styleUrl: './lazy-basic.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [LazyServiceService],
   imports: [PageHeaderComponent, NzButtonModule, NzWaveModule, AdDirective]

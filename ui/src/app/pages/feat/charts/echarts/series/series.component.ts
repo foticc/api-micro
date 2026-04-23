@@ -1,11 +1,12 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { ComponentPortal, ComponentType, Portal, PortalModule } from '@angular/cdk/portal';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { FromLeftToRightComponent } from '@app/pages/feat/charts/echarts/series/from-left-to-right/from-left-to-right.component';
 import { RadialTreeComponent } from '@app/pages/feat/charts/echarts/series/radial-tree/radial-tree.component';
 import { SimpleGraphComponent } from '@app/pages/feat/charts/echarts/series/simple-graph/simple-graph.component';
+
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzTabPosition, NzTabsModule } from 'ng-zorro-antd/tabs';
@@ -27,9 +28,8 @@ export class SeriesComponent implements OnInit {
     { label: 'From Left To Right', value: FromLeftToRightComponent },
     { label: 'Radial Tree', value: RadialTreeComponent }
   ];
-  tabPosition: NzTabPosition = 'left';
+  tabPosition = signal<NzTabPosition>('left');
 
-  private cdr = inject(ChangeDetectorRef);
   private breakpointObserver = inject(BreakpointObserver);
 
   to(tabIndex: number): void {
@@ -43,8 +43,7 @@ export class SeriesComponent implements OnInit {
       .observe(['(max-width: 767px)'])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(result => {
-        this.tabPosition = result.matches ? 'top' : 'left';
-        this.cdr.markForCheck();
+        this.tabPosition.set(result.matches ? 'top' : 'left');
       });
   }
 }

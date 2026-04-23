@@ -1,4 +1,4 @@
-import { NgClass, NgStyle, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, viewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
@@ -11,8 +11,9 @@ import { ChatComponent } from '@shared/components/chat/chat.component';
 import { TopProgressBarComponent } from '@shared/components/top-progress-bar/top-progress-bar.component';
 import { SplitNavStoreService } from '@store/common-store/split-nav-store.service';
 import { ThemeService } from '@store/common-store/theme.service';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzNoAnimationModule } from 'ng-zorro-antd/core/no-animation';
+import { NzNoAnimationDirective } from 'ng-zorro-antd/core/animation';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -26,14 +27,12 @@ import { ToolBarComponent } from './tool-bar/tool-bar.component';
 @Component({
   selector: 'app-default',
   templateUrl: './default.component.html',
-  styleUrls: ['./default.component.less'],
+  styleUrl: './default.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TopProgressBarComponent,
     NzLayoutModule,
-    NgClass,
-    NzNoAnimationModule,
-    NgStyle,
+    NzNoAnimationDirective,
     SettingDrawerComponent,
     ChatComponent,
     NzMenuModule,
@@ -50,7 +49,7 @@ import { ToolBarComponent } from './tool-bar/tool-bar.component';
     RouterOutlet,
     NavDrawerComponent,
     ChatComponent
-  ]
+]
 })
 export class DefaultComponent implements AfterViewInit {
   readonly navDrawer = viewChild.required<NavDrawerComponent>('navDrawer');

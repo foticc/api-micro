@@ -1,26 +1,24 @@
-import { ChangeDetectorRef, Directive, HostListener, inject, OnInit } from '@angular/core';
+import { Directive, DestroyRef, inject, signal } from '@angular/core';
 
 import screenfull from 'screenfull';
 
 @Directive({
   selector: '[appToggleFullscreen]',
   exportAs: 'appToggleFullscreen',
-  standalone: true
+  host: {
+    '(click)': 'onClick()'
+  }
 })
-export class ToggleFullscreenDirective implements OnInit {
-  isFullscreenFlag = true;
-  private cdr = inject(ChangeDetectorRef);
+export class ToggleFullscreenDirective {
+  readonly isFullscreenFlag = signal(true);
 
-  ngOnInit(): void {
-    screenfull.onchange(() => {
-      setTimeout(() => {
-        this.isFullscreenFlag = !this.isFullscreenFlag;
-        this.cdr.markForCheck();
-      }, 10);
-    });
+  constructor() {
+    const handler = () => this.isFullscreenFlag.update(v => !v);
+    screenfull.on('change', handler);
+    inject(DestroyRef).onDestroy(() => screenfull.off('change', handler));
   }
 
-  @HostListener('click') onClick(): void {
+  onClick(): void {
     if (screenfull.isEnabled) {
       screenfull.toggle();
     }

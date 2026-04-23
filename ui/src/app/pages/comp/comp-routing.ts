@@ -10,9 +10,9 @@ export default [
   { path: 'strength-meter', title: '密码强度组件', data: { key: 'strength-meter' }, loadComponent: () => import('./strength-meter/strength-meter.component').then(m => m.StrengthMeterComponent) },
   { path: 'form', loadChildren: () => import('./form/form-routing') },
   {
-    path: 'comp1',
+    path: 'blingbling',
     title: 'blingbling',
-    data: { key: 'comp1' },
+    data: { key: 'blingbling' },
     loadComponent: () => import('../../pages/comp/blingbling/blingbling.component').then(m => m.BlingblingComponent)
   },
   {

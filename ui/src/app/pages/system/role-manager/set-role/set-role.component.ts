@@ -1,5 +1,5 @@
-import { NgTemplateOutlet, NgStyle } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, ViewEncapsulation, input } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, ViewEncapsulation, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -11,6 +11,7 @@ import { PutPermissionParam, RoleService } from '@services/system/role.service';
 import { FooterSubmitComponent } from '@shared/components/footer-submit/footer-submit.component';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { fnAddTreeDataGradeAndLeaf, fnFlatDataHasParentToTree, fnFlattenTreeDataByDataList } from '@utils/treeTableTools';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
@@ -23,7 +24,7 @@ import { NzResultModule } from 'ng-zorro-antd/result';
 @Component({
   selector: 'app-set-role',
   templateUrl: './set-role.component.html',
-  styleUrls: ['./set-role.component.less'],
+  styleUrl: './set-role.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   imports: [
@@ -36,19 +37,18 @@ import { NzResultModule } from 'ng-zorro-antd/result';
     NzDividerModule,
     NzResultModule,
     NgTemplateOutlet,
-    NgStyle,
     FooterSubmitComponent,
     NzWaveModule
-  ]
+]
 })
 export class SetRoleComponent implements OnInit {
-  pageHeaderInfo: Partial<PageHeaderType> = {
+  pageHeaderInfo = signal<Partial<PageHeaderType>>({
     title: '设置权限',
     desc: '当前角色：',
     breadcrumb: ['首页', '用户管理', '角色管理', '设置权限']
-  };
+  });
   authCodeArr: string[] = [];
-  permissionList: Array<Menu & { isOpen?: boolean; checked?: boolean }> = [];
+  permissionList = signal<Array<Menu & { isOpen?: boolean; checked?: boolean }>>([]);
   destroyRef = inject(DestroyRef);
   readonly id = input.required<string>(); // 从路由中获取的角色id，ng16支持的新特性
   readonly roleName = input.required<string>(); // 从路由中获取的角色名称，ng16支持的新特性
@@ -57,7 +57,6 @@ export class SetRoleComponent implements OnInit {
   private menusService = inject(MenusService);
   private router = inject(Router);
   private message = inject(NzMessageService);
-  private cdr = inject(ChangeDetectorRef);
 
   // 初始化数据
   initPermission(): void {
@@ -79,14 +78,12 @@ export class SetRoleComponent implements OnInit {
           item.isOpen = false;
           item.checked = this.authCodeArr.includes(item.code);
         });
-        this.permissionList = fnAddTreeDataGradeAndLeaf(fnFlatDataHasParentToTree(menuArray));
-        this.cdr.markForCheck();
+        this.permissionList.set(fnAddTreeDataGradeAndLeaf(fnFlatDataHasParentToTree(menuArray)));
       });
   }
 
   getRoleName(): void {
-    this.pageHeaderInfo = { ...this.pageHeaderInfo, ...{ desc: `当前角色：${this.roleName()}` } };
-    this.cdr.markForCheck();
+    this.pageHeaderInfo.update(v => ({ ...v, desc: `当前角色：${this.roleName()}` }));
   }
 
   back(): void {
@@ -94,7 +91,7 @@ export class SetRoleComponent implements OnInit {
   }
 
   submit(): void {
-    const temp = [...this.permissionList];
+    const temp = [...this.permissionList()];
     const flatArray = fnFlattenTreeDataByDataList(temp);
     const selectedAuthCodeArray: string[] = [];
     flatArray.forEach(item => {

@@ -39,17 +39,13 @@ export default [
   { path: 'setup', title: '引导页', data: { key: 'setup' }, loadComponent: () => import('./setup/setup.component').then(m => m.SetupComponent) },
   { path: 'download', title: '文件下载', data: { key: 'download' }, loadComponent: () => import('./download/download.component').then(m => m.DownloadComponent) },
   { path: 'qrcode', title: '二维码', data: { key: 'qrcode' }, loadComponent: () => import('./qrcode/qrcode.component').then(m => m.QrcodeComponent) },
-  { path: 'water-mark', title: '水印', data: { key: 'water-mark' }, loadComponent: () => import('./water-mark/water-mark.component').then(m => m.WaterMarkComponent) },
+  { path: 'water-mark', title: '水印', data: { key: 'water-mark' }, loadComponent: () => import('./water-mark/water-mark.component').then(m => m.WaterMarkDemoComponent) },
+  { path: 'keep-alive', title: 'KeepAlive', data: { key: 'keep-alive' }, loadComponent: () => import('./keep-alive/keep-alive').then(m => m.KeepAliveDemo) },
+  { path: 'transitions', loadChildren: () => import('./transitions/transitions-routing') },
   {
     path: 'feat1',
     title: '新功能1',
     data: { key: 'feat1' },
-    loadComponent: () => import('../../pages/no-content/no-content.component').then(m => m.NoContentComponent)
-  },
-  {
-    path: 'feat2',
-    title: '新功能2',
-    data: { key: 'feat2' },
     loadComponent: () => import('../../pages/no-content/no-content.component').then(m => m.NoContentComponent)
   },
   {

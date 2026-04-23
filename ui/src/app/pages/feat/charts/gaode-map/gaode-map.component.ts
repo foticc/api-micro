@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import AMapLoader from '@amap/amap-jsapi-loader';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
+
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzInputModule } from 'ng-zorro-antd/input';
 
@@ -15,21 +16,19 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 })
 export class GaodeMapComponent implements AfterViewInit {
   pageHeaderInfo: Partial<PageHeaderType> = {
-    title: '高德地图，可不要暴露行踪了哟',
+    title: '高德地图，高德打电话给我了，我这个key注销了，我就保留源代码在这里，供小伙伴参考，我自己的key就不暴露了',
     breadcrumb: ['首页', '功能', '图表', '高德地图']
   };
   marker: [number, number] = [116.437253, 39.935033];
   markerPosition: string = this.marker.join(',');
 
-  private cdr = inject(ChangeDetectorRef);
-
   ngAfterViewInit(): void {
     // api地址
     // https://lbs.amap.com/demo/javascript-api/example/map-lifecycle/map-show
-    // 自己去申请一个key，别用我这个Key，多谢
+    // 自己去申请一个key，别用我这个Key，多谢。高德打电话给我了，我这个Key注销掉了，我就保留使用方法在这里，就不展示出来了
     // 申请地址 https://console.amap.com/dev/key/app
     AMapLoader.load({
-      key: '1c1b77fae2e59c25eb26ced9a0801103', //首次load必填
+      key: 'xxxxxxxxxxxxx', //首次load必填
       version: '1.4.15',
       AMapUI: {
         version: '1.1',
@@ -51,7 +50,6 @@ export class GaodeMapComponent implements AfterViewInit {
         marker.on('dragend', () => {
           this.marker = [marker.getPosition()['R'], marker.getPosition()['Q']];
           this.markerPosition = this.marker.join(',');
-          this.cdr.markForCheck();
           console.log(this.markerPosition);
         });
         marker.setMap(map);

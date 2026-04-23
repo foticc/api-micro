@@ -1,0 +1,47 @@
+import { Directive, inject, input } from '@angular/core';
+
+import { NzModalComponent } from 'ng-zorro-antd/modal';
+
+import { ModalResizeConfig, ModalResizeService } from './modal-resize.service';
+
+/**
+ * 可调整大小的对话框
+ *
+ * @example
+ * ``` html
+ * <nz-modal nzxModalResize></nz-modal>
+ * <nz-modal nzxModalResize [nzxResizeConfig]="{minWidth: 500, minHeight: 400}"></nz-modal>
+ * ```
+ */
+@Directive({
+  // eslint-disable-next-line @angular-eslint/directive-selector
+  selector: 'nz-modal[nzxModalResize]',
+})
+export class ModalResizeDirective {
+  readonly nzxResizeConfig = input<ModalResizeConfig>();
+
+  modalResizeService = inject(ModalResizeService);
+  protected modal = inject(NzModalComponent, { host: true });
+
+  constructor() {
+    // afterOpen/afterClose 各自只会触发一次，且由 NzModalComponent 自身管理生命周期，
+    // modal 销毁时这些 Observable 会自动 complete，无需 takeUntilDestroyed
+    this.modal.afterOpen.subscribe(() => {
+      const modalElement = this.modal.getElement()!;
+      if (!modalElement) {
+        return;
+      }
+
+      // 生成唯一类名
+      const wrapCls = `modal-resize-${Date.now()}-${Math.random().toString().replace('0.', '')}`;
+      modalElement.classList.add(wrapCls);
+
+      // 创建调整大小手柄
+      this.modalResizeService.createResizeHandlers(wrapCls, this.nzxResizeConfig());
+
+      this.modal.afterClose.subscribe(() => {
+        this.modalResizeService.dispose();
+      });
+    });
+  }
+}

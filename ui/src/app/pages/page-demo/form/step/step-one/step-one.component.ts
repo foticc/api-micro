@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy, inject, input, output, Inpu
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { fnCheckForm } from '@utils/tools';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -14,7 +15,7 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
 @Component({
   selector: 'app-step-one',
   templateUrl: './step-one.component.html',
-  styleUrls: ['./step-one.component.less'],
+  styleUrl: './step-one.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzSelectModule, NzButtonModule, NzInputModule, NzWaveModule, NzDividerModule, NzTypographyModule]
 })

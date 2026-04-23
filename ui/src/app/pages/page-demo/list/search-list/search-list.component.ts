@@ -6,11 +6,13 @@ import { filter } from 'rxjs/operators';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
 import { SearchListStoreService } from '@store/biz-store-service/search-list/search-list-store.service';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzSpaceCompactComponent } from 'ng-zorro-antd/space';
 
 interface TabInterface {
   label: string;
@@ -21,7 +23,7 @@ interface TabInterface {
   selector: 'app-search-list',
   templateUrl: './search-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PageHeaderComponent, WaterMarkComponent, NzButtonModule, NzInputModule, NzWaveModule, NzTabsModule, RouterOutlet]
+  imports: [PageHeaderComponent, WaterMarkComponent, NzButtonModule, NzInputModule, NzWaveModule, NzTabsModule, RouterOutlet, NzSpaceCompactComponent]
 })
 export class SearchListComponent {
   readonly headerContent = viewChild.required<TemplateRef<NzSafeAny>>('headerContent');

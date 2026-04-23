@@ -1,16 +1,17 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { ModalBtnStatus } from '@widget/base-modal';
 import { AppendFormModalService } from '@widget/biz-widget/form/append-form-modal/append-form-modal.service';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -68,7 +69,7 @@ export enum TaskStateSearchCheckPeriodEnum {
 @Component({
   selector: 'app-append-form',
   templateUrl: './append-form.component.html',
-  styleUrls: ['./append-form.component.less'],
+  styleUrl: './append-form.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
@@ -83,7 +84,7 @@ export enum TaskStateSearchCheckPeriodEnum {
     NzWaveModule,
     NzIconModule,
     NzListModule,
-    NzDropDownModule,
+    NzDropdownModule,
     NzMenuModule,
     NzTagModule,
     NzProgressModule,
@@ -95,7 +96,6 @@ export enum TaskStateSearchCheckPeriodEnum {
 })
 export class AppendFormComponent implements OnInit {
   private modalService = inject(AppendFormModalService);
-  private cdr = inject(ChangeDetectorRef);
   private fb = inject(FormBuilder);
 
   destroyRef = inject(DestroyRef);
@@ -107,11 +107,8 @@ export class AppendFormComponent implements OnInit {
   taskStateSearchEnum = TaskStateSearchEnum;
   taskState = TaskStateSearchEnum.All;
   taskCheckPeriodState = TaskStateSearchCheckPeriodEnum.All;
-  pageObj = {
-    pageSize: 3,
-    pageIndex: 1
-  };
-  showTaskList: TaskObj[] = [];
+  pageObj = signal({ pageSize: 3, pageIndex: 1 });
+  showTaskList = signal<TaskObj[]>([]);
   showAllTaskList: TaskObj[] = [
     {
       id: 1,
@@ -195,7 +192,7 @@ export class AppendFormComponent implements OnInit {
     }
   ];
   taskCheckPeriodStateEnum = TaskStateSearchCheckPeriodEnum;
-  loading = false;
+  loading = signal(false);
 
   validateForm = this.fb.group({
     formArray: this.fb.array([this.creatForm()])
@@ -229,7 +226,7 @@ export class AppendFormComponent implements OnInit {
   }
 
   pageSizeChange(event: number): void {
-    this.pageObj = { ...this.pageObj, pageSize: event };
+    this.pageObj.update(p => ({ ...p, pageSize: event }));
     this.getData(1);
   }
 
@@ -237,14 +234,14 @@ export class AppendFormComponent implements OnInit {
     console.log(this.validateForm.value);
   }
 
-  searchTask(event: number, type: 'checkPeriod' | 'taskState'): void {
-    this.pageObj = { ...this.pageObj, pageIndex: 1 };
+  searchTask(): void {
+    this.pageObj.update(p => ({ ...p, pageIndex: 1 }));
 
-    this.showAllTaskList = this.showAllTaskList.filter(item => {
+    this.showAllTaskList = this.showAllTaskList.filter(() => {
       return true;
     });
 
-    this.pageSizeChange(this.pageObj.pageSize);
+    this.pageSizeChange(this.pageObj().pageSize);
   }
 
   add(): void {
@@ -261,15 +258,14 @@ export class AppendFormComponent implements OnInit {
       });
   }
 
-  onEllipsisChange(ellipsis: boolean): void {
+  onEllipsisChange(_ellipsis: boolean): void {
     // console.log(ellipsis);
   }
 
   // 分页获取数据
-  getData(event: number = this.pageObj.pageIndex): void {
-    this.pageObj = { ...this.pageObj, pageIndex: event };
-    this.showTaskList = [...this.showAllTaskList.slice((this.pageObj.pageIndex - 1) * this.pageObj.pageSize, this.pageObj.pageIndex * this.pageObj.pageSize)];
-    this.cdr.markForCheck();
+  getData(event: number = this.pageObj().pageIndex): void {
+    this.pageObj.update(p => ({ ...p, pageIndex: event }));
+    this.showTaskList.set([...this.showAllTaskList.slice((this.pageObj().pageIndex - 1) * this.pageObj().pageSize, this.pageObj().pageIndex * this.pageObj().pageSize)]);
   }
 
   ngOnInit(): void {

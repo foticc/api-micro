@@ -1,17 +1,24 @@
-import { DOCUMENT, registerLocaleData } from '@angular/common';
+import { registerLocaleData } from '@angular/common';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import zh from '@angular/common/locales/zh';
-import { ApplicationConfig, importProvidersFrom, provideExperimentalZonelessChangeDetection, inject, provideAppInitializer, EnvironmentProviders } from '@angular/core';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import {
+  ApplicationConfig,
+  importProvidersFrom,
+  provideZonelessChangeDetection,
+  inject,
+  provideAppInitializer,
+  EnvironmentProviders,
+  provideBrowserGlobalErrorListeners
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { provideRouter, RouteReuseStrategy, TitleStrategy, withComponentInputBinding, withHashLocation, withInMemoryScrolling, withPreloading, withViewTransitions } from '@angular/router';
 
 import { DashboardOutline, FormOutline, MenuFoldOutline, MenuUnfoldOutline } from '@ant-design/icons-angular/icons';
-import { appRoutes } from '@app/app-routing';
+import { appRoutes } from '@app/app.routes';
 import { CustomPageTitleResolverService } from '@core/services/common/custom-page-title-resolver.service';
 import { InitThemeService } from '@core/services/common/init-theme.service';
 import { LoadAliIconCdnService } from '@core/services/common/load-ali-icon-cdn.service';
 import { SimpleReuseStrategy } from '@core/services/common/reuse-strategy';
-import { ScrollService } from '@core/services/common/scroll.service';
 import { SelectivePreloadingStrategyService } from '@core/services/common/selective-preloading-strategy.service';
 import { SubLockedStatusService } from '@core/services/common/sub-locked-status.service';
 import { SubWindowWithService } from '@core/services/common/sub-window-with.service';
@@ -19,10 +26,12 @@ import { ThemeSkinService } from '@core/services/common/theme-skin.service';
 import { httpInterceptorService } from '@core/services/interceptors/http-interceptor';
 import { StartupService } from '@core/startup/startup.service';
 import { getDeepReuseStrategyKeyFn } from '@utils/tools';
+
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NZ_I18N, zh_CN } from 'ng-zorro-antd/i18n';
 import { NZ_ICONS } from 'ng-zorro-antd/icon';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { ViewTransitionService } from '@core/services/common/view-transition.service';
 
 const icons = [MenuFoldOutline, MenuUnfoldOutline, DashboardOutline, FormOutline];
 
@@ -87,7 +96,9 @@ const APPINIT_PROVIDES: EnvironmentProviders[] = [
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    { provide: RouteReuseStrategy, useClass: SimpleReuseStrategy, deps: [DOCUMENT, ScrollService] }, // 路由复用
+    // 在无 Zone.js (Zoneless) 的新模式下，Angular 不再依赖 Zone.js 来感知异步操作和错误。这就导致了原生异步任务（如 setTimeout 或 Promise）中未处理的错误会“逃逸”出 Angular 的管理范围。
+    provideBrowserGlobalErrorListeners(), // 在浏览器环境中，设置全局的错误监听器，并自动将捕获到的未处理错误和 Promise 拒绝 (rejection) 转发给 Angular 的 ErrorHandler 进行统一处理。
+    { provide: RouteReuseStrategy, useClass: SimpleReuseStrategy }, // 路由复用
     {
       provide: TitleStrategy, // 相关资料：https://dev.to/brandontroberts/setting-page-titles-natively-with-the-angular-router-393j
       useClass: CustomPageTitleResolverService // 自定义路由切换时，浏览器title的显示，在ng14以上支持。旧版本使用方式请看我的github v16tag以下版本代码
@@ -99,11 +110,19 @@ export const appConfig: ApplicationConfig = {
       withPreloading(SelectivePreloadingStrategyService), // 自定义模块预加载
       withViewTransitions({
         skipInitialTransition: true,
-        onViewTransitionCreated: ({ transition, from }) => {
-          const fromSource = getDeepReuseStrategyKeyFn(from, false);
+        onViewTransitionCreated: info => {
+          const viewTransitionService = inject(ViewTransitionService);
+
+          viewTransitionService.currentTransition.set(info);
+          info.transition.finished.finally(() => {
+            viewTransitionService.currentTransition.set(null);
+          });
+
+          const fromSource = getDeepReuseStrategyKeyFn(info.from, false);
+
           if (fromSource === 'refresh-empty') {
             // 刷新tab或者切换“是否展示tab”时禁用过渡动画，否则页面tab栏会闪烁
-            transition.skipTransition();
+            info.transition.skipTransition();
           }
         }
       }), // 路由切换过渡，ng17新增实验性特性参考资料https://netbasal.com/angular-v17s-view-transitions-navigate-in-elegance-f2d48fd8ceda
@@ -113,10 +132,9 @@ export const appConfig: ApplicationConfig = {
       withHashLocation(), // 使用哈希路由
       withComponentInputBinding() // 开启路由参数绑定到组件的输入属性,ng16新增特性
     ),
-    importProvidersFrom(NzDrawerModule, NzModalModule),
+    importProvidersFrom(NzDrawerModule, NzModalModule, FormsModule),
     ...APPINIT_PROVIDES, // 项目启动之前，需要调用的一系列方法
-    provideAnimationsAsync(), // 开启延迟加载动画，ng17新增特性，如果想要项目启动时就加载动画，可以使用provideAnimations()
     provideHttpClient(withInterceptors([httpInterceptorService])),
-    provideExperimentalZonelessChangeDetection() // 开启 zoneless
+    provideZonelessChangeDetection() // 开启 zoneless
   ]
 };

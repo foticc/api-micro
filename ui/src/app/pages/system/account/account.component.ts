@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ChangeDetectorRef, inject, DestroyRef, viewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, inject, DestroyRef, viewChild, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -14,6 +14,7 @@ import { AuthDirective } from '@shared/directives/auth.directive';
 import { MapKeyType, MapPipe, MapSet } from '@shared/pipes/map.pipe';
 import { ModalBtnStatus } from '@widget/base-modal';
 import { AccountModalService } from '@widget/biz-widget/system/account-modal/account-modal.service';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
@@ -26,8 +27,6 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
-
-import { DeptTreeComponent } from './dept-tree/dept-tree.component';
 
 interface SearchParam {
   userName: string;
@@ -43,7 +42,6 @@ interface SearchParam {
   imports: [
     PageHeaderComponent,
     NzGridModule,
-    DeptTreeComponent,
     NzCardModule,
     FormsModule,
     NzFormModule,
@@ -62,21 +60,21 @@ export class AccountComponent implements OnInit {
   readonly operationTpl = viewChild.required<TemplateRef<NzSafeAny>>('operationTpl');
   readonly availableFlag = viewChild.required<TemplateRef<NzSafeAny>>('availableFlag');
   searchParam: Partial<SearchParam> = {};
-  tableConfig!: AntTableConfig;
-  pageHeaderInfo: Partial<PageHeaderType> = {
+  tableConfig = signal<AntTableConfig>({ headers: [], total: 0, showCheckbox: true, loading: false, pageSize: 10, pageIndex: 1 });
+  readonly pageHeaderInfo: Partial<PageHeaderType> = {
     title: '账号管理',
-    breadcrumb: ['首页', '用户管理', '账号管理']
+    breadcrumb: ['首页', '用户管理', '账号管理'],
+    desc: '移除了左侧部门的布局，如果有需要可以看v20及以下的模版代码'
   };
-  dataList: User[] = [];
+  dataList = signal<User[]>([]);
   checkedCashArray: User[] = [];
   ActionCode = ActionCode;
   isCollapse = true;
-  availableOptions: OptionsInterface[] = [];
+  readonly availableOptions: OptionsInterface[] = [...MapPipe.transformMapToArray(MapSet.available, MapKeyType.Boolean)];
   destroyRef = inject(DestroyRef);
 
   private dataService = inject(AccountService);
   private modalSrv = inject(NzModalService);
-  private cdr = inject(ChangeDetectorRef);
   private modalService = inject(AccountModalService);
   private router = inject(Router);
   private message = inject(NzMessageService);
@@ -91,10 +89,10 @@ export class AccountComponent implements OnInit {
   }
 
   getDataList(e?: { pageIndex: number }): void {
-    this.tableConfig.loading = true;
+    this.tableLoading(true);
     const params: SearchCommonVO<NzSafeAny> = {
-      pageSize: this.tableConfig.pageSize!,
-      pageIndex: e?.pageIndex || this.tableConfig.pageIndex!,
+      pageSize: this.tableConfig().pageSize!,
+      pageIndex: e?.pageIndex || this.tableConfig().pageIndex!,
       filters: this.searchParam
     };
     this.dataService
@@ -107,9 +105,8 @@ export class AccountComponent implements OnInit {
       )
       .subscribe(data => {
         const { list, total, pageIndex } = data;
-        this.dataList = [...list];
-        this.tableConfig.total = total!;
-        this.tableConfig.pageIndex = pageIndex!;
+        this.dataList.set([...list]);
+        this.tableConfig.update(c => ({ ...c, total: total!, pageIndex: pageIndex! }));
         this.tableLoading(false);
         this.checkedCashArray = [...this.checkedCashArray];
       });
@@ -120,16 +117,8 @@ export class AccountComponent implements OnInit {
     this.router.navigate(['/default/system/role-manager/set-role'], { queryParams: { id: id } });
   }
 
-  // 触发表格变更检测
-  tableChangeDectction(): void {
-    // 改变引用触发变更检测。
-    this.dataList = [...this.dataList];
-    this.cdr.detectChanges();
-  }
-
   tableLoading(isLoading: boolean): void {
-    this.tableConfig.loading = isLoading;
-    this.tableChangeDectction();
+    this.tableConfig.update(config => ({ ...config, loading: isLoading }));
   }
 
   add(): void {
@@ -197,7 +186,7 @@ export class AccountComponent implements OnInit {
   }
 
   changeStatus(e: boolean, id: number): void {
-    this.tableConfig.loading = true;
+    this.tableLoading(true);
     const people: Partial<User> = {
       id,
       available: !e
@@ -235,8 +224,8 @@ export class AccountComponent implements OnInit {
               takeUntilDestroyed(this.destroyRef)
             )
             .subscribe(() => {
-              if (this.dataList.length === 1) {
-                this.tableConfig.pageIndex--;
+              if (this.dataList().length === 1) {
+                this.tableConfig.update(c => ({ ...c, pageIndex: c.pageIndex! - 1 }));
               }
               this.getDataList();
               this.checkedCashArray = [];
@@ -266,8 +255,8 @@ export class AccountComponent implements OnInit {
           )
           .subscribe(() => {
             // 例如分页第二页只有一条数据，此时删除这条数据，跳转到第一页，并重新查询一下列表,pageIndex改变会由changePageIndex自动触发表格查询getDataList（）
-            if (this.dataList.length === 1 && this.tableConfig.pageIndex !== 1) {
-              this.tableConfig.pageIndex--;
+            if (this.dataList().length === 1 && this.tableConfig().pageIndex !== 1) {
+              this.tableConfig.update(c => ({ ...c, pageIndex: c.pageIndex! - 1 }));
             } else {
               this.getDataList();
             }
@@ -278,7 +267,7 @@ export class AccountComponent implements OnInit {
 
   // 修改一页几条
   changePageSize(e: number): void {
-    this.tableConfig.pageSize = e;
+    this.tableConfig.update(config => ({ ...config, pageSize: e }));
   }
 
   searchDeptIdUser(departmentId: number): void {
@@ -292,12 +281,11 @@ export class AccountComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.availableOptions = [...MapPipe.transformMapToArray(MapSet.available, MapKeyType.Boolean)];
     this.initTable();
   }
 
   private initTable(): void {
-    this.tableConfig = {
+    this.tableConfig.set({
       showCheckbox: true,
       headers: [
         {
@@ -360,6 +348,6 @@ export class AccountComponent implements OnInit {
       loading: true,
       pageSize: 10,
       pageIndex: 1
-    };
+    });
   }
 }

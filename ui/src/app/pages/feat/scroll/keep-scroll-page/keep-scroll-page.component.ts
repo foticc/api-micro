@@ -1,13 +1,14 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
+
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 
 @Component({
   selector: 'app-keep-scroll-page',
   templateUrl: './keep-scroll-page.component.html',
-  styleUrls: ['./keep-scroll-page.component.less'],
+  styleUrl: './keep-scroll-page.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PageHeaderComponent, NzCardModule, NzGridModule]
 })

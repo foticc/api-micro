@@ -1,10 +1,11 @@
-import { NgStyle } from '@angular/common';
+
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
 import { NumberLoopPipe } from '@shared/pipes/number-loop.pipe';
 import { SearchListStoreService } from '@store/biz-store-service/search-list/search-list-store.service';
+
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -13,19 +14,18 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 
 @Component({
   selector: 'app-project',
   templateUrl: './project.component.html',
-  styleUrls: ['./project.component.less'],
+  styleUrl: './project.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NzCardModule,
     WaterMarkComponent,
     NzGridModule,
-    NgStyle,
     NzTagModule,
     NzIconModule,
     NzButtonModule,
@@ -34,9 +34,9 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
     FormsModule,
     NzTypographyModule,
     NzAvatarModule,
-    NzToolTipModule,
+    NzTooltipModule,
     NumberLoopPipe
-  ]
+]
 })
 export class ProjectComponent {
   expanded = false;

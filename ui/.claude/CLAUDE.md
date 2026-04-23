@@ -1,0 +1,70 @@
+
+You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
+
+## TypeScript Best Practices
+
+- Use strict type checking
+- Prefer type inference when the type is obvious
+- Avoid the `any` type; use `unknown` when type is uncertain
+
+## Angular Best Practices
+
+- Always use standalone components over NgModules
+- Must NOT set `standalone: true` inside Angular decorators. It's the default in Angular v20+.
+- Use signals for state management
+- Implement lazy loading for feature routes
+- Do NOT use the `@HostBinding` and `@HostListener` decorators. Put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead
+- Use `NgOptimizedImage` for all static images.
+  - `NgOptimizedImage` does not work for inline base64 images.
+
+### Components
+
+- Keep components small and focused on a single responsibility
+- Use `input()` and `output()` functions instead of decorators
+- Use `computed()` for derived state
+- Set `changeDetection: ChangeDetectionStrategy.OnPush` in `@Component` decorator
+- Prefer inline templates for small components
+- Prefer Reactive forms instead of Template-driven ones
+- Do NOT use `ngClass`, use `class` bindings instead
+- Do NOT use `ngStyle`, use `style` bindings instead
+- When using external templates/styles, use paths relative to the component TS file.
+
+## State Management
+
+- Use signals for local component state
+- Use `computed()` for derived state
+- Keep state transformations pure and predictable
+- Do NOT use `mutate` on signals, use `update` or `set` instead
+
+## Templates
+
+- Keep templates simple and avoid complex logic
+- Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
+- Use the async pipe to handle observables
+- Do not assume globals like (`new Date()`) are available.
+- Do not write arrow functions in templates (they are not supported).
+
+## Services
+
+- Design services around a single responsibility
+- Use the `providedIn: 'root'` option for singleton services
+- Use the `inject()` function instead of constructor injection
+
+## Code Modification Principles
+
+- **Prove there is a problem before making a change.** Do not modify code just because it looks suspicious or matches a pattern. Before changing anything, answer these three questions:
+  1. Does this code have an actual bug right now?
+  2. What is the concrete benefit of the change?
+  3. What is the risk of the change?
+  If the answer to question 1 is "no bug", stop — do not change it.
+
+- **Batch searches produce candidates, not conclusions.** When searching for a pattern across the codebase (e.g. all uses of `ChangeDetectorRef`), the result is a list of files to investigate — not a list of files to fix. Each file must be analyzed independently before deciding whether a change is needed.
+
+- **Understand the context before replacing.** For example, `inject(ChangeDetectorRef)` inside a Service injects the host component's detector — not a global one. `detectChanges()` is valid in Zoneless mode. Do not replace working code with an alternative just because the alternative exists.
+
+## Styles
+
+- Do NOT use CSS variables (e.g. `var(--ant-color-xxx)`) in component Less files
+- Do NOT use Less variables (e.g. `@primary-color`) unless explicitly wrapping inside `.themeMixin({})` for theme support
+- For colors in component styles, use plain CSS color values (e.g. `#1890ff`, `#f5f5f5`) unless the task specifically requires theme-aware styling
+- This project uses Less + `.themeMixin()` for theming, not CSS custom properties

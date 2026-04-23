@@ -15,10 +15,10 @@
       id="menuNav"
       class="menu-sidebar"
       nzBreakpoint="lg"
+      nzCollapsible
       [class.left-nav-fixed]="isFixedLeftNav"
       [nzCollapsed]="isCollapsed"
       [nzCollapsedWidth]="CollapsedNavWidth"
-      [nzCollapsible]="true"
       [nzTheme]="theme"
       [nzTrigger]="trigger"
       [nzWidth]="SideNavWidth"
@@ -60,7 +60,7 @@
     @if (!isMixinMode && isHasTopArea && isSideMode) {
       <nz-header
         style="transition: width 0.2s"
-        [ngClass]="{
+        [class]="{
           'full-with': !isHasNavArea,
           fixed: isFixedHead,
           'fixed-collapsed': isFixedHead && isCollapsed,
@@ -73,7 +73,7 @@
     <!--top模式header-->
     @if (!isMixinMode && isHasTopArea && isTopMode) {
       <nz-header
-        [ngClass]="{
+        [class]="{
           'dark-top-nav-bg': theme === 'dark',
           'top-fixed': isFixedHead
         }"
@@ -91,12 +91,12 @@
       <nz-sider
         class="menu-sidebar"
         nzBreakpoint="lg"
+        nzCollapsible
         nzNoAnimation
         [class.mixin-left-nav-fixed]="isFixedLeftNav"
         [class.t-0]="!isHasTopArea"
         [nzCollapsed]="isCollapsed"
         [nzCollapsedWidth]="CollapsedNavWidth"
-        [nzCollapsible]="true"
         [nzTheme]="isNightTheme ? 'dark' : 'light'"
         [nzTrigger]="trigger"
         [nzWidth]="SideNavWidth"
@@ -107,7 +107,7 @@
     }
 
     <nz-layout>
-      <nz-content [ngStyle]="{ marginTop: contentMarginTop }">
+      <nz-content [style.marginTop]="contentMarginTop">
         @if (isShowTab) {
           <app-tab></app-tab>
         }
@@ -128,14 +128,7 @@
 
 <ng-template #trigger>
   <ul nz-menu nzMode="inline" [nzSelectable]="false" [nzTheme]="isMixinMode && !isOverMode ? 'light' : theme">
-    <li
-      class="trigger-top-border m-0"
-      nz-menu-item
-      [ngStyle]="{
-        'border-top-color': (!isMixinMode && theme === 'dark') || isNightTheme ? 'rgba(0,0,0,0.25)' : 'rgb(240,240,240)'
-      }"
-      [nzPaddingLeft]="16"
-    >
+    <li class="trigger-top-border m-0" nz-menu-item [nzPaddingLeft]="16" [style.border-top-color]="(!isMixinMode && theme === 'dark') || isNightTheme ? 'rgba(0,0,0,0.25)' : 'rgb(240,240,240)'">
       <i class="sp-16" nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"></i>
     </li>
   </ul>

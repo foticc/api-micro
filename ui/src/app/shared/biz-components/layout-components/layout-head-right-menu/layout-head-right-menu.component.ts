@@ -12,23 +12,24 @@ import { ModalBtnStatus } from '@widget/base-modal';
 import { ChangePasswordService } from '@widget/biz-widget/change-password/change-password.service';
 import { LockWidgetService } from '@widget/common-widget/lock-widget/lock-widget.service';
 import { SearchRouteService } from '@widget/common-widget/search-route/search-route.service';
+
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ModalOptions } from 'ng-zorro-antd/modal';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
 import { HomeNoticeComponent } from '../home-notice/home-notice.component';
 
 @Component({
   selector: 'app-layout-head-right-menu',
   templateUrl: './layout-head-right-menu.component.html',
-  styleUrls: ['./layout-head-right-menu.component.less'],
+  styleUrl: './layout-head-right-menu.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet, NzToolTipModule, NzIconModule, NzButtonModule, ToggleFullscreenDirective, NzDropDownModule, NzBadgeModule, NzMenuModule, HomeNoticeComponent, ScreenLessHiddenDirective]
+  imports: [NgTemplateOutlet, NzTooltipModule, NzIconModule, NzButtonModule, ToggleFullscreenDirective, NzDropdownModule, NzBadgeModule, NzMenuModule, HomeNoticeComponent, ScreenLessHiddenDirective]
 })
 export class LayoutHeadRightMenuComponent {
   user!: UserPsd;

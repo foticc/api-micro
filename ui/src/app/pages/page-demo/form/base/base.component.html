@@ -4,7 +4,7 @@
 <div class="normal-table-wrap">
   <nz-card>
     <app-water-mark />
-    <form class="form-wrap" nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()" #baseForm="ngForm">
+    <form #baseForm="ngForm" class="form-wrap" nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
       <nz-form-item>
         <nz-form-label nzFor="title" nzRequired [nzSm]="6" [nzXs]="24">标题</nz-form-label>
         <nz-form-control nzErrorTip="请输入标题" [nzSm]="14" [nzXs]="24">
@@ -44,7 +44,7 @@
       <nz-form-item>
         <nz-form-label nzFor="weights" [nzSm]="6" [nzXs]="24">权重</nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24">
-          <nz-input-number id="weights" formControlName="weights" [nzPlaceHolder]="'请输入'" [nzStep]="1"></nz-input-number>
+          <nz-input-number id="weights" formControlName="weights" nzPlaceHolder="请输入" [nzStep]="1"></nz-input-number>
           %
         </nz-form-control>
       </nz-form-item>
