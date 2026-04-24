@@ -122,14 +122,9 @@ const rolePermissions: Record<number, string[]> = {
     'default:system:dept:del',
     'default:system:dept:addlowlevel',
     'default:about',
+    'default:system:dict-manage'
   ],
-  2: [
-    'default:dashboard',
-    'default:dashboard:analysis',
-    'default:dashboard:monitor',
-    'default:dashboard:workbench',
-    'default:about',
-  ],
+  2: ['default:dashboard', 'default:dashboard:analysis', 'default:dashboard:monitor', 'default:dashboard:workbench', 'default:about']
 };
 
 export const permission = [

@@ -1,4 +1,12 @@
 {
+  "/site/api/dict": {
+    "target": "http://localhost:8002/",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/site/api": ""
+    }
+  },
   "/site/api": {
     "target": "http://localhost:3001/",
     "secure": false,
