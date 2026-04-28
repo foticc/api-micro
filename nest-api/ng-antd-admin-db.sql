@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict sW4OA7WQRevj6qKgKb3Hs1QTMP3oaBMUMUBGRmgLnxYbAYOVBi7MDTz3YqNuGbd
+\restrict WkhkWIPvpQtbUHeC8FOpNeD7b6fHTUtud0vaP6ozpn6FAldCaazr9RPYfHyckiY
 
 -- Dumped from database version 17.6 (Debian 17.6-1.pgdg13+1)
 -- Dumped by pg_dump version 17.6 (Debian 17.6-1.pgdg13+1)
@@ -37,6 +37,23 @@ DROP SEQUENCE IF EXISTS public.menu_id_seq;
 DROP TABLE IF EXISTS public.menu;
 DROP SEQUENCE IF EXISTS public.department_id_seq;
 DROP TABLE IF EXISTS public.department;
+DROP SCHEMA IF EXISTS public;
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: pg_database_owner
+--
+
+CREATE SCHEMA public;
+
+
+ALTER SCHEMA public OWNER TO pg_database_owner;
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: pg_database_owner
+--
+
+COMMENT ON SCHEMA public IS 'standard public schema';
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -400,10 +417,6 @@ INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, pat
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (16, 2, '个人页', 'C', NULL, 'user', '/default/page-demo/personal', 'default:page-demo:personal', 6, true, false, true, '2022-05-10 06:58:36', '2022-05-10 01:53:13', NULL);
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (17, 2, '图形编辑器', 'C', 'icon-mel-help', NULL, '/default/page-demo/flow', 'default:page-demo:flow', 7, true, false, true, '2022-05-10 07:06:00', '2022-05-10 01:54:38', NULL);
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (18, 2, '任务', 'C', NULL, 'border-bottom', '/default/page-demo/task', 'default:page-demo:task', 8, true, false, true, '2023-10-10 13:49:45', '2023-10-10 13:49:45', NULL);
-INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (19, 2, '新布局', 'C', NULL, 'caret-down', '/default/page-demo/page-demo1', 'default:page-demo:page-demo1', 9, true, false, true, '2024-05-02 15:24:50', '2024-05-02 15:24:50', NULL);
-INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (20, 2, '新页面2', 'C', NULL, 'up', '/default/page-demo/page-demo2', 'default:page-demo:page-demo2', 10, true, false, true, '2024-05-02 15:18:31', '2024-05-02 15:18:31', NULL);
-INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (21, 2, '新页面3', 'C', NULL, 'down', '/default/page-demo/page-demo3', 'default:page-demo:page-demo3', 11, true, false, true, '2024-05-02 15:25:14', '2024-05-02 15:25:14', NULL);
-INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (22, 2, '新页面4', 'C', NULL, 'caret-down', '/default/page-demo/page-demo4', 'default:page-demo:page-demo4', 12, true, false, true, '2024-05-02 15:25:53', '2024-05-02 15:25:53', NULL);
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (23, 3, '消息提示', 'C', NULL, 'dashboard', '/default/feat/msg', 'default:feat:msg', 1, true, false, true, '2022-05-10 06:58:36', '2022-05-10 01:56:21', NULL);
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (24, 3, '图标', 'C', NULL, 'dashboard', '/default/feat/icons', 'default:feat:icons', 2, true, false, true, '2022-05-10 06:58:36', '2022-05-10 01:56:43', NULL);
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (25, 3, '右键菜单', 'C', NULL, 'dashboard', '/default/feat/context-menu', 'default:feat:context-menu', 3, true, false, true, '2022-05-10 06:58:36', '2022-05-10 01:58:45', NULL);
@@ -465,7 +478,6 @@ INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, pat
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (81, 16, '个人设置', 'C', '', 'user', '/default/page-demo/personal/personal-setting', 'default:page-demo:personal:personal-setting', 2, true, false, true, '2022-05-10 06:58:36', '2022-05-10 01:54:03', NULL);
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (82, 17, '流程图', 'C', NULL, 'highlight', '/default/page-demo/flow/flow-chat', 'default:page-demo:flow:flow-chat', 1, true, false, true, '2022-05-10 06:58:36', '2022-05-10 01:55:02', NULL);
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (83, 33, 'zorro文档', 'C', NULL, 'dashboard', '/default/feat/frame/zorro-doc', 'default:feat:frame:zorro-doc', 1, true, false, true, '2022-05-10 06:58:36', '2022-05-10 02:03:27', NULL);
-INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (84, 33, '外部链接', 'C', NULL, 'usergroup-delete', 'https://github.com/huajian123/ng-antd-admin', 'https://github.com/huajian123/ng-antd-admin', 2, true, true, true, '2022-05-10 06:58:53', '2022-05-10 02:05:11', NULL);
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (85, 34, '缓存滚动条', 'C', NULL, 'dashboard', '/default/feat/scroll/keep-scroll-page', 'default:feat:scroll:keep-scroll-page', 1, true, false, true, '2022-05-10 06:58:36', '2022-05-10 02:06:02', NULL);
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (86, 34, '玩弄滚动条', 'C', NULL, 'dashboard', '/default/feat/scroll/play-scroll', 'default:feat:scroll:play-scroll', 2, true, false, true, '2022-05-10 06:58:36', '2022-05-10 02:06:24', NULL);
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (87, 35, '高德', 'C', NULL, 'highlight', '/default/feat/charts/gaode-map', 'default:feat:charts:gaode-map', 1, true, false, true, '2022-05-10 06:58:36', '2022-05-10 02:07:28', NULL);
@@ -502,6 +514,18 @@ INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, pat
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (120, 52, '动态组件', 'C', NULL, 'up-circle', '/default/comp/lazy/dynamic-comp', 'default:comp:lazy:dynamic-comp', 5, true, false, true, NULL, '2026-04-20 06:27:31.192522', NULL);
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (118, 52, 'defer演示', 'C', NULL, 'logout', '/default/comp/lazy/lazy-defer', 'default:comp:lazy:lazy-defer', 3, true, false, true, NULL, '2026-04-20 06:28:28.153', NULL);
 INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (119, 52, '懒加载script脚本', 'C', NULL, 'login', '/default/comp/lazy/lazy-loadscript', 'default:comp:lazy:lazy-loadscript', 4, true, false, true, NULL, '2026-04-20 06:29:17.516', NULL);
+INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (121, 3, 'Signal演示', 'C', NULL, 'slack-square', '/default/feat/signal-demo', 'default:feat:signal-demo', 28, true, false, true, NULL, '2026-04-23 09:25:38.497309', NULL);
+INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (124, 121, '性能优化', 'C', NULL, 'alipay-circle', '/default/feat/signal-demo/performance-optimization', 'default:feat:signal-demo:performance-optimization', 3, true, false, true, NULL, '2026-04-23 09:33:18.895131', NULL);
+INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (126, 121, '基础与进阶', 'C', NULL, 'rollback', '/default/feat/signal-demo/basic-advanced', 'default:feat:signal-demo:basic-advanced', 1, true, false, true, NULL, '2026-04-23 09:44:24.42904', NULL);
+INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (127, 121, 'linkedSignal演示', 'C', NULL, 'border-horizontal', '/default/feat/signal-demo/linked-signal-demo', 'default:feat:signal-demo:linked-signal-demo', 2, true, false, true, NULL, '2026-04-23 09:45:30.29926', NULL);
+INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (129, 121, 'resource演示', 'C', NULL, 'play-circle', '/default/feat/signal-demo/resource', 'default:feat:signal-demo:resource', 4, true, false, true, NULL, '2026-04-23 09:48:11.795285', NULL);
+INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (125, 121, '综合实战', 'C', NULL, 'instagram', '/default/feat/signal-demo/signal-comprehensive-practical', 'default:feat:signal-demo:signal-comprehensive-practical', 8, true, false, true, NULL, '2026-04-23 09:49:41.97', NULL);
+INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (122, 121, 'Signal&Reactive Forms', 'C', NULL, 'caret-left', '/default/feat/signal-demo/signal-reactive-forms', 'default:feat:signal-demo:signal-reactive-forms', 7, true, false, true, NULL, '2026-04-23 09:49:55.884', NULL);
+INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (128, 121, '与Observable互转', 'C', NULL, 'border-inner', '/default/feat/signal-demo/change-to-observable', 'default:feat:signal-demo:change-to-observable', 6, true, false, true, NULL, '2026-04-23 09:50:10.035', NULL);
+INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (123, 121, '跨组件通信', 'C', NULL, 'up-circle', '/default/feat/signal-demo/cross-comp-communication', 'default:feat:signal-demo:cross-comp-communication', 5, true, false, true, NULL, '2026-04-23 09:50:19.684', NULL);
+INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (19, 2, '新布局', 'C', NULL, 'caret-down', '/default/page-demo/new-layout', 'default:page-demo:new-layout', 9, true, false, true, '2024-05-02 15:24:50', '2026-04-25 12:36:18.096', NULL);
+INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (84, 33, '外部链接', 'C', NULL, 'usergroup-delete', 'https://github.com/huajian123/ng-antd-admin', 'default:feat:frame:other-link', 2, true, true, true, '2022-05-10 06:58:53', '2026-04-25 12:37:59.227', NULL);
+INSERT INTO public.menu (id, father_id, menu_name, menu_type, al_icon, icon, path, code, order_num, status, new_link_flag, visible, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (130, 3, '多语言', 'C', NULL, 'menu-fold', '/default/feat/multilingual', 'default:feat:multilingual', 29, true, false, true, NULL, '2026-04-25 12:40:08.229262', NULL);
 
 
 --
@@ -521,126 +545,132 @@ INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at
 INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (3, 2, 'default:dashboard:monitor', NULL, '2024-11-19 13:26:42.775771', NULL);
 INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (4, 2, 'default:dashboard:workbench', NULL, '2024-11-19 13:26:42.775771', NULL);
 INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (5, 2, 'default:about', NULL, '2024-11-19 13:26:42.775771', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (239, 1, 'default:dashboard', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (240, 1, 'default:dashboard:analysis', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (241, 1, 'default:dashboard:monitor', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (242, 1, 'default:dashboard:workbench', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (243, 1, 'default:page-demo', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (244, 1, 'default:page-demo:form', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (245, 1, 'default:page-demo:form:base-form', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (246, 1, 'default:page-demo:form:step-form', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (247, 1, 'default:page-demo:form:advanced-form', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (248, 1, 'default:page-demo:list', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (249, 1, 'default:page-demo:list:search-list', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (250, 1, 'default:page-demo:list:search-list:article', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (251, 1, 'default:page-demo:list:search-list:project', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (252, 1, 'default:page-demo:list:search-list:application', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (253, 1, 'default:page-demo:list:search-table', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (254, 1, 'default:page-demo:list:tree-list', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (255, 1, 'default:page-demo:list:standard-table', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (256, 1, 'default:page-demo:list:card-table', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (257, 1, 'default:page-demo:detail', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (258, 1, 'default:page-demo:detail:base-detail', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (259, 1, 'default:page-demo:detail:adv-detail', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (260, 1, 'default:page-demo:result', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (261, 1, 'default:page-demo:result:success', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (262, 1, 'default:page-demo:result:fail', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (263, 1, 'default:page-demo:except', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (264, 1, 'default:page-demo:except:except403', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (265, 1, 'default:page-demo:except:except404', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (266, 1, 'default:page-demo:except:except500', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (267, 1, 'default:page-demo:except:network-error', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (268, 1, 'default:page-demo:except:no-data', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (269, 1, 'default:page-demo:personal', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (270, 1, 'default:page-demo:personal:personal-center', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (271, 1, 'default:page-demo:personal:personal-setting', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (272, 1, 'default:page-demo:flow', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (273, 1, 'default:page-demo:flow:flow-chat', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (274, 1, 'default:page-demo:task', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (275, 1, 'default:page-demo:page-demo1', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (276, 1, 'default:page-demo:page-demo2', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (277, 1, 'default:page-demo:page-demo3', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (278, 1, 'default:page-demo:page-demo4', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (279, 1, 'default:feat', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (280, 1, 'default:feat:msg', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (281, 1, 'default:feat:icons', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (282, 1, 'default:feat:context-menu', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (283, 1, 'default:feat:img-preview', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (284, 1, 'default:feat:full-screen', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (285, 1, 'default:feat:tabs', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (286, 1, 'default:feat:ex-modal', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (287, 1, 'default:feat:ex-drawer', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (288, 1, 'default:feat:rich-text', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (289, 1, 'default:feat:click-out-side', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (290, 1, 'default:feat:frame', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (291, 1, 'default:feat:frame:zorro-doc', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (292, 1, 'https://github.com/huajian123/ng-antd-admin', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (293, 1, 'default:feat:scroll', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (294, 1, 'default:feat:scroll:keep-scroll-page', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (295, 1, 'default:feat:scroll:play-scroll', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (296, 1, 'default:feat:charts', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (297, 1, 'default:feat:charts:gaode-map', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (298, 1, 'default:feat:charts:baidu-map', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (299, 1, 'default:feat:charts:echarts', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (300, 1, 'blank:other-login', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (301, 1, 'blank:other-login:login1', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (302, 1, 'default:feat:color-sel', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (303, 1, 'default:feat:ripple', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (304, 1, 'default:feat:copy', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (305, 1, 'blank:empty-page', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (306, 1, 'default:feat:setup', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (307, 1, 'default:feat:session-timeout', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (308, 1, 'default:feat:websocket', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (309, 1, 'default:feat:upload', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (310, 1, 'default:feat:download', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (311, 1, 'default:feat:qrcode', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (312, 1, 'default:feat:water-mark', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (313, 1, 'default:feat:keep-alive', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (314, 1, 'default:feat:transitions', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (315, 1, 'default:comp', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (316, 1, 'default:comp:basic', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (317, 1, 'default:comp:transition', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (318, 1, 'default:comp:luckysheet', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (319, 1, 'default:comp:lazy', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (320, 1, 'default:comp:lazy:lazy-basic', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (321, 1, 'default:comp:lazy:lazy-scroll', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (322, 1, 'default:comp:lazy:lazy-defer', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (323, 1, 'default:comp:lazy:lazy-loadscript', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (324, 1, 'default:comp:lazy:dynamic-comp', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (325, 1, 'default:comp:desc', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (326, 1, 'default:comp:strength-meter', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (327, 1, 'default:comp:form', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (328, 1, 'default:comp:form:shrink-form', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (329, 1, 'default:comp:form:append-form', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (330, 1, 'default:comp:blingbling', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (331, 1, 'default:level', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (332, 1, 'default:level:menu1', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (333, 1, 'default:level:menu1:menu1-1', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (334, 1, 'default:level:menu1:menu1-1:menu1-1-1', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (335, 1, 'default:level:menu1:menu1-1:menu1-1-2', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (336, 1, 'default:level:menu1:menu1-2', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (337, 1, 'default:level:menu2', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (338, 1, 'default:system', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (339, 1, 'default:system:account', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (340, 1, 'default:system:account:add', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (341, 1, 'default:system:account:edit', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (342, 1, 'default:system:account:del', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (343, 1, 'default:system:role-manager', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (344, 1, 'default:system:role-manager:add', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (345, 1, 'default:system:role-manager:edit', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (346, 1, 'default:system:role-manager:del', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (347, 1, 'default:system:role-manager:set-role', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (348, 1, 'default:system:menu', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (349, 1, 'default:system:menu:add', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (350, 1, 'default:system:menu:edit', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (351, 1, 'default:system:menu:del', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (352, 1, 'default:system:menu:addlowlevel', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (353, 1, 'default:system:dept', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (354, 1, 'default:system:dept:add', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (355, 1, 'default:system:dept:edit', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (356, 1, 'default:system:dept:del', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (357, 1, 'default:system:dept:addlowlevel', NULL, '2026-04-20 06:33:27.061005', NULL);
-INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (358, 1, 'default:about', NULL, '2026-04-20 06:33:27.061005', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (602, 1, 'default:dashboard', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (603, 1, 'default:dashboard:analysis', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (604, 1, 'default:dashboard:monitor', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (605, 1, 'default:dashboard:workbench', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (606, 1, 'default:page-demo', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (607, 1, 'default:page-demo:form', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (608, 1, 'default:page-demo:form:base-form', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (609, 1, 'default:page-demo:form:step-form', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (610, 1, 'default:page-demo:form:advanced-form', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (611, 1, 'default:page-demo:list', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (612, 1, 'default:page-demo:list:search-list', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (613, 1, 'default:page-demo:list:search-list:article', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (614, 1, 'default:page-demo:list:search-list:project', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (615, 1, 'default:page-demo:list:search-list:application', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (616, 1, 'default:page-demo:list:search-table', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (617, 1, 'default:page-demo:list:tree-list', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (618, 1, 'default:page-demo:list:standard-table', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (619, 1, 'default:page-demo:list:card-table', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (620, 1, 'default:page-demo:detail', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (621, 1, 'default:page-demo:detail:base-detail', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (622, 1, 'default:page-demo:detail:adv-detail', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (623, 1, 'default:page-demo:result', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (624, 1, 'default:page-demo:result:success', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (625, 1, 'default:page-demo:result:fail', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (626, 1, 'default:page-demo:except', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (627, 1, 'default:page-demo:except:except403', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (628, 1, 'default:page-demo:except:except404', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (629, 1, 'default:page-demo:except:except500', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (630, 1, 'default:page-demo:except:network-error', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (631, 1, 'default:page-demo:except:no-data', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (632, 1, 'default:page-demo:personal', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (633, 1, 'default:page-demo:personal:personal-center', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (634, 1, 'default:page-demo:personal:personal-setting', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (635, 1, 'default:page-demo:flow', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (636, 1, 'default:page-demo:flow:flow-chat', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (637, 1, 'default:page-demo:task', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (638, 1, 'default:page-demo:new-layout', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (639, 1, 'default:feat', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (640, 1, 'default:feat:msg', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (641, 1, 'default:feat:icons', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (642, 1, 'default:feat:context-menu', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (643, 1, 'default:feat:img-preview', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (644, 1, 'default:feat:full-screen', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (645, 1, 'default:feat:tabs', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (646, 1, 'default:feat:ex-modal', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (647, 1, 'default:feat:ex-drawer', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (648, 1, 'default:feat:rich-text', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (649, 1, 'default:feat:click-out-side', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (650, 1, 'default:feat:frame', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (651, 1, 'default:feat:frame:zorro-doc', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (652, 1, 'default:feat:scroll', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (653, 1, 'default:feat:scroll:keep-scroll-page', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (654, 1, 'default:feat:scroll:play-scroll', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (655, 1, 'default:feat:charts', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (656, 1, 'default:feat:charts:gaode-map', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (657, 1, 'default:feat:charts:baidu-map', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (658, 1, 'default:feat:charts:echarts', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (659, 1, 'blank:other-login', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (660, 1, 'blank:other-login:login1', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (661, 1, 'default:feat:color-sel', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (662, 1, 'default:feat:ripple', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (663, 1, 'default:feat:copy', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (664, 1, 'blank:empty-page', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (665, 1, 'default:feat:setup', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (666, 1, 'default:feat:session-timeout', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (667, 1, 'default:feat:websocket', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (668, 1, 'default:feat:upload', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (669, 1, 'default:feat:download', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (670, 1, 'default:feat:qrcode', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (671, 1, 'default:feat:water-mark', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (672, 1, 'default:feat:keep-alive', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (673, 1, 'default:feat:transitions', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (674, 1, 'default:feat:signal-demo', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (675, 1, 'default:feat:signal-demo:basic-advanced', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (676, 1, 'default:feat:signal-demo:linked-signal-demo', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (677, 1, 'default:feat:signal-demo:performance-optimization', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (678, 1, 'default:feat:signal-demo:resource', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (679, 1, 'default:feat:signal-demo:cross-comp-communication', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (680, 1, 'default:feat:signal-demo:change-to-observable', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (681, 1, 'default:feat:signal-demo:signal-reactive-forms', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (682, 1, 'default:feat:signal-demo:signal-comprehensive-practical', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (683, 1, 'default:feat:multilingual', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (684, 1, 'default:comp', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (685, 1, 'default:comp:basic', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (686, 1, 'default:comp:transition', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (687, 1, 'default:comp:luckysheet', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (688, 1, 'default:comp:lazy', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (689, 1, 'default:comp:lazy:lazy-basic', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (690, 1, 'default:comp:lazy:lazy-scroll', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (691, 1, 'default:comp:lazy:lazy-defer', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (692, 1, 'default:comp:lazy:lazy-loadscript', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (693, 1, 'default:comp:lazy:dynamic-comp', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (694, 1, 'default:comp:desc', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (695, 1, 'default:comp:strength-meter', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (696, 1, 'default:comp:form', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (697, 1, 'default:comp:form:shrink-form', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (698, 1, 'default:comp:form:append-form', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (699, 1, 'default:comp:blingbling', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (700, 1, 'default:level', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (701, 1, 'default:level:menu1', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (702, 1, 'default:level:menu1:menu1-1', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (703, 1, 'default:level:menu1:menu1-1:menu1-1-1', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (704, 1, 'default:level:menu1:menu1-1:menu1-1-2', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (705, 1, 'default:level:menu1:menu1-2', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (706, 1, 'default:level:menu2', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (707, 1, 'default:system', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (708, 1, 'default:system:account', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (709, 1, 'default:system:account:add', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (710, 1, 'default:system:account:edit', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (711, 1, 'default:system:account:del', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (712, 1, 'default:system:role-manager', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (713, 1, 'default:system:role-manager:add', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (714, 1, 'default:system:role-manager:edit', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (715, 1, 'default:system:role-manager:del', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (716, 1, 'default:system:role-manager:set-role', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (717, 1, 'default:system:menu', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (718, 1, 'default:system:menu:add', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (719, 1, 'default:system:menu:edit', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (720, 1, 'default:system:menu:del', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (721, 1, 'default:system:menu:addlowlevel', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (722, 1, 'default:system:dept', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (723, 1, 'default:system:dept:add', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (724, 1, 'default:system:dept:edit', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (725, 1, 'default:system:dept:del', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (726, 1, 'default:system:dept:addlowlevel', NULL, '2026-04-25 12:41:51.772981', NULL);
+INSERT INTO public.sys_role_perm (id, role_id, perm_code, updated_at, created_at, deleted_at) OVERRIDING SYSTEM VALUE VALUES (727, 1, 'default:about', NULL, '2026-04-25 12:41:51.772981', NULL);
 
 
 --
@@ -684,7 +714,7 @@ SELECT pg_catalog.setval('public.menu_id_seq', 117, false);
 -- Name: menu_id_seq1; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.menu_id_seq1', 120, true);
+SELECT pg_catalog.setval('public.menu_id_seq1', 130, true);
 
 
 --
@@ -712,7 +742,7 @@ SELECT pg_catalog.setval('public.sys_role_perm_id_seq', 122, false);
 -- Name: sys_role_perm_id_seq1; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.sys_role_perm_id_seq1', 358, true);
+SELECT pg_catalog.setval('public.sys_role_perm_id_seq1', 727, true);
 
 
 --
@@ -802,5 +832,5 @@ REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict sW4OA7WQRevj6qKgKb3Hs1QTMP3oaBMUMUBGRmgLnxYbAYOVBi7MDTz3YqNuGbd
+\unrestrict WkhkWIPvpQtbUHeC8FOpNeD7b6fHTUtud0vaP6ozpn6FAldCaazr9RPYfHyckiY
 
