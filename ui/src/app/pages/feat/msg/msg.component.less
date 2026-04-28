@@ -1,22 +1,50 @@
-[nz-button] {
-  margin-right: 8px;
-  margin-bottom: 12px;
+// Section Label
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+
+  span[nz-icon] {
+    font-size: 13px;
+  }
 }
 
-.success {
-  border-color: #55d187;
-  color: white;
-  background: #55d187;
+.card-desc {
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: 0.65;
 }
 
-.warning {
-  border-color: #efbd47;
-  color: white;
-  background: #efbd47;
+// Button group
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  [nz-button] {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 8px;
+    transition: all 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+
+    &:active {
+      transform: scale(0.97) translateY(1px);
+    }
+  }
 }
 
-.loading {
-  border-color: #0960bd;
-  color: white;
-  background: #0960bd;
+.btn-ghost-success {
+  color: #52c41a !important;
+  border-color: #52c41a !important;
+}
+
+.btn-warning {
+  color: #faad14 !important;
+  border-color: #faad14 !important;
 }
