@@ -27,13 +27,9 @@ export interface ActionResult<T> {
   providedIn: 'root'
 })
 export class BaseHttpService {
-  uri: string;
+  uri = environment.production ? localUrl : '/site/api';
   http = inject(HttpClient);
   message = inject(NzMessageService);
-
-  protected constructor() {
-    this.uri = environment.production ? localUrl : '/site/api';
-  }
 
   get<T>(path: string, param?: NzSafeAny, config?: HttpCustomConfig): Observable<T> {
     config = config || { needSuccessInfo: false };

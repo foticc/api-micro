@@ -52,13 +52,11 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
 
   // 删除全部的缓存，在退出登录，不使用多标签 等操作中需要用到
   public static deleteAllRouteSnapshot(route: ActivatedRouteSnapshot): Promise<void> {
-    return new Promise(resolve => {
-      Object.keys(SimpleReuseStrategy.handlers).forEach(key => {
-        SimpleReuseStrategy.deleteRouteSnapshot(key);
-      });
-      SimpleReuseStrategy.waitDelete = getDeepReuseStrategyKeyFn(route);
-      resolve();
+    Object.keys(SimpleReuseStrategy.handlers).forEach(key => {
+      SimpleReuseStrategy.deleteRouteSnapshot(key);
     });
+    SimpleReuseStrategy.waitDelete = getDeepReuseStrategyKeyFn(route);
+    return Promise.resolve();
   }
 
   // 是否允许复用路由
