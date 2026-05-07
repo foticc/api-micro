@@ -17,8 +17,6 @@ export class StartupService {
     if (token) {
       return this.loginInOutService.loginIn(token);
     }
-    return new Promise(resolve => {
-      return resolve();
-    });
+    return Promise.resolve();
   }
 }
