@@ -1,64 +1,64 @@
 <div class="login-form-wrap">
   <form class="login-form" nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
     <nz-tabs [nzAnimated]="false">
-      <nz-tab nzTitle="账户密码登录">
+      <nz-tab [nzTitle]="'login.accountPasswordLogin' | translate">
         <nz-form-item>
-          <nz-form-control nzErrorTip="账号名：admin">
+          <nz-form-control [nzErrorTip]="'login.accountNameDemo' | translate">
             <nz-input-wrapper>
-              <i nzInputPrefix nz-icon nzType="user"></i>
-              <input type="text" formControlName="userName" nz-input nzSize="large" placeholder="用户名" [placeholder]="'账号名：admin'" />
+              <i nz-icon nzInputPrefix nzType="user"></i>
+              <input type="text" formControlName="userName" nz-input nzSize="large" [placeholder]="'login.accountNameDemo' | translate" />
             </nz-input-wrapper>
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-control nzErrorTip="密码：a123456">
+          <nz-form-control [nzErrorTip]="'login.passwordDemo' | translate">
             <nz-input-wrapper>
-              <i nzInputPrefix nz-icon nzType="lock"></i>
-              <input type="password" autocomplete="on" formControlName="password" nz-input nzSize="large" placeholder="密码" [placeholder]="'密码：a123456'" />
+              <i nz-icon nzInputPrefix nzType="lock"></i>
+              <input type="password" autocomplete="on" formControlName="password" nz-input nzSize="large" [placeholder]="'login.passwordDemo' | translate" />
             </nz-input-wrapper>
           </nz-form-control>
         </nz-form-item>
       </nz-tab>
 
-      <nz-tab nzTitle="手机号登录">
+      <nz-tab [nzTitle]="'login.mobileLogin' | translate">
         <nz-form-item>
-          <nz-form-control nzErrorTip="请输入用户名!">
+          <nz-form-control [nzErrorTip]="'login.pleaseEnterUsername' | translate">
             <nz-input-wrapper>
-              <i nzInputPrefix nz-icon nzType="mobile"></i>
-              <input type="text" autocomplete="on" formControlName="userName" nz-input nzSize="large" placeholder="手机号" />
+              <i nz-icon nzInputPrefix nzType="mobile"></i>
+              <input type="text" autocomplete="on" formControlName="userName" nz-input nzSize="large" [placeholder]="'login.phone' | translate" />
             </nz-input-wrapper>
           </nz-form-control>
         </nz-form-item>
         <nz-form-item nz-row nzJustify="space-between">
-          <nz-form-control class="flex-1" nz-col nzErrorTip="请输入验证码!" style="max-width: 65%" [nzSm]="16" [nzXs]="15">
+          <nz-form-control class="flex-1" nz-col style="max-width: 65%" [nzErrorTip]="'login.pleaseEnterVerificationCode' | translate" [nzSm]="16" [nzXs]="15">
             <nz-input-wrapper>
-              <i nzInputPrefix nz-icon nzType="mail"></i>
-              <input type="password" formControlName="password" nz-input nzSize="large" placeholder="密码" />
+              <i nz-icon nzInputPrefix nzType="mail"></i>
+              <input type="password" formControlName="password" nz-input nzSize="large" [placeholder]="'login.verificationCode' | translate" />
             </nz-input-wrapper>
           </nz-form-control>
-          <button class="p-0" nz-button nz-col nzType="default" nzSize="large" [nzSm]="7" [nzXs]="7">获取验证码</button>
+          <button class="p-0" nz-button nz-col nzSize="large" nzType="default" [nzSm]="7" [nzXs]="7">{{ 'login.getVerificationCode' | translate }}</button>
         </nz-form-item>
       </nz-tab>
     </nz-tabs>
     <div class="login-form-margin" nz-row>
       <div nz-col [nzSpan]="12">
         <label formControlName="remember" nz-checkbox>
-          <span>自动登录</span>
+          <span>{{ 'login.autoLogin' | translate }}</span>
         </label>
       </div>
       <div nz-col [nzSpan]="12">
-        <a class="login-form-forgot">忘记密码</a>
+        <a class="login-form-forgot">{{ 'login.forgotPassword' | translate }}</a>
       </div>
     </div>
-    <button class="login-form-button login-form-margin" nz-button nzSize="large" nzType="primary">登 录</button>
+    <button class="login-form-button login-form-margin" nz-button nzSize="large" nzType="primary">{{ 'login.loginBtn' | translate }}</button>
     <div class="other-way">
       <div class="other-login">
-        <span>其他方式登陆</span>
+        <span>{{ 'login.otherLoginMethods' | translate }}</span>
         <i nz-icon nzTheme="fill" nzType="alipay-circle"></i>
         <i nz-icon nzTheme="fill" nzType="taobao-circle"></i>
         <i nz-icon nzTheme="fill" nzType="weibo-circle"></i>
       </div>
-      <a routerLink="/login/register-form">注册用户</a>
+      <a routerLink="/login/register-form">{{ 'login.registerUser' | translate }}</a>
     </div>
   </form>
 </div>

@@ -1,13 +1,21 @@
 <div class="container">
-  <div class="lang">
+  <span class="lang" nz-dropdown nzPlacement="bottomLeft" [nzDropdownMenu]="languageMenu">
     <i nz-icon nzTheme="outline" nzType="font-size"></i>
-  </div>
+  </span>
+  <nz-dropdown-menu #languageMenu="nzDropdownMenu">
+    <ul nz-menu nzSelectable>
+      <li nz-menu-item [nzSelected]="$currentLang() === 'zh_CN'" (click)="changeLang('zh_CN')">{{ 'lang.zhCN' | translate }}</li>
+      <li nz-menu-item [nzSelected]="$currentLang() === 'zh_TW'" (click)="changeLang('zh_TW')">{{ 'lang.zhTW' | translate }}</li>
+      <li nz-menu-item [nzSelected]="$currentLang() === 'en_US'" (click)="changeLang('en_US')">{{ 'lang.enUS' | translate }}</li>
+      <li nz-menu-item [nzSelected]="$currentLang() === 'vi_VN'" (click)="changeLang('vi_VN')">{{ 'lang.viVN' | translate }}</li>
+    </ul>
+  </nz-dropdown-menu>
   <div class="content-layout">
     <div class="head">
       <img class="logo" alt="" src="imgs/logo-color.svg" />
-      <span class="title">Ant Design</span>
+      <span class="title">{{ 'login.brand' | translate }}</span>
     </div>
-    <div class="desc">Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+    <div class="desc">{{ 'login.slogan' | translate }}</div>
   </div>
   <router-outlet></router-outlet>
 </div>

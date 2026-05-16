@@ -9,6 +9,7 @@ import { LoginService } from '@core/services/http/login/login.service';
 import { SpinService } from '@store/common-store/spin.service';
 import { fnCheckForm } from '@utils/tools';
 
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
@@ -24,7 +25,7 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzTabsModule, NzGridModule, NzButtonModule, NzInputModule, NzWaveModule, NzCheckboxModule, NzIconModule, RouterLink]
+  imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzTabsModule, NzGridModule, NzButtonModule, NzInputModule, NzWaveModule, NzCheckboxModule, NzIconModule, RouterLink, TranslateModule]
 })
 export class LoginFormComponent implements OnInit {
   validateForm!: FormGroup;
@@ -36,6 +37,7 @@ export class LoginFormComponent implements OnInit {
   private spinService = inject(SpinService);
   private dataService = inject(LoginService);
   private loginInOutService = inject(LoginInOutService);
+  private translate = inject(TranslateService);
 
   submitForm(): void {
     // 校验表单
@@ -72,9 +74,9 @@ export class LoginFormComponent implements OnInit {
           .finally(() => {
             this.spinService.$globalSpinStore.set(false);
             this.notification.blank(
-              '温馨提示',
+              this.translate.instant('login.noticeTitle'),
               `
-                源码地址：<a href="https://github.com/huajian123/ng-antd-admin">在这里</a>
+                ${this.translate.instant('login.sourceCode')}：<a href="https://github.com/huajian123/ng-antd-admin">${this.translate.instant('login.here')}</a>
             `,
               {
                 nzPlacement: 'top',
