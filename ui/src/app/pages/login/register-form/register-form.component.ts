@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 
 import { fnCheckForm } from '@utils/tools';
 
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -17,13 +18,14 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzButtonModule, NzInputModule, NzSelectModule, NzWaveModule, RouterLink]
+  imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzButtonModule, NzInputModule, NzSelectModule, NzWaveModule, RouterLink, TranslateModule]
 })
 export class RegisterFormComponent implements OnInit {
   validateForm!: FormGroup;
   messageService = inject(NzMessageService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private translate = inject(TranslateService);
 
   // checkPassword: [null, [Validators.required, this.confirmationValidator]],
 
@@ -41,7 +43,7 @@ export class RegisterFormComponent implements OnInit {
     if (!invalid) {
       return;
     }
-    this.messageService.success('注册成功，请重新登录');
+    this.messageService.success(this.translate.instant('login.registerSuccess'));
     this.router.navigateByUrl('login/login-form');
     const param = this.validateForm.getRawValue();
 
