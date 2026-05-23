@@ -1,0 +1,15 @@
+<form nz-form [formGroup]="addEditForm">
+  <nz-form-item>
+    <nz-form-label nzFor="value" nzRequired [nzSm]="4" [nzXs]="24">值</nz-form-label>
+    <nz-form-control nzErrorTip="请输入选项值（提交给后端的值）" [nzSm]="18" [nzXs]="24">
+      <input id="value" name="value" formControlName="value" nz-input placeholder="例如：1、NORMAL" />
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label nzFor="label" nzRequired [nzSm]="4" [nzXs]="24">标签</nz-form-label>
+    <nz-form-control nzErrorTip="请输入展示名称" [nzSm]="18" [nzXs]="24">
+      <input id="label" name="label" formControlName="label" nz-input placeholder="下拉中显示的文本" />
+    </nz-form-control>
+  </nz-form-item>
+</form>

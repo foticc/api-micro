@@ -1,0 +1,131 @@
+<app-page-header [pageHeaderInfo]="pageHeaderInfo" />
+
+<div class="normal-table-wrap">
+  <nz-card nzHoverable [nzBordered]="false" [nzTitle]="'字典管理'" [nzExtra]="dictCardExtra">
+    <ng-template #dictCardExtra>
+      <button *appAuth="ActionCode.DictAdd" nz-button nzType="primary" (click)="addDict()">
+        <i nz-icon nzType="plus"></i>
+        新建类型
+      </button>
+      <button class="m-l-8" nz-button (click)="getDictList()" [disabled]="dictTableConfig().loading">
+        <i nz-icon nzType="reload"></i>
+        刷新
+      </button>
+    </ng-template>
+
+    <div class="dict-type-search">
+      <form nz-form>
+        <div nz-row [nzGutter]="{ xs: 8, sm: 16 }" nzAlign="middle">
+          <div nz-col [nzSpan]="24" [nzMd]="14" [nzLg]="15" [nzXl]="16">
+            <nz-form-item class="m-b-0">
+              <nz-form-label>关键字</nz-form-label>
+              <nz-form-control>
+                <input name="keyword" nz-input placeholder="编码或名称" [(ngModel)]="searchParam.keyword" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="24" [nzMd]="10" [nzLg]="9" [nzXl]="8" class="text-right p-0">
+            <button nz-button nzType="primary" (click)="getDictList({ pageIndex: 1 })">
+              <i nz-icon nzType="search"></i>
+              搜索
+            </button>
+            <button class="m-l-15" nz-button (click)="resetDictSearch()">
+              <i nz-icon nzTheme="outline" nzType="close-circle"></i>
+              重置
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <nz-table
+      nzBordered
+      nzTableLayout="fixed"
+      [nzData]="dictDataList()"
+      [nzFrontPagination]="false"
+      [nzLoading]="dictTableConfig().loading"
+      [nzPageIndex]="dictTableConfig().pageIndex!"
+      [nzPageSize]="dictTableConfig().pageSize!"
+      [nzTotal]="dictTableConfig().total!"
+      [nzShowPagination]="true"
+      [nzShowSizeChanger]="true"
+      [nzShowQuickJumper]="true"
+      (nzPageIndexChange)="onDictPageIndexChange($event)"
+      (nzPageSizeChange)="onDictPageSizeChange($event)"
+    >
+      <thead>
+        <tr>
+          <th nzWidth="48px"></th>
+          <th nzWidth="160px">编码</th>
+          <th>名称</th>
+          <th nzWidth="200px">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (data of dictDataList(); track data.id) {
+          <tr>
+            <td
+              [nzShowExpand]="true"
+              [nzExpand]="isDictExpanded(data.id)"
+              (nzExpandChange)="onDictExpandChange(data.id, $event)"
+            ></td>
+            <td nzEllipsis>{{ data.code }}</td>
+            <td nzEllipsis>{{ data.name }}</td>
+            <td>
+              <span *appAuth="ActionCode.DictEdit" class="operate-text" (click)="editDict(data.id!)">编辑</span>
+              <span *appAuth="ActionCode.DictDel" class="operate-text" (click)="delDict(data.id!)">删除</span>
+            </td>
+          </tr>
+          <tr [nzExpand]="isDictExpanded(data.id)">
+            <td colspan="4" class="dict-nested-cell">
+              <div class="dict-nested-toolbar">
+                <button *appAuth="ActionCode.DictItemAdd" nz-button nzType="primary" nzSize="small" (click)="addItem(data.id!)">
+                  <i nz-icon nzType="plus"></i>
+                  新建字典项
+                </button>
+                <button class="m-l-8" nz-button nzSize="small" (click)="refreshItemsForDict(data.id!)" [disabled]="itemsLoadingFor(data.id!)">
+                  <i nz-icon nzType="reload"></i>
+                  刷新字典项
+                </button>
+              </div>
+              <nz-table
+                nzSize="small"
+                nzBordered
+                nzTableLayout="fixed"
+                class="dict-nested-table"
+                [nzData]="itemsForDict(data.id!)"
+                [nzShowPagination]="false"
+                [nzLoading]="itemsLoadingFor(data.id!)"
+                [nzNoResult]="nestedEmptyTpl"
+              >
+                <thead>
+                  <tr>
+                    <th nzWidth="120px">值</th>
+                    <th nzWidth="200px">标签</th>
+                    <th nzWidth="160px">操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of itemsForDict(data.id!); track item.id) {
+                    <tr>
+                      <td nzEllipsis>{{ item.value }}</td>
+                      <td nzEllipsis>{{ item.label }}</td>
+                      <td>
+                        <span *appAuth="ActionCode.DictItemEdit" class="operate-text" (click)="editItem(item.id!, data.id!)">编辑</span>
+                        <span *appAuth="ActionCode.DictItemDel" class="operate-text" (click)="delItem(item.id!, data.id!)">删除</span>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </nz-table>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </nz-table>
+  </nz-card>
+</div>
+
+<ng-template #nestedEmptyTpl>
+  <nz-empty nzNotFoundImage="simple" nzNotFoundContent="暂无字典项"></nz-empty>
+</ng-template>
