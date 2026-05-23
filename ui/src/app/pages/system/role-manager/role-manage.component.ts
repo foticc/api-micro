@@ -85,7 +85,7 @@ export class RoleManageComponent implements OnInit {
       filters: this.searchParam
     };
     this.dataService
-      .getRoles(params)
+      .getRolesPages(params)
       .pipe(
         finalize(() => {
           this.tableLoading(false);

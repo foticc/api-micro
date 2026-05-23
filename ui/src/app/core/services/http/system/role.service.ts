@@ -42,8 +42,12 @@ export interface Role {
 export class RoleService {
   http = inject(BaseHttpService);
 
-  public getRoles(param: SearchCommonVO<Role>): Observable<PageInfo<Role>> {
+  public getRoles(param: SearchCommonVO<Role>): Observable<Role[]> {
     return this.http.post('/role/list', param, { showLoading: true, loadingText: '请求中' });
+  }
+
+  public getRolesPages(param: SearchCommonVO<Role>): Observable<PageInfo<Role>> {
+    return this.http.post('/role/page', param, { showLoading: true, loadingText: '请求中' });
   }
 
   public getRolesDetail(id: number): Observable<Role> {

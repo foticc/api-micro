@@ -96,6 +96,8 @@ const adminAuthCodes = [
   'default:system:role-manager:del','default:system:role-manager:set-role',
   'default:system:menu','default:system:menu:add','default:system:menu:edit','default:system:menu:del','default:system:menu:addlowlevel',
   'default:system:dept','default:system:dept:add','default:system:dept:edit','default:system:dept:del','default:system:dept:addlowlevel',
+  'default:system:dict','default:system:dict:add','default:system:dict:edit','default:system:dict:del',
+  'default:system:dict:item:add','default:system:dict:item:edit','default:system:dict:item:del',
   'default:about'
 ];
 

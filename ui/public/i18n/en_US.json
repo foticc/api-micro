@@ -164,6 +164,7 @@
     "default:system:role-manager": "Role Manager",
     "default:system:menu": "Menu Manager",
     "default:system:dept": "Department",
+    "default:system:dict": "Dictionary",
     "default:about": "About",
     "blank:other-login": "Other Login",
     "blank:other-login:login1": "Type 1",

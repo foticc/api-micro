@@ -1,0 +1,45 @@
+<app-page-header [pageHeaderInfo]="pageHeader()"/>
+
+<app-card-table-wrap>
+  <div class="search-wrap"
+       style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <div style="display: flex; gap: 16px;">
+      <input
+        nz-input
+        style="width: 300px;"
+        placeholder="搜索路径或描述"
+        [(ngModel)]="keyword"
+      />
+      <button nz-button nzType="primary" (click)="search()">搜索</button>
+      <button nz-button (click)="resetSearch()">重置</button>
+    </div>
+    <button nz-button nzType="primary" (click)="add()">
+      <i nz-icon nzType="plus"></i>
+      新增API
+    </button>
+  </div>
+
+  <app-ant-table
+    [tableConfig]="tableConfig()"
+    [tableData]="dataList()"
+    (changePageIndex)="changePageIndex($event)"
+    (changePageSize)="changePageSize($event)"
+  >
+    <ng-template #operationTpl let-$$dataItem="$$dataItem">
+      <span class="operate-text" (click)="edit($$dataItem.id)">编辑</span>
+      <span class="operate-text" (click)="del($$dataItem.id)">删除</span>
+    </ng-template>
+
+    <ng-template #methodTagTpl let-$$dataItem="$$dataItem">
+      <span [ngClass]="{
+        'tag-get': $$dataItem.method === 'GET',
+        'tag-post': $$dataItem.method === 'POST',
+        'tag-put': $$dataItem.method === 'PUT',
+        'tag-delete': $$dataItem.method === 'DELETE',
+        'tag-patch': $$dataItem.method === 'PATCH'
+      }" class="method-tag">
+        {{ $$dataItem.method }}
+      </span>
+    </ng-template>
+  </app-ant-table>
+</app-card-table-wrap>

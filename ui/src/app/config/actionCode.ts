@@ -26,5 +26,13 @@ export const ActionCode = {
   DeptAdd: 'default:system:dept:add', // 部门管理新增
   DeptEdit: 'default:system:dept:edit', // 部门管理编辑
   DeptDel: 'default:system:dept:del', // 部门管理删除
-  DeptAddLowLevel: 'default:system:dept:addlowlevel' // 部门管理添加下级
+  DeptAddLowLevel: 'default:system:dept:addlowlevel', // 部门管理添加下级
+
+  /*字典管理*/
+  DictAdd: 'default:system:dict:add',
+  DictEdit: 'default:system:dict:edit',
+  DictDel: 'default:system:dict:del',
+  DictItemAdd: 'default:system:dict:item:add',
+  DictItemEdit: 'default:system:dict:item:edit',
+  DictItemDel: 'default:system:dict:item:del'
 };

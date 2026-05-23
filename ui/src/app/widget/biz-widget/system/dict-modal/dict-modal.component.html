@@ -1,0 +1,15 @@
+<form nz-form [formGroup]="addEditForm">
+  <nz-form-item>
+    <nz-form-label nzFor="code" nzRequired [nzSm]="4" [nzXs]="24">编码</nz-form-label>
+    <nz-form-control nzErrorTip="请输入编码" [nzSm]="18" [nzXs]="24">
+      <input id="code" name="code" formControlName="code" nz-input placeholder="字典编码" />
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label nzFor="name" nzRequired [nzSm]="4" [nzXs]="24">名称</nz-form-label>
+    <nz-form-control nzErrorTip="请输入名称" [nzSm]="18" [nzXs]="24">
+      <input id="name" name="name" formControlName="name" nz-input placeholder="字典名称" />
+    </nz-form-control>
+  </nz-form-item>
+</form>

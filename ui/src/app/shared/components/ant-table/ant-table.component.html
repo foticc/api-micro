@@ -3,17 +3,17 @@
 <nz-table
   nzBordered
   nzOuterBordered
-  nzShowPagination
-  nzShowQuickJumper
-  nzShowSizeChanger
+  [nzShowPagination]="tableConfig.showPagination !== false"
+  [nzShowQuickJumper]="tableConfig.showPagination !== false"
+  [nzShowSizeChanger]="tableConfig.showPagination !== false"
   nzTableLayout="fixed"
   [nzData]="_dataList()"
-  [nzFrontPagination]="false"
+  [nzFrontPagination]="tableConfig.showPagination === false"
   [nzLoading]="tableConfig.loading"
   [nzPageIndex]="tableConfig.pageIndex"
   [nzPageSize]="tableConfig.pageSize"
   [nzScroll]="_scrollConfig"
-  [nzShowTotal]="rangeTemplate"
+  [nzShowTotal]="tableConfig.showPagination !== false ? rangeTemplate : null"
   [nzSize]="tableSize"
   [nzTotal]="tableConfig.total"
   [nzVirtualForTrackBy]="trackById"

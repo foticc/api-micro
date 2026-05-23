@@ -164,6 +164,7 @@
     "default:system:role-manager": "角色管理",
     "default:system:menu": "菜单管理",
     "default:system:dept": "部门管理",
+    "default:system:dict": "字典管理",
     "default:about": "关于",
     "blank:other-login": "其他登录方式",
     "blank:other-login:login1": "第一种",

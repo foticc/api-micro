@@ -128,8 +128,14 @@ const rolePermissions: Record<number, string[]> = {
     'default:system:dept:edit',
     'default:system:dept:del',
     'default:system:dept:addlowlevel',
-    'default:about',
-    'default:system:dict-manage'
+    'default:system:dict',
+    'default:system:dict:add',
+    'default:system:dict:edit',
+    'default:system:dict:del',
+    'default:system:dict:item:add',
+    'default:system:dict:item:edit',
+    'default:system:dict:item:del',
+    'default:about'
   ],
   2: ['default:dashboard', 'default:dashboard:analysis', 'default:dashboard:monitor', 'default:dashboard:workbench', 'default:about']
 };

@@ -109,7 +109,7 @@ export class DeptComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(deptList => {
-        const target = fnFlatDataHasParentToTree(deptList.list);
+        const target = fnFlatDataHasParentToTree(deptList);
         let list = fnFlattenTreeDataByDataList(target);
         // 因为前段要对后端返回的数据进行处理，所以排序这里交给了前段来做
         if (sortFile) {

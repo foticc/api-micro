@@ -1,0 +1,41 @@
+<app-page-header [pageHeaderInfo]="pageHeaderInfo" />
+<app-rbac-nav />
+
+<nz-alert
+  class="m-b-16"
+  nzType="info"
+  nzShowIcon
+  nzMessage="本页只读"
+  nzDescription="菜单层级用于核对权限挂载；新增、编辑权限请在「权限定义」完成，避免与菜单配置脱节。"
+/>
+
+<nz-card nzTitle="菜单 → 权限 → API" [nzExtra]="extraTpl">
+  <ng-template #extraTpl>
+    <button nz-button (click)="expandAll()">全部展开</button>
+    <button nz-button class="m-l-8" (click)="collapseAll()">全部收起</button>
+    <button nz-button nzType="primary" class="m-l-8" (click)="goDefine()">前往权限定义</button>
+  </ng-template>
+
+  <div class="structure-scroll">
+    @if (tree().length === 0) {
+      <nz-empty nzNotFoundContent="暂无挂载数据" />
+    } @else {
+      <nz-tree
+        [nzData]="tree()"
+        [nzExpandedKeys]="expandedKeys()"
+        (nzExpandedKeysChange)="expandedKeys.set($event)"
+        nzShowLine
+        [nzTreeTemplate]="treeTpl"
+      />
+      <ng-template #treeTpl let-node>
+        <span>{{ node.title }}</span>
+        @if (node.origin.countLabel) {
+          <span class="tree-meta">{{ node.origin.countLabel }}</span>
+        }
+        @if (node.origin.type === 'api') {
+          <span class="tree-meta">只读</span>
+        }
+      </ng-template>
+    }
+  </div>
+</nz-card>

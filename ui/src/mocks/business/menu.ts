@@ -75,6 +75,7 @@ let menus: Menu[] = [
   { id: 60, fatherId: 6, menuName: '角色管理', menuType: 'C', alIcon: 'icon-mel-help', icon: '', path: '/default/system/role-manager', code: 'default:system:role-manager', orderNum: 2, status: true, newLinkFlag: false, visible: true },
   { id: 61, fatherId: 6, menuName: '菜单管理', menuType: 'C', alIcon: '', icon: 'menu', path: '/default/system/menu', code: 'default:system:menu', orderNum: 3, status: true, newLinkFlag: false, visible: true },
   { id: 62, fatherId: 6, menuName: '部门管理', menuType: 'C', alIcon: 'icon-mel-help', icon: '', path: '/default/system/dept', code: 'default:system:dept', orderNum: 4, status: true, newLinkFlag: false, visible: true },
+  { id: 131, fatherId: 6, menuName: '字典管理', menuType: 'C', alIcon: '', icon: 'book', path: '/default/system/dict', code: 'default:system:dict', orderNum: 5, status: true, newLinkFlag: false, visible: true },
   { id: 63, fatherId: 11, menuName: '基础表单', menuType: 'C', alIcon: '', icon: 'form', path: '/default/page-demo/form/base-form', code: 'default:page-demo:form:base-form', orderNum: 1, status: true, newLinkFlag: false, visible: true },
   { id: 64, fatherId: 11, menuName: '分步表单', menuType: 'C', alIcon: '', icon: 'form', path: '/default/page-demo/form/step-form', code: 'default:page-demo:form:step-form', orderNum: 2, status: true, newLinkFlag: false, visible: true },
   { id: 65, fatherId: 11, menuName: '高级表单', menuType: 'C', alIcon: '', icon: 'form', path: '/default/page-demo/form/advanced-form', code: 'default:page-demo:form:advanced-form', orderNum: 3, status: true, newLinkFlag: false, visible: true },
@@ -124,6 +125,12 @@ let menus: Menu[] = [
   { id: 109, fatherId: 62, menuName: '部门管理编辑', menuType: 'F', alIcon: '', icon: '', path: '', code: 'default:system:dept:edit', orderNum: 2, status: true, newLinkFlag: false, visible: false },
   { id: 110, fatherId: 62, menuName: '部门管理删除', menuType: 'F', alIcon: '', icon: '', path: '', code: 'default:system:dept:del', orderNum: 3, status: true, newLinkFlag: false, visible: false },
   { id: 111, fatherId: 62, menuName: '部门管理添加下级', menuType: 'F', alIcon: '', icon: '', path: '', code: 'default:system:dept:addlowlevel', orderNum: 4, status: true, newLinkFlag: false, visible: false },
+  { id: 132, fatherId: 131, menuName: '字典类型新增', menuType: 'F', alIcon: '', icon: '', path: '', code: 'default:system:dict:add', orderNum: 1, status: true, newLinkFlag: false, visible: false },
+  { id: 133, fatherId: 131, menuName: '字典类型编辑', menuType: 'F', alIcon: '', icon: '', path: '', code: 'default:system:dict:edit', orderNum: 2, status: true, newLinkFlag: false, visible: false },
+  { id: 134, fatherId: 131, menuName: '字典类型删除', menuType: 'F', alIcon: '', icon: '', path: '', code: 'default:system:dict:del', orderNum: 3, status: true, newLinkFlag: false, visible: false },
+  { id: 135, fatherId: 131, menuName: '字典项新增', menuType: 'F', alIcon: '', icon: '', path: '', code: 'default:system:dict:item:add', orderNum: 4, status: true, newLinkFlag: false, visible: false },
+  { id: 136, fatherId: 131, menuName: '字典项编辑', menuType: 'F', alIcon: '', icon: '', path: '', code: 'default:system:dict:item:edit', orderNum: 5, status: true, newLinkFlag: false, visible: false },
+  { id: 137, fatherId: 131, menuName: '字典项删除', menuType: 'F', alIcon: '', icon: '', path: '', code: 'default:system:dict:item:del', orderNum: 6, status: true, newLinkFlag: false, visible: false },
   { id: 112, fatherId: 66, menuName: '搜索列表(文章)', menuType: 'C', alIcon: '', icon: 'table', path: '/default/page-demo/list/search-list/article', code: 'default:page-demo:list:search-list:article', orderNum: 1, status: true, newLinkFlag: false, visible: true },
   { id: 113, fatherId: 66, menuName: '搜索列表(项目)', menuType: 'C', alIcon: '', icon: 'table', path: '/default/page-demo/list/search-list/project', code: 'default:page-demo:list:search-list:project', orderNum: 2, status: true, newLinkFlag: false, visible: true },
   { id: 114, fatherId: 66, menuName: '搜索列表(应用)', menuType: 'C', alIcon: '', icon: 'table', path: '/default/page-demo/list/search-list/application', code: 'default:page-demo:list:search-list:application', orderNum: 3, status: true, newLinkFlag: false, visible: true },
@@ -145,7 +152,7 @@ let menus: Menu[] = [
   { id: 130, fatherId: 3, menuName: '多语言', menuType: 'C', alIcon: '', icon: 'menu-fold', path: '/default/feat/multilingual', code: 'default:feat:multilingual', orderNum: 29, status: true, newLinkFlag: false, visible: true },
 ];
 
-let nextId = 131;
+let nextId = 138;
 
 export const menu = [
   http.post('/site/api/auth/menu', () => {

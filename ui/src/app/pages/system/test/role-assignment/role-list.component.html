@@ -1,0 +1,122 @@
+@if (viewMode() === 'list') {
+  <app-page-header [pageHeaderInfo]="listPageHeader" />
+  <app-rbac-nav />
+
+  <div class="normal-table-wrap">
+    <nz-card nzHoverable [nzBordered]="false" nzTitle="角色列表">
+      <nz-table
+        nzSize="middle"
+        [nzData]="roles()"
+        [nzLoading]="listLoading()"
+        [nzFrontPagination]="true"
+        [nzPageSize]="10"
+        [nzShowSizeChanger]="true"
+      >
+        <thead>
+          <tr>
+            <th>角色名称</th>
+            <th>说明</th>
+            <th>已绑权限数</th>
+            <th nzWidth="120px">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of roles(); track row.id) {
+            <tr>
+              <td>{{ row.roleName }}</td>
+              <td>{{ row.roleDesc || '—' }}</td>
+              <td>{{ row.permissionIds.length }}</td>
+              <td>
+                <span class="operate-text" (click)="openAssign(row)">分配</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </nz-table>
+    </nz-card>
+  </div>
+} @else {
+  <app-page-header [pageHeaderInfo]="assignPageHeader()" />
+  <app-rbac-nav />
+
+  <div class="normal-table-wrap">
+    <button class="m-b-16" nz-button (click)="backToList()">
+      <i nz-icon nzType="arrow-left"></i>
+      返回角色列表
+    </button>
+
+    <nz-card class="m-b-16" nzTitle="勾选权限">
+      <div class="m-b-16">
+        <nz-space nzWrap>
+          <input
+            *nzSpaceItem
+            nz-input
+            placeholder="搜索权限"
+            style="width: 240px"
+            [ngModel]="keyword()"
+            (ngModelChange)="keyword.set($event); onFilterChange()"
+          />
+          <label *nzSpaceItem nz-checkbox [ngModel]="onlySelected()" (ngModelChange)="onlySelected.set($event); onFilterChange()">仅看已选</label>
+          <span *nzSpaceItem class="muted">已选 {{ selectedCount() }} / {{ totalPermissionCount() }}</span>
+          <button *nzSpaceItem nz-button (click)="expandAll()">展开模块</button>
+          <button *nzSpaceItem nz-button (click)="collapseAll()">收起模块</button>
+        </nz-space>
+      </div>
+
+      <div class="assign-scroll">
+        @if (assignLoading()) {
+          <span class="muted">加载中…</span>
+        } @else if (filteredTree().length === 0) {
+          <nz-empty nzNotFoundContent="无匹配权限" />
+        } @else {
+          @for (mod of filteredTree(); track mod.key) {
+            <div class="tree-node">
+              <label nz-checkbox [ngModel]="mod.checked" [nzIndeterminate]="mod.halfChecked" (ngModelChange)="onCheck(mod, $event)"></label>
+              <span class="hand-model m-l-8" (click)="toggleModuleExpand(mod.key)">
+                <i nz-icon [nzType]="isModuleExpanded(mod.key) ? 'down' : 'right'"></i>
+                {{ mod.title }}
+              </span>
+            </div>
+            @if (isModuleExpanded(mod.key)) {
+              @for (perm of mod.children ?? []; track perm.key) {
+                <div class="tree-node tree-node-perm">
+                  <label nz-checkbox [ngModel]="perm.checked" (ngModelChange)="onCheck(perm, $event)"></label>
+                  <span class="m-l-8">{{ perm.title }}</span>
+                </div>
+              }
+            }
+          }
+        }
+      </div>
+    </nz-card>
+
+    <nz-collapse>
+      <nz-collapse-panel nzHeader="API 预览（只读）" [nzActive]="true">
+        <p class="muted m-b-8">共 {{ apiTotal() }} 条接口</p>
+        <nz-table [nzData]="apiPreview()" nzSize="small" [nzFrontPagination]="true" [nzPageSize]="8">
+          <thead>
+            <tr>
+              <th>方法</th>
+              <th>路径</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of apiPreview(); track row.path + row.method) {
+              <tr>
+                <td>{{ row.method }}</td>
+                <td>{{ row.path }}</td>
+                <td>{{ row.description || '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </nz-table>
+      </nz-collapse-panel>
+    </nz-collapse>
+
+    <div class="m-t-24 text-right">
+      <button nz-button (click)="backToList()">取消</button>
+      <button class="m-l-8" nz-button nzType="primary" [nzLoading]="saving()" (click)="submitAssign()">保存</button>
+    </div>
+  </div>
+}

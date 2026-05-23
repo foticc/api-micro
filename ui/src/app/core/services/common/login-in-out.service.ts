@@ -76,17 +76,23 @@ export class LoginInOutService {
   clearSessionCash(): void {
     this.windowServe.removeSessionStorage(TokenKey);
     this.menuService.setMenuArrayStore([]);
+    this.userInfoService.$userInfo.set({ userId: -1, userName: '', authCode: [] });
   }
 
-  loginOut(): Promise<void> {
-    this.loginService.loginOut().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+  /**
+   * Token 已失效时的本地清理：不调用登出接口，避免携带无效 Token 请求 /auth/signout。
+   * 用于 HTTP 401、业务码 1010 等鉴权失败场景。
+   */
+  clearSessionAndRedirect(): Promise<void> {
+    this.clearSessionCash();
     return this.router
       .navigate(['/login/login-form'])
-      .then(() => {
-        return this.clearTabCash();
-      })
-      .then(() => {
-        return this.clearSessionCash();
-      });
+      .then(() => this.clearTabCash());
+  }
+
+  /** 用户主动登出：通知后端后清理本地会话 */
+  loginOut(): Promise<void> {
+    this.loginService.loginOut().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    return this.clearSessionAndRedirect();
   }
 }

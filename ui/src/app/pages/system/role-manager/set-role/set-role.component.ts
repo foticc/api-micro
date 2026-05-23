@@ -27,19 +27,7 @@ import { NzResultModule } from 'ng-zorro-antd/result';
   styleUrl: './set-role.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [
-    PageHeaderComponent,
-    NzCardModule,
-    NzCheckboxModule,
-    FormsModule,
-    NzIconModule,
-    NzButtonModule,
-    NzDividerModule,
-    NzResultModule,
-    NgTemplateOutlet,
-    FooterSubmitComponent,
-    NzWaveModule
-]
+  imports: [PageHeaderComponent, NzCardModule, NzCheckboxModule, FormsModule, NzIconModule, NzButtonModule, NzDividerModule, NzResultModule, NgTemplateOutlet, FooterSubmitComponent, NzWaveModule]
 })
 export class SetRoleComponent implements OnInit {
   pageHeaderInfo = signal<Partial<PageHeaderType>>({
@@ -73,7 +61,7 @@ export class SetRoleComponent implements OnInit {
       )
       .subscribe(response => {
         // isOpen表示 节点是否展开
-        const menuArray: Array<Menu & { isOpen?: boolean; checked?: boolean }> = response.list;
+        const menuArray: Array<Menu & { isOpen?: boolean; checked?: boolean }> = response;
         menuArray.forEach(item => {
           item.isOpen = false;
           item.checked = this.authCodeArr.includes(item.code);

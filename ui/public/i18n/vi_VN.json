@@ -164,6 +164,7 @@
     "default:system:role-manager": "Quản lý vai trò",
     "default:system:menu": "Quản lý menu",
     "default:system:dept": "Quản lý phòng ban",
+    "default:system:dict": "Quản lý từ điển",
     "default:about": "Giới thiệu",
     "blank:other-login": "Cách đăng nhập khác",
     "blank:other-login:login1": "Loại 1",
