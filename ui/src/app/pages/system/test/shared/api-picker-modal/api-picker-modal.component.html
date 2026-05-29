@@ -1,0 +1,161 @@
+<div class="picker-search">
+  <form nz-form>
+    <div nz-row [nzGutter]="12">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item class="m-b-0">
+          <nz-form-control>
+            <input
+              name="keyword"
+              nz-input
+              placeholder="搜索路径、描述或方法"
+              [(ngModel)]="searchParam.keyword"
+              (keyup.enter)="search()"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="5">
+        <nz-form-item class="m-b-0">
+          <nz-form-control>
+            <nz-select name="method" nzAllowClear nzPlaceHolder="请求方法" [(ngModel)]="searchParam.method">
+              @for (opt of methodOptions; track opt.value) {
+                <nz-option [nzLabel]="opt.label" [nzValue]="opt.value" />
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="5">
+        <nz-form-item class="m-b-0">
+          <nz-form-control>
+            <nz-select
+              name="addedFilter"
+              nzPlaceHolder="添加状态"
+              [(ngModel)]="addedFilter"
+              (ngModelChange)="onAddedFilterChange()"
+            >
+              @for (opt of addedFilterOptions; track opt.value) {
+                <nz-option [nzLabel]="opt.label" [nzValue]="opt.value" />
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="text-right" nz-col [nzSpan]="6">
+        <button nz-button nzType="primary" (click)="search()">
+          <i nz-icon nzType="search"></i>
+          搜索
+        </button>
+        <button class="m-l-8" nz-button (click)="resetSearch()">重置</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="picker-toolbar">
+  <button nz-button nzSize="small" (click)="expandAll()">全部展开</button>
+  <button class="m-l-8" nz-button nzSize="small" (click)="collapseAll()">全部收起</button>
+  <button class="m-l-8" nz-button nzSize="small" (click)="selectAllFiltered()">选中当前筛选结果</button>
+  <button class="m-l-8" nz-button nzSize="small" (click)="clearSelection()" [disabled]="selectedCount() === 0">
+    清空已选
+  </button>
+  <span class="m-l-16" style="color: rgba(0, 0, 0, 0.45); font-size: 13px">
+    当前筛选可添加 {{ filteredSelectableCount() }} 条；本次已选 {{ selectedCount() }} 条
+  </span>
+</div>
+
+<div class="picker-panels">
+  <div class="picker-panel">
+    <div class="picker-panel-header">
+      <span>可选 API（按首段分组）</span>
+    </div>
+    <p class="picker-panel-hint">勾选分组节点可选中该组下全部未添加 API；灰色「已添加」不可重复选择</p>
+    <div class="picker-panel-body">
+      <nz-spin [nzSpinning]="loading()">
+        @if (treeNodes().length === 0 && !loading()) {
+          <div class="panel-empty">
+            <nz-empty nzNotFoundContent="暂无匹配 API" nzNotFoundImage="simple" />
+          </div>
+        } @else {
+          <nz-tree
+            nzCheckable
+            [nzCheckedKeys]="checkedKeys()"
+            [nzData]="treeNodes()"
+            [nzExpandedKeys]="expandedKeys()"
+            [nzTreeTemplate]="treeTpl"
+            (nzCheckedKeysChange)="onCheckedKeysChange($event)"
+            (nzExpandedKeysChange)="expandedKeys.set($event)"
+          />
+          <ng-template #treeTpl let-node let-origin="origin">
+            <span class="tree-node-title">
+              @if (isGroupOrigin(origin)) {
+                <span class="tree-node-path" nz-tooltip [nzTooltipTitle]="origin.groupPrefix">{{ origin.segmentLabel }}</span>
+                <span class="tree-node-desc">({{ groupSummary(origin) }})</span>
+              } @else if (origin.api) {
+                <nz-tag class="tree-node-tag" [nzColor]="methodTagColor(origin.api.method)">{{ origin.api.method }}</nz-tag>
+                <span class="tree-node-path" nz-tooltip [nzTooltipTitle]="origin.api.path">{{ origin.api.path }}</span>
+                @if (origin.api.description) {
+                  <span class="tree-node-desc">{{ origin.api.description }}</span>
+                }
+                @if (isExistingOrigin(origin)) {
+                  <nz-tag class="tree-node-tag" nzColor="default">已添加</nz-tag>
+                }
+              }
+            </span>
+          </ng-template>
+        }
+      </nz-spin>
+    </div>
+  </div>
+
+  <div class="picker-panel">
+    <div class="picker-panel-header">
+      <span>已选 API（{{ selectedCount() }}）</span>
+      <nz-select
+        nzSize="small"
+        style="width: 120px"
+        [(ngModel)]="sortBy"
+        (ngModelChange)="onSortChange()"
+      >
+        @for (opt of sortOptions; track opt.value) {
+          <nz-option [nzLabel]="opt.label" [nzValue]="opt.value" />
+        }
+      </nz-select>
+    </div>
+    <p class="picker-panel-hint">仅展示本次新选 API，确认后将加入资源组</p>
+    <div class="picker-panel-body">
+      @if (selectedList().length === 0) {
+        <div class="panel-empty">
+          <nz-empty nzNotFoundContent="尚未选择 API" nzNotFoundImage="simple" />
+        </div>
+      } @else {
+        <div class="selected-list">
+          @for (api of selectedList(); track api.id) {
+            <div class="selected-item">
+              <div class="selected-item-main">
+                <div class="selected-item-path">
+                  <nz-tag [nzColor]="methodTagColor(api.method)">{{ api.method }}</nz-tag>
+                  <span nz-tooltip [nzTooltipTitle]="api.path">{{ api.path }}</span>
+                </div>
+                @if (api.description) {
+                  <div class="selected-item-desc">{{ api.description }}</div>
+                }
+              </div>
+              <button
+                class="selected-item-remove"
+                nz-button
+                nz-tooltip
+                nzDanger
+                nzTooltipTitle="移除"
+                nzType="text"
+                (click)="removeSelected(api.id!)"
+              >
+                <i nz-icon nzType="close"></i>
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

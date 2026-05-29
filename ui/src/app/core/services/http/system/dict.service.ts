@@ -42,7 +42,8 @@ export class DictService {
   }
 
   public editDict(param: DictDTO): Observable<void> {
-    return this.http.put('/dict/update', param, { needSuccessInfo: true });
+    const { id, ...body } = param;
+    return this.http.put(`/dict/${id}`, body, { needSuccessInfo: true });
   }
 
   public delDict(ids: number[]): Observable<void> {
@@ -63,7 +64,8 @@ export class DictService {
   }
 
   public editDictItem(param: DictItemDTO): Observable<void> {
-    return this.http.put('/dict/item/update', param, { needSuccessInfo: true });
+    const { id, ...body } = param;
+    return this.http.put(`/dict/item/${id}`, body, { needSuccessInfo: true });
   }
 
   public delDictItem(ids: number[]): Observable<void> {

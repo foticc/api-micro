@@ -1,0 +1,95 @@
+<app-page-header [pageHeaderInfo]="listPageHeader" />
+
+<div class="normal-table-wrap">
+  <nz-card class="m-b-10" nzHoverable [nzBodyStyle]="{ 'padding-bottom': 0 }">
+    <form nz-form>
+      <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24 }">
+        <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+          <nz-form-item>
+            <nz-form-label>关键字</nz-form-label>
+            <nz-form-control>
+              <input name="keyword" nz-input placeholder="路径或描述" [(ngModel)]="searchParam.keyword" (keyup.enter)="getDataList({ pageIndex: 1 })" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+          <nz-form-item>
+            <nz-form-label>请求方法</nz-form-label>
+            <nz-form-control>
+              <nz-select name="method" nzAllowClear nzPlaceHolder="全部" [(ngModel)]="searchParam.method">
+                @for (opt of methodOptions; track opt.value) {
+                  <nz-option [nzLabel]="opt.label" [nzValue]="opt.value" />
+                }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="text-right p-0 m-b-10" nz-col [nzLg]="8" [nzMd]="24" [nzSm]="24" [nzXs]="24">
+          <button nz-button nzType="primary" (click)="getDataList({ pageIndex: 1 })">
+            <i nz-icon nzType="search"></i>
+            搜索
+          </button>
+          <button class="m-l-15" nz-button (click)="resetSearch()">
+            <i nz-icon nzType="close-circle"></i>
+            重置
+          </button>
+        </div>
+      </div>
+    </form>
+  </nz-card>
+
+  <app-card-table-wrap [btnTpl]="tableBtns" [tableTitle]="'API 列表'" (reload)="reloadTable()">
+    <app-ant-table
+      [checkedCashArrayFromComment]="checkedCashArray"
+      [tableConfig]="tableConfig()"
+      [tableData]="dataList()"
+      (changePageIndex)="getDataList($event)"
+      (changePageSize)="changePageSize($event)"
+      (selectedChange)="selectedChecked($event)"
+    />
+    <ng-template #methodTagTpl let-method="method">
+      @switch (method) {
+        @case ('GET') {
+          <nz-tag nzColor="success">{{ method }}</nz-tag>
+        }
+        @case ('POST') {
+          <nz-tag nzColor="processing">{{ method }}</nz-tag>
+        }
+        @case ('PUT') {
+          <nz-tag nzColor="warning">{{ method }}</nz-tag>
+        }
+        @case ('DELETE') {
+          <nz-tag nzColor="error">{{ method }}</nz-tag>
+        }
+        @case ('PATCH') {
+          <nz-tag nzColor="purple">{{ method }}</nz-tag>
+        }
+        @default {
+          <nz-tag>{{ method }}</nz-tag>
+        }
+      }
+    </ng-template>
+    <ng-template #descriptionTpl let-description="description">
+      {{ description || '—' }}
+    </ng-template>
+    <ng-template #operationTpl let-$$dataItem="$$dataItem" let-id="id">
+      <span class="operate-text" (click)="edit(id)">编辑</span>
+      <span class="operate-text" (click)="remove(id, $$dataItem)">删除</span>
+    </ng-template>
+  </app-card-table-wrap>
+</div>
+
+<ng-template #tableBtns>
+  <button class="m-r-8" nz-button nzType="primary" (click)="add()">
+    <i nz-icon nzType="plus"></i>
+    新增 API
+  </button>
+  <button class="m-r-8" nz-button nzType="default" nzDanger (click)="allDel()">
+    <i nz-icon nzType="delete"></i>
+    批量删除
+  </button>
+  <button nz-button (click)="openSync()">
+    <i nz-icon nzType="sync"></i>
+    同步接口
+  </button>
+</ng-template>

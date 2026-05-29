@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { PermissionListFilters, PermissionListQuery, RbacPermission, RbacPermissionPayload, RbacRole, RbacStructureTreeNode } from '@app/pages/system/test/models/rbac.models';
+import { PermissionListFilters, PermissionListQuery, RbacPermission, RbacPermissionPageItem, RbacPermissionPayload, RbacRole, RbacRolePageItem, RoleListFilters } from '@app/pages/system/test/models/rbac.models';
 import { PageInfo, SearchCommonVO } from '@core/services/types';
 import { BaseHttpService } from '@services/base-http.service';
 
@@ -10,46 +10,46 @@ export class RbacTestService {
   private http = inject(BaseHttpService);
 
   listPermissions(query?: PermissionListQuery): Observable<RbacPermission[]> {
-    return this.http.post('/rbac-test/permissions/list', query ?? {});
+    return this.http.post('/rbac/permissions/list', query ?? {});
   }
 
-  listPermissionsPage(param: SearchCommonVO<PermissionListFilters>): Observable<PageInfo<RbacPermission>> {
-    return this.http.post('/rbac-test/permissions/page', param, { showLoading: true });
+  listPermissionsPage(param: SearchCommonVO<PermissionListFilters>): Observable<PageInfo<RbacPermissionPageItem>> {
+    return this.http.post('/rbac/permissions/page', param, { showLoading: true });
   }
 
   getPermission(id: number): Observable<RbacPermission> {
-    return this.http.get(`/rbac-test/permissions/${id}`);
+    return this.http.get(`/rbac/permissions/${id}`);
   }
 
   createPermission(payload: RbacPermissionPayload): Observable<RbacPermission> {
-    return this.http.post('/rbac-test/permissions', payload, { needSuccessInfo: true });
+    return this.http.post('/rbac/permissions', payload, { needSuccessInfo: true });
   }
 
   updatePermission(id: number, payload: RbacPermissionPayload): Observable<RbacPermission> {
-    return this.http.put(`/rbac-test/permissions/${id}`, payload, { needSuccessInfo: true });
+    return this.http.put(`/rbac/permissions/${id}`, payload, { needSuccessInfo: true });
   }
 
   deletePermission(id: number): Observable<void> {
-    return this.http.delete(`/rbac-test/permissions/${id}`, undefined, { needSuccessInfo: true });
-  }
-
-  getMenuStructureTree(): Observable<RbacStructureTreeNode[]> {
-    return this.http.get('/rbac-test/menu-structure');
+    return this.http.post('/rbac/permissions/del', { ids: [id] }, { needSuccessInfo: true });
   }
 
   listRoles(): Observable<RbacRole[]> {
-    return this.http.get('/rbac-test/roles');
+    return this.http.get('/rbac/roles');
+  }
+
+  listRolesPage(param: SearchCommonVO<RoleListFilters>): Observable<PageInfo<RbacRolePageItem>> {
+    return this.http.post('/rbac/roles/page', param, { showLoading: true });
   }
 
   getRole(id: number): Observable<RbacRole> {
-    return this.http.get(`/rbac-test/roles/${id}`);
+    return this.http.get(`/rbac/roles/${id}`);
   }
 
   assignRolePermissions(roleId: number, permissionIds: number[]): Observable<void> {
-    return this.http.post(`/rbac-test/roles/${roleId}/permissions`, { permissionIds }, { needSuccessInfo: true });
+    return this.http.post(`/rbac/roles/${roleId}/permissions`, { permissionIds }, { needSuccessInfo: true });
   }
 
   previewApis(permissionIds: number[]): Observable<{ total: number; list: RbacPermission['apis'] }> {
-    return this.http.post('/rbac-test/permissions/preview-apis', { permissionIds });
+    return this.http.post('/rbac/permissions/preview-apis', { permissionIds });
   }
 }

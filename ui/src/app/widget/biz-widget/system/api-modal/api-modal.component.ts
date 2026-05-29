@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 
 import { fnCheckForm } from '@utils/tools';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
-import { ApiResource } from '@app/pages/system/api/models/api.models';
+import { ApiResourceDTO } from '@services/system/api-resource.service';
 
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -21,7 +21,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 })
 export class ApiModalComponent extends BasicConfirmModalComponent implements OnInit {
   addEditForm!: FormGroup;
-  readonly nzModalData: ApiResource = inject(NZ_MODAL_DATA);
+  readonly nzModalData: ApiResourceDTO = inject(NZ_MODAL_DATA);
   isEdit = false;
 
   readonly methodOptions = [

@@ -5,7 +5,11 @@ import { role } from './business/role';
 import { menu } from './business/menu';
 import { permission } from './business/permission';
 import { dict } from './business/dict';
+import { apiResource } from './business/api-resource';
 import { rbacTest } from './business/rbac-test';
+import { rbacTestMenu } from './business/rbac-test-menu';
+import { rbacTestUser } from './business/rbac-test-user';
+import { rbacTestApiSync } from './business/rbac-test-api-sync';
 import { example } from './business/example';
 
 export const handlers = [
@@ -17,6 +21,10 @@ export const handlers = [
   ...menu,
   ...permission,
   ...dict,
+  ...apiResource,
   ...example,
   ...rbacTest,
+  ...rbacTestMenu,
+  ...rbacTestUser,
+  ...rbacTestApiSync,
 ];

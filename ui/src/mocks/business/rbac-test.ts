@@ -1,35 +1,36 @@
 import { http, HttpResponse } from 'msw';
 
-import type { RbacPermission, RbacPermissionPayload, RbacRole } from '@app/pages/system/test/models/rbac.models';
-
-interface StructureTreeNode {
-  key: string;
-  title: string;
-  type: 'module' | 'permission' | 'api';
-  permissionId?: number;
-  children?: StructureTreeNode[];
-}
-
-function buildStructureTree(permissions: RbacPermission[]): StructureTreeNode[] {
-  return permissions.map(p => ({
-    key: `perm:${p.id}`,
-    title: `${p.name} [${p.code}]`,
-    type: 'permission',
-    permissionId: p.id,
-    children: (p.apis || []).map(api => ({
-      key: `api:${p.id}:${api.path}`,
-      title: `${api.method} ${api.path}`,
-      type: 'api'
-    }))
-  }));
-}
+import type { PermissionApi, RbacPermission, RbacPermissionPageItem, RbacPermissionPayload, RbacRole, RbacRolePageItem } from '@app/pages/system/test/models/rbac.models';
 
 let nextPermId = 100;
 let nextRoleId = 10;
 
-const permissions: RbacPermission[] = [
+function resolveModule(p: { code: string; module?: string }): string {
+  if (p.module) {
+    return p.module;
+  }
+  if (p.code === 'all') {
+    return 'all';
+  }
+  const idx = p.code.indexOf(':');
+  return idx > 0 ? p.code.slice(0, idx) : p.code;
+}
+
+const rawPermissions = [
   {
     id: 1,
+    code: 'all',
+    name: '所有权限',
+    module: 'all',
+    menuIds: [1, 8],
+    menus: [
+      { id: 1, code: 'default:dashboard', menuName: 'Dashboard', menuType: 'C' },
+      { id: 8, code: 'default:dashboard:analysis', menuName: '分析页', menuType: 'C' }
+    ] as RbacPermission['menus'],
+    apis: []
+  },
+  {
+    id: 2,
     code: 'sys:user:list',
     name: '用户列表查询',
 
@@ -39,7 +40,7 @@ const permissions: RbacPermission[] = [
     ]
   },
   {
-    id: 2,
+    id: 17,
     code: 'sys:user:create',
     name: '用户创建',
 
@@ -193,6 +194,11 @@ const permissions: RbacPermission[] = [
   }
 ];
 
+const permissions: RbacPermission[] = rawPermissions.map(p => ({
+  ...p,
+  module: p.module ?? resolveModule(p)
+}));
+
 let roles: RbacRole[] = [
   { id: 1, roleName: '超级管理员', roleDesc: '拥有所有权限', permissionIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16] },
   { id: 2, roleName: '系统管理员', roleDesc: '管理系统配置', permissionIds: [1, 2, 3, 4, 5, 6, 7, 8] },
@@ -200,6 +206,25 @@ let roles: RbacRole[] = [
   { id: 4, roleName: '数据分析师', roleDesc: '查看报表数据', permissionIds: [9, 13, 15, 16] },
   { id: 5, roleName: '普通用户', roleDesc: '基础操作权限', permissionIds: [1, 9, 13] }
 ];
+
+function toRolePageItem(r: RbacRole): RbacRolePageItem {
+  return {
+    id: r.id,
+    roleName: r.roleName,
+    roleDesc: r.roleDesc,
+    permissionCount: r.permissionIds.length
+  };
+}
+
+function filterRoles(keyword?: string): RbacRole[] {
+  const k = (keyword ?? '').trim().toLowerCase();
+  if (!k) {
+    return [...roles];
+  }
+  return roles.filter(
+    r => r.roleName.toLowerCase().includes(k) || (r.roleDesc && r.roleDesc.toLowerCase().includes(k))
+  );
+}
 
 function filterList(keyword?: string): RbacPermission[] {
   const k = (keyword ?? '').trim().toLowerCase();
@@ -210,18 +235,54 @@ function filterList(keyword?: string): RbacPermission[] {
     p =>
       p.name.toLowerCase().includes(k) ||
       p.code.toLowerCase().includes(k) ||
+      resolveModule(p).toLowerCase().includes(k) ||
       (p.apis && p.apis.some(api => api.path.toLowerCase().includes(k))) ||
-      p.menus?.some(m => m.name.toLowerCase().includes(k) || m.code.toLowerCase().includes(k))
+      p.menus?.some(m => {
+        const name = String(m.name ?? m['menuName'] ?? '');
+        const code = String(m.code ?? '');
+        return name.toLowerCase().includes(k) || code.toLowerCase().includes(k);
+      })
   );
 }
 
+function toPageItem(p: RbacPermission): RbacPermissionPageItem {
+  return {
+    id: p.id,
+    code: p.code,
+    name: p.name,
+    module: resolveModule(p),
+    menuCount: p.menus?.length ?? p.menuIds?.length ?? 0,
+    apiCount: p.apis?.length ?? 0
+  };
+}
+
+function permissionFromPayload(id: number, body: RbacPermissionPayload): RbacPermission {
+  const { apiIds, ...rest } = body;
+  const prev = permissions.find(p => p.id === id);
+  const prevApiById = new Map(
+    (prev?.apis ?? [])
+      .filter((a): a is PermissionApi & { id: number } => a.id != null)
+      .map(a => [a.id, a])
+  );
+
+  return {
+    id,
+    ...rest,
+    module: rest.module,
+    apis: (apiIds ?? []).map(apiId => {
+      const cached = prevApiById.get(apiId);
+      return cached ?? { id: apiId, method: '', path: '', description: '' };
+    })
+  };
+}
+
 export const rbacTest = [
-  http.post('/site/api/rbac-test/permissions/list', async ({ request }) => {
+  http.post('/site/api/rbac/permissions/list', async ({ request }) => {
     const body = (await request.json()) as { keyword?: string };
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: filterList(body.keyword) });
   }),
 
-  http.post('/site/api/rbac-test/permissions/page', async ({ request }) => {
+  http.post('/site/api/rbac/permissions/page', async ({ request }) => {
     const body = (await request.json()) as { pageIndex: number; pageSize: number; filters?: { keyword?: string } };
     const list = filterList(body.filters?.keyword);
     const total = list.length;
@@ -233,27 +294,35 @@ export const rbacTest = [
         total,
         pageSize: body.pageSize,
         pageIndex: body.pageIndex,
-        list: list.slice(start, start + body.pageSize)
+        list: list.slice(start, start + body.pageSize).map(toPageItem)
       }
     });
   }),
 
-  http.get('/site/api/rbac-test/permissions/:id', ({ params }) => {
-    const item = permissions.find(p => p.id === Number(params['id']));
-    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: item ?? null });
+  http.get('/site/api/rbac/permissions/:id', ({ params }) => {
+    const id = Number(params['id']);
+    const item = permissions.find(p => p.id === id);
+    if (!item) {
+      return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: null });
+    }
+    return HttpResponse.json({
+      code: 200,
+      msg: 'SUCCESS',
+      data: { ...item, module: item.module ?? resolveModule(item) }
+    });
   }),
 
-  http.post('/site/api/rbac-test/permissions', async ({ request }) => {
+  http.post('/site/api/rbac/permissions', async ({ request }) => {
     const body = (await request.json()) as RbacPermissionPayload;
     if (permissions.some(p => p.code === body.code)) {
       return HttpResponse.json({ code: 400, msg: '权限编码已存在', data: null }, { status: 200 });
     }
-    const item: RbacPermission = { id: nextPermId++, ...body };
+    const item = permissionFromPayload(nextPermId++, body);
     permissions.push(item);
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: item });
   }),
 
-  http.put('/site/api/rbac-test/permissions/:id', async ({ request, params }) => {
+  http.put('/site/api/rbac/permissions/:id', async ({ request, params }) => {
     const id = Number(params['id']);
     const body = (await request.json()) as RbacPermissionPayload;
     const idx = permissions.findIndex(p => p.id === id);
@@ -263,34 +332,49 @@ export const rbacTest = [
     if (permissions.some(p => p.code === body.code && p.id !== id)) {
       return HttpResponse.json({ code: 400, msg: '权限编码已存在', data: null }, { status: 200 });
     }
-    permissions[idx] = { id, ...body };
+    permissions[idx] = permissionFromPayload(id, body);
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: permissions[idx] });
   }),
 
-  http.delete('/site/api/rbac-test/permissions/:id', ({ params }) => {
-    const id = Number(params['id']);
-    const idx = permissions.findIndex(p => p.id === id);
-    if (idx !== -1) {
-      permissions.splice(idx, 1);
-      roles = roles.map(r => ({ ...r, permissionIds: r.permissionIds.filter(pid => pid !== id) }));
-    }
+  http.post('/site/api/rbac/permissions/del', async ({ request }) => {
+    const { ids } = (await request.json()) as { ids: number[] };
+    ids.forEach(id => {
+      const idx = permissions.findIndex(p => p.id === id);
+      if (idx !== -1) {
+        permissions.splice(idx, 1);
+        roles = roles.map(r => ({ ...r, permissionIds: r.permissionIds.filter(pid => pid !== id) }));
+      }
+    });
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: null });
   }),
 
-  http.get('/site/api/rbac-test/menu-structure', () => {
-    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: buildStructureTree(permissions) });
-  }),
-
-  http.get('/site/api/rbac-test/roles', () => {
+  http.get('/site/api/rbac/roles', () => {
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: roles });
   }),
 
-  http.get('/site/api/rbac-test/roles/:id', ({ params }) => {
+  http.post('/site/api/rbac/roles/page', async ({ request }) => {
+    const body = (await request.json()) as { pageIndex: number; pageSize: number; filters?: { keyword?: string } };
+    const list = filterRoles(body.filters?.keyword);
+    const total = list.length;
+    const start = (body.pageIndex - 1) * body.pageSize;
+    return HttpResponse.json({
+      code: 200,
+      msg: 'SUCCESS',
+      data: {
+        total,
+        pageSize: body.pageSize,
+        pageIndex: body.pageIndex,
+        list: list.slice(start, start + body.pageSize).map(toRolePageItem)
+      }
+    });
+  }),
+
+  http.get('/site/api/rbac/roles/:id', ({ params }) => {
     const item = roles.find(r => r.id === Number(params['id']));
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: item ?? null });
   }),
 
-  http.post('/site/api/rbac-test/roles/:roleId/permissions', async ({ request, params }) => {
+  http.post('/site/api/rbac/roles/:roleId/permissions', async ({ request, params }) => {
     const roleId = Number(params['roleId']);
     const { permissionIds } = (await request.json()) as { permissionIds: number[] };
     const idx = roles.findIndex(r => r.id === roleId);
@@ -300,7 +384,7 @@ export const rbacTest = [
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: null });
   }),
 
-  http.post('/site/api/rbac-test/permissions/preview-apis', async ({ request }) => {
+  http.post('/site/api/rbac/permissions/preview-apis', async ({ request }) => {
     const { permissionIds } = (await request.json()) as { permissionIds: number[] };
     const list = permissions.filter(p => permissionIds.includes(p.id)).flatMap(p => p.apis);
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: { total: list.length, list } });

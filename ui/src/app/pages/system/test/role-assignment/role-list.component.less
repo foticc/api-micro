@@ -1,0 +1,108 @@
+.normal-table-wrap {
+  margin-top: 0;
+}
+
+.role-assign-form-wrap {
+  padding-bottom: 72px;
+}
+
+.form-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.form-toolbar-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  .muted {
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 13px;
+  }
+}
+
+.section-hint {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 13px;
+  margin: -8px 0 16px;
+}
+
+.assign-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.resource-row {
+  align-items: stretch;
+}
+
+.resource-card {
+  height: 100%;
+}
+
+/** 固定预览区高度，避免 empty / table / loading 切换时页面抖动 */
+.preview-panel-body {
+  min-height: 380px;
+}
+
+.preview-spin {
+  display: block;
+  min-height: 380px;
+}
+
+.preview-table-wrap {
+  min-height: 360px;
+}
+
+.preview-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  margin: 0;
+}
+
+.permission-pick-table {
+  .permission-row {
+    cursor: pointer;
+  }
+
+  .permission-row-active > td {
+    background: #e6f4ff !important;
+  }
+}
+
+.api-table {
+  ::ng-deep .ant-table-cell {
+    vertical-align: middle;
+  }
+
+  ::ng-deep .ant-table-body {
+    overflow-y: auto !important;
+  }
+}
+
+.form-footer-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 12px 24px;
+  background: #fff;
+  border-top: 1px solid #f0f0f0;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+}

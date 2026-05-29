@@ -1,7 +1,7 @@
 import { inject, Injectable, Type } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { ApiResource } from '@app/pages/system/api/models/api.models';
+import { ApiResourceDTO } from '@services/system/api-resource.service';
 import { ModalResponse, ModalWrapService } from '@widget/base-modal';
 import { ApiModalComponent } from '@widget/biz-widget/system/api-modal/api-modal.component';
 
@@ -17,7 +17,7 @@ export class ApiModalService {
     return ApiModalComponent;
   }
 
-  public show(modalOptions: ModalOptions = {}, modalData?: ApiResource): Observable<ModalResponse> {
-    return this.modalWrapService.show<ApiModalComponent, ApiResource>(this.getContentComponent(), modalOptions, modalData);
+  public show(modalOptions: ModalOptions = {}, modalData?: ApiResourceDTO): Observable<ModalResponse> {
+    return this.modalWrapService.show<ApiModalComponent, ApiResourceDTO>(this.getContentComponent(), modalOptions, modalData);
   }
 }

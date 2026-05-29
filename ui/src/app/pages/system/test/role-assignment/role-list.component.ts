@@ -1,295 +1,350 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs/operators';
 
+import { RbacTestService } from '@services/system/rbac-test.service';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
-import { RbacPermission, RbacRole } from '../models/rbac.models';
-import { mockPermissions, mockRoles } from '../models/rbac.mock';
-import { RbacNavComponent } from '../shared/rbac-nav.component';
+import { normalizePermissionMenus } from '../shared/permission-menu-tree.util';
+import { PermissionApi, PermissionMenu, RbacPermissionPageItem, RbacRolePageItem } from '../models/rbac.models';
 
+import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
-import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzSpaceModule } from 'ng-zorro-antd/space';
-import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 
 type ViewMode = 'list' | 'assign';
-
-interface AssignTreeNode {
-  key: string;
-  title: string;
-  type: 'module' | 'permission';
-  permissionId?: number;
-  children?: AssignTreeNode[];
-  checked: boolean;
-  halfChecked: boolean;
-}
 
 @Component({
   selector: 'app-role-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    RbacNavComponent,
     FormsModule,
     NzCardModule,
+    NzFormModule,
+    NzGridModule,
     NzTableModule,
     NzButtonModule,
     NzWaveModule,
     NzInputModule,
     NzCheckboxModule,
-    NzCollapseModule,
     NzIconModule,
-    NzSpaceModule,
-    NzSwitchModule,
-    NzEmptyModule
+    NzAlertModule,
+    NzEmptyModule,
+    NzTagModule,
+    NzSpinModule
   ],
   templateUrl: './role-list.component.html',
-  styles: `
-    .assign-scroll {
-      max-height: 420px;
-      overflow: auto;
-      border: 1px solid #f0f0f0;
-      padding: 12px;
-      border-radius: 4px;
-    }
-    .tree-node {
-      padding: 4px 0;
-    }
-    .tree-node-perm {
-      padding-left: 16px;
-    }
-    .muted {
-      color: rgba(0, 0, 0, 0.45);
-      font-size: 12px;
-    }
-  `
+  styleUrl: './role-list.component.less'
 })
 export class RoleListComponent implements OnInit {
   private message = inject(NzMessageService);
+  private rbacTestService = inject(RbacTestService);
+  private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
 
   viewMode = signal<ViewMode>('list');
+  listKeyword = '';
+  assignKeyword = '';
+  onlySelected = false;
   listLoading = signal(false);
   assignLoading = signal(false);
+  previewLoading = signal(false);
   saving = signal(false);
 
-  roles = signal<RbacRole[]>([...mockRoles]);
-  permissions = signal<RbacPermission[]>([...mockPermissions]);
+  rolePageList = signal<RbacRolePageItem[]>([]);
+  roleTotal = signal(0);
+  rolePageIndex = signal(1);
+  rolePageSize = signal(10);
+
+  permissionList = signal<RbacPermissionPageItem[]>([]);
+
+  /** 勾选绑定到角色的资源组 */
+  private selectedPermissionIds = new Set<number>();
+  allChecked = false;
+  indeterminate = false;
+
+  /** 当前预览详情的资源组 id，默认不选中 */
+  activePreviewId = signal<number | null>(null);
+  previewMenus = signal<PermissionMenu[]>([]);
+  previewApis = signal<PermissionApi[]>([]);
 
   assignRoleId = 0;
   assignRoleName = '';
   assignRoleDesc = '';
-  keyword = signal('');
-  onlySelected = signal(false);
-  private readonly filterTick = signal(0);
-
-  allPermissions = signal<RbacPermission[]>([]);
-  assignTree = signal<AssignTreeNode[]>([]);
-  apiPreview = signal<{ method: string; path: string; description?: string }[]>([]);
-  apiTotal = signal(0);
-  expandedModuleKeys = signal<Set<string>>(new Set());
 
   readonly listPageHeader: Partial<PageHeaderType> = {
     title: '角色分配',
-    desc: '为角色分配权限资源组。'
+    desc: '为角色勾选权限资源组，与「权限资源组」页定义的数据一致。'
   };
 
   readonly assignPageHeader = signal<Partial<PageHeaderType>>({
-    title: '分配权限',
+    title: '分配权限资源组',
     desc: ''
   });
 
-  selectedCount = computed(() => this.collectPermissionIdsFromAssignTree(this.assignTree()).length);
-  totalPermissionCount = computed(() => this.allPermissions().length);
-
-  filteredTree = computed(() => {
-    this.filterTick();
-    const perms = this.filterPermissions(this.allPermissions(), this.keyword());
-    const ids = new Set(this.collectPermissionIdsFromAssignTree(this.assignTree()));
-    if (!this.onlySelected()) {
-      return this.buildAssignTree(perms, ids);
-    }
-    return this.buildAssignTree(
-      perms.filter(p => ids.has(p.id)),
-      ids
-    );
-  });
-
   ngOnInit(): void {
-    this.loadRoles();
+    this.loadRolePage();
   }
 
-  loadRoles(): void {
+  selectedPermissionCount(): number {
+    return this.selectedPermissionIds.size;
+  }
+
+  permissionListScroll(): { y: string } {
+    return { y: '280px' };
+  }
+
+  readonly previewTableScroll = { y: '320px' };
+
+  loadRolePage(pageIndex = this.rolePageIndex()): void {
     this.listLoading.set(true);
-    setTimeout(() => {
-      this.roles.set([...mockRoles]);
-      this.listLoading.set(false);
-    }, 300);
-  }
-
-  private filterPermissions(permissions: RbacPermission[], keyword?: string): RbacPermission[] {
-    if (!keyword?.trim()) {
-      return permissions;
-    }
-    const k = keyword.toLowerCase();
-    return permissions.filter(
-      p =>
-        p.name.toLowerCase().includes(k) ||
-        p.code.toLowerCase().includes(k) ||
-        (p.apis && p.apis.some(api => api.path.toLowerCase().includes(k))) ||
-        p.menus?.some(m => m.name.toLowerCase().includes(k) || m.code.toLowerCase().includes(k))
-    );
-  }
-
-  private buildAssignTree(permissions: RbacPermission[], selectedIds: Set<number>): AssignTreeNode[] {
-    return permissions.map(p => {
-      const isChecked = selectedIds.has(p.id);
-      return {
-        key: `perm:${p.id}`,
-        title: `${p.name} [${p.code}]`,
-        type: 'permission',
-        permissionId: p.id,
-        checked: isChecked,
-        halfChecked: false
-      };
-    });
-  }
-
-  private collectPermissionIdsFromAssignTree(nodes: AssignTreeNode[]): number[] {
-    const ids: number[] = [];
-    const walk = (ns: AssignTreeNode[]) => {
-      for (const n of ns) {
-        if (n.type === 'permission' && n.checked && n.permissionId) {
-          ids.push(n.permissionId);
-        }
-        if (n.children) {
-          walk(n.children);
-        }
-      }
-    };
-    walk(nodes);
-    return ids;
-  }
-
-  private toggleAssignNodeChecked(nodes: AssignTreeNode[], key: string, checked: boolean): AssignTreeNode[] {
-    const result: AssignTreeNode[] = [];
-    const walk = (ns: AssignTreeNode[]): AssignTreeNode[] => {
-      return ns.map(n => {
-        if (n.key === key) {
-          const updated = { ...n, checked, halfChecked: false };
-          return updated;
-        }
-        if (n.children) {
-          const updatedChildren = walk(n.children);
-          const childChecked = updatedChildren.filter(c => c.checked).length;
-          return {
-            ...n,
-            children: updatedChildren,
-            checked: childChecked === updatedChildren.length,
-            halfChecked: childChecked > 0 && childChecked !== updatedChildren.length
-          };
-        }
-        return n;
+    const keyword = this.listKeyword.trim();
+    this.rbacTestService
+      .listRolesPage({
+        pageIndex,
+        pageSize: this.rolePageSize(),
+        filters: keyword ? { keyword } : {}
+      })
+      .pipe(
+        finalize(() => {
+          this.listLoading.set(false);
+          this.cdr.markForCheck();
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(data => {
+        this.rolePageList.set(data.list);
+        this.roleTotal.set(data.total);
+        this.rolePageIndex.set(data.pageIndex);
+        this.rolePageSize.set(data.pageSize);
       });
-    };
-    return walk(nodes);
   }
 
-  openAssign(role: RbacRole): void {
-    this.assignRoleId = role.id;
-    this.assignRoleName = role.roleName;
-    this.assignRoleDesc = role.roleDesc ?? '';
-    this.assignPageHeader.set({
-      title: '分配权限',
-      desc: `当前角色：${this.assignRoleName}${this.assignRoleDesc ? ' — ' + this.assignRoleDesc : ''}`
-    });
-    this.keyword.set('');
-    this.onlySelected.set(false);
+  searchRoles(): void {
+    this.loadRolePage(1);
+  }
+
+  resetRoleSearch(): void {
+    this.listKeyword = '';
+    this.loadRolePage(1);
+  }
+
+  onRolePageIndexChange(index: number): void {
+    this.loadRolePage(index);
+  }
+
+  onRolePageSizeChange(size: number): void {
+    this.rolePageSize.set(size);
+    this.loadRolePage(1);
+  }
+
+  openAssign(row: RbacRolePageItem): void {
     this.assignLoading.set(true);
-    this.viewMode.set('assign');
-
-    setTimeout(() => {
-      const perms = [...mockPermissions];
-      this.allPermissions.set(perms);
-
-      const roleData = mockRoles.find(r => r.id === role.id);
-      const selected = new Set(roleData?.permissionIds ?? []);
-
-      this.assignTree.set(this.buildAssignTree(perms, selected));
-      this.expandedModuleKeys.set(new Set(this.assignTree().map(n => n.key)));
-      this.refreshApiPreview();
-
-      this.assignLoading.set(false);
-    }, 300);
+    this.rbacTestService
+      .getRole(row.id)
+      .pipe(
+        finalize(() => {
+          this.assignLoading.set(false);
+          this.cdr.markForCheck();
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(role => {
+        if (!role) {
+          this.message.warning('角色不存在');
+          return;
+        }
+        this.assignRoleId = role.id;
+        this.assignRoleName = role.roleName;
+        this.assignRoleDesc = role.roleDesc ?? '';
+        this.assignPageHeader.set({
+          title: '分配权限资源组',
+          desc: `当前角色：${this.assignRoleName}${this.assignRoleDesc ? ' — ' + this.assignRoleDesc : ''}`
+        });
+        this.assignKeyword = '';
+        this.onlySelected = false;
+        this.selectedPermissionIds = new Set(role.permissionIds);
+        this.clearPreview();
+        this.viewMode.set('assign');
+        this.loadPermissionList();
+      });
   }
 
   backToList(): void {
     this.viewMode.set('list');
-    this.loadRoles();
+    this.clearPreview();
+    this.loadRolePage(this.rolePageIndex());
   }
 
-  onFilterChange(): void {
-    this.filterTick.update(v => v + 1);
+  loadPermissionList(): void {
+    this.assignLoading.set(true);
+    const keyword = this.assignKeyword.trim();
+    this.rbacTestService
+      .listPermissionsPage({
+        pageIndex: 1,
+        pageSize: 9999,
+        filters: keyword ? { keyword } : {}
+      })
+      .pipe(
+        finalize(() => {
+          this.assignLoading.set(false);
+          this.cdr.markForCheck();
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(data => {
+        let list = data.list;
+        if (this.onlySelected) {
+          list = list.filter(p => this.selectedPermissionIds.has(p.id));
+        }
+        this.permissionList.set(list);
+        this.refreshCheckedStatus();
+        this.syncPreviewAfterListChange();
+      });
   }
 
-  refreshApiPreview(): void {
-    const ids = this.collectPermissionIdsFromAssignTree(this.assignTree());
-    const list = this.permissions()
-      .filter(p => ids.includes(p.id))
-      .flatMap(p => p.apis || []);
-
-    this.apiPreview.set(list);
-    this.apiTotal.set(list.length);
+  searchPermissions(): void {
+    this.loadPermissionList();
   }
 
-  onCheck(node: AssignTreeNode, checked: boolean): void {
-    this.assignTree.set(this.toggleAssignNodeChecked(this.assignTree(), node.key, checked));
-    this.refreshApiPreview();
+  resetPermissionSearch(): void {
+    this.assignKeyword = '';
+    this.onlySelected = false;
+    this.loadPermissionList();
   }
 
-  toggleModuleExpand(key: string): void {
-    const set = new Set(this.expandedModuleKeys());
-    if (set.has(key)) {
-      set.delete(key);
+  onOnlySelectedChange(checked: boolean): void {
+    this.onlySelected = checked;
+    this.loadPermissionList();
+  }
+
+  isPermissionChecked(row: RbacPermissionPageItem): boolean {
+    return this.selectedPermissionIds.has(row.id);
+  }
+
+  isPreviewActive(row: RbacPermissionPageItem): boolean {
+    return this.activePreviewId() === row.id;
+  }
+
+  onPermissionChecked(row: RbacPermissionPageItem, checked: boolean): void {
+    if (checked) {
+      this.selectedPermissionIds.add(row.id);
     } else {
-      set.add(key);
+      this.selectedPermissionIds.delete(row.id);
     }
-    this.expandedModuleKeys.set(set);
+    this.refreshCheckedStatus();
+    this.cdr.markForCheck();
   }
 
-  isModuleExpanded(key: string): boolean {
-    return this.expandedModuleKeys().has(key);
+  onAllPermissionChecked(checked: boolean): void {
+    for (const row of this.permissionList()) {
+      if (checked) {
+        this.selectedPermissionIds.add(row.id);
+      } else {
+        this.selectedPermissionIds.delete(row.id);
+      }
+    }
+    this.refreshCheckedStatus();
+    this.cdr.markForCheck();
   }
 
-  expandAll(): void {
-    this.expandedModuleKeys.set(new Set(this.assignTree().map(n => n.key)));
+  selectPermissionPreview(row: RbacPermissionPageItem): void {
+    if (this.activePreviewId() === row.id) {
+      return;
+    }
+    this.activePreviewId.set(row.id);
+    this.previewLoading.set(true);
+    this.rbacTestService
+      .getPermission(row.id)
+      .pipe(
+        finalize(() => {
+          this.previewLoading.set(false);
+          this.cdr.markForCheck();
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(p => {
+        if (!p) {
+          this.message.warning('权限资源组不存在');
+          this.clearPreview();
+          return;
+        }
+        this.previewMenus.set(normalizePermissionMenus(p.menus));
+        this.previewApis.set(p.apis ?? []);
+        this.cdr.markForCheck();
+      });
   }
 
-  collapseAll(): void {
-    this.expandedModuleKeys.set(new Set());
+  refreshCheckedStatus(): void {
+    const list = this.permissionList();
+    if (list.length === 0) {
+      this.allChecked = false;
+      this.indeterminate = false;
+      return;
+    }
+    const checkedCount = list.filter(r => this.isPermissionChecked(r)).length;
+    this.allChecked = checkedCount === list.length;
+    this.indeterminate = checkedCount > 0 && checkedCount < list.length;
+  }
+
+  private clearPreview(): void {
+    this.activePreviewId.set(null);
+    this.previewMenus.set([]);
+    this.previewApis.set([]);
+  }
+
+  /** 筛选后若当前预览项不在列表中，清空预览 */
+  private syncPreviewAfterListChange(): void {
+    const previewId = this.activePreviewId();
+    if (previewId == null) {
+      return;
+    }
+    if (!this.permissionList().some(p => p.id === previewId)) {
+      this.clearPreview();
+    }
+  }
+
+  methodTagColor(method: string): string {
+    const map: Record<string, string> = {
+      GET: 'success',
+      POST: 'processing',
+      PUT: 'warning',
+      DELETE: 'error',
+      PATCH: 'purple'
+    };
+    return map[method] ?? 'default';
   }
 
   submitAssign(): void {
-    const ids = this.collectPermissionIdsFromAssignTree(this.assignTree());
+    if (this.selectedPermissionIds.size === 0) {
+      this.message.warning('请至少选择一个权限资源组');
+      return;
+    }
     this.saving.set(true);
-
-    setTimeout(() => {
-      const idx = this.roles().findIndex(r => r.id === this.assignRoleId);
-      if (idx !== -1) {
-        const updatedRoles = [...this.roles()];
-        updatedRoles[idx] = { ...updatedRoles[idx], permissionIds: [...ids] };
-        this.roles.set(updatedRoles);
-      }
-
-      this.message.success('角色权限已保存');
-      this.saving.set(false);
-      this.backToList();
-    }, 300);
+    const permissionIds = [...this.selectedPermissionIds];
+    this.rbacTestService
+      .assignRolePermissions(this.assignRoleId, permissionIds)
+      .pipe(
+        finalize(() => {
+          this.saving.set(false);
+          this.cdr.markForCheck();
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: () => this.backToList()
+      });
   }
 }

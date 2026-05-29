@@ -1,5 +1,13 @@
 import { RbacPermission, RbacRole } from './rbac.models';
 
+function moduleFromCode(code: string): string {
+  if (code === 'all') {
+    return 'all';
+  }
+  const idx = code.indexOf(':');
+  return idx > 0 ? code.slice(0, idx) : code;
+}
+
 export const mockMenus = [
   { id: 101, code: 'sys:user', name: '用户管理', type: 'menu' as const },
   { id: 102, code: 'sys:role', name: '角色管理', type: 'menu' as const },
@@ -19,7 +27,7 @@ export const mockMenus = [
   { id: 210, code: 'btn:order:export', name: '导出订单', type: 'button' as const },
 ];
 
-export const mockPermissions: RbacPermission[] = [
+const mockPermissionsRaw = [
   {
     id: 1,
     code: 'sys:user:view',
@@ -181,6 +189,11 @@ export const mockPermissions: RbacPermission[] = [
     description: '查看报表和日志权限'
   }
 ];
+
+export const mockPermissions = mockPermissionsRaw.map(p => ({
+  ...p,
+  module: moduleFromCode(p.code)
+})) as RbacPermission[];
 
 export const mockRoles: RbacRole[] = [
   { id: 1, roleName: '超级管理员', roleDesc: '拥有所有权限', permissionIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },

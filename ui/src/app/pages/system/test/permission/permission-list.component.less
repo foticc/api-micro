@@ -1,0 +1,89 @@
+.normal-table-wrap {
+  margin-top: 0;
+}
+
+.permission-form-wrap {
+  padding-bottom: 72px;
+}
+
+.form-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.form-toolbar-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  .muted {
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 13px;
+  }
+}
+
+.edit-target {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 14px;
+}
+
+.edit-target-name {
+  color: rgba(0, 0, 0, 0.88);
+  font-weight: 600;
+}
+
+.section-hint {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 13px;
+  margin: -8px 0 16px;
+}
+
+.resource-row {
+  align-items: stretch;
+}
+
+.resource-card {
+  height: 100%;
+}
+
+.api-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.api-table {
+  ::ng-deep .ant-table-cell {
+    vertical-align: middle;
+  }
+
+  ::ng-deep .ant-table-body {
+    overflow-y: auto !important;
+  }
+}
+
+.form-footer-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 12px 24px;
+  background: #fff;
+  border-top: 1px solid #f0f0f0;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+}
