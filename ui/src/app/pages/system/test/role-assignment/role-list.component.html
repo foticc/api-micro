@@ -29,6 +29,14 @@
 
     <nz-card nzHoverable nzTitle="角色列表" [nzBordered]="false" [nzExtra]="listExtra">
       <ng-template #listExtra>
+        <button class="m-r-8" nz-button nzType="primary" (click)="addRole()">
+          <i nz-icon nzType="plus"></i>
+          新建
+        </button>
+        <button class="m-r-8" nz-button (click)="batchDelRoles()">
+          <i nz-icon nzType="delete"></i>
+          批量删除
+        </button>
         <button nz-button (click)="loadRolePage()">
           <i nz-icon nzType="reload"></i>
           刷新
@@ -50,20 +58,26 @@
       >
         <thead>
           <tr>
+            <th nzWidth="48px" [nzChecked]="allRoleChecked" [nzIndeterminate]="roleIndeterminate" (nzCheckedChange)="onAllRoleChecked($event)"></th>
             <th>角色名称</th>
             <th>说明</th>
             <th>已绑资源组</th>
-            <th nzWidth="100px">操作</th>
+            <th nzWidth="180px">操作</th>
           </tr>
         </thead>
         <tbody>
           @for (row of rolePageList(); track row.id) {
             <tr>
+              <td>
+                <label nz-checkbox [ngModel]="isRoleChecked(row)" (ngModelChange)="onRoleChecked(row, $event)"></label>
+              </td>
               <td>{{ row.roleName }}</td>
               <td>{{ row.roleDesc || '—' }}</td>
               <td>{{ row.permissionCount }} 个</td>
               <td>
                 <span class="operate-text" (click)="openAssign(row)">分配</span>
+                <span class="operate-text" (click)="editRole(row)">编辑</span>
+                <span class="operate-text" (click)="delRole(row.id)">删除</span>
               </td>
             </tr>
           }

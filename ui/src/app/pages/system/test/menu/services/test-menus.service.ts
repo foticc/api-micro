@@ -19,7 +19,7 @@ export class TestMenusService {
 
   addMenus(param: TestMenuListObj): Observable<void> {
     const { id: _id, ...body } = param;
-    return this.http.post('/rbac/menu', body, { needSuccessInfo: true });
+    return this.http.post('/rbac/menu/create', body, { needSuccessInfo: true });
   }
 
   editMenus(param: TestMenuListObj): Observable<void> {

@@ -5,8 +5,10 @@ import { finalize } from 'rxjs/operators';
 
 import { RbacTestService } from '@services/system/rbac-test.service';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
+import { ModalBtnStatus } from '@widget/base-modal';
+import { TestRoleModalService } from '@app/pages/system/test/role-assignment/test-role-modal/test-role-modal.service';
 import { normalizePermissionMenus } from '../shared/permission-menu-tree.util';
-import { PermissionApi, PermissionMenu, RbacPermissionPageItem, RbacRolePageItem } from '../models/rbac.models';
+import { PermissionApi, PermissionMenu, RbacPermissionPageItem, RbacRolePageItem, RbacRolePayload } from '../models/rbac.models';
 
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -19,6 +21,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
@@ -50,6 +53,8 @@ type ViewMode = 'list' | 'assign';
 })
 export class RoleListComponent implements OnInit {
   private message = inject(NzMessageService);
+  private modalSrv = inject(NzModalService);
+  private roleModalService = inject(TestRoleModalService);
   private rbacTestService = inject(RbacTestService);
   private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
@@ -68,6 +73,10 @@ export class RoleListComponent implements OnInit {
   rolePageIndex = signal(1);
   rolePageSize = signal(10);
 
+  private selectedRoleIds = new Set<number>();
+  allRoleChecked = false;
+  roleIndeterminate = false;
+
   permissionList = signal<RbacPermissionPageItem[]>([]);
 
   /** 勾选绑定到角色的资源组 */
@@ -85,8 +94,8 @@ export class RoleListComponent implements OnInit {
   assignRoleDesc = '';
 
   readonly listPageHeader: Partial<PageHeaderType> = {
-    title: '角色分配',
-    desc: '为角色勾选权限资源组，与「权限资源组」页定义的数据一致。'
+    title: '角色管理（测试）',
+    desc: '角色的增删改查与权限资源组分配。'
   };
 
   readonly assignPageHeader = signal<Partial<PageHeaderType>>({
@@ -129,7 +138,138 @@ export class RoleListComponent implements OnInit {
         this.roleTotal.set(data.total);
         this.rolePageIndex.set(data.pageIndex);
         this.rolePageSize.set(data.pageSize);
+        this.refreshRoleCheckedStatus();
       });
+  }
+
+  addRole(): void {
+    this.roleModalService
+      .show({ nzTitle: '新增角色' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(res => {
+        if (!res || res.status === ModalBtnStatus.Cancel) {
+          return;
+        }
+        this.listLoading.set(true);
+        this.rbacTestService
+          .createRole(res.modalValue as RbacRolePayload)
+          .pipe(
+            finalize(() => {
+              this.listLoading.set(false);
+              this.cdr.markForCheck();
+            }),
+            takeUntilDestroyed(this.destroyRef)
+          )
+          .subscribe(() => this.loadRolePage(1));
+      });
+  }
+
+  editRole(row: RbacRolePageItem): void {
+    this.rbacTestService
+      .getRole(row.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(role => {
+        if (!role) {
+          this.message.warning('角色不存在');
+          return;
+        }
+        this.roleModalService
+          .show({ nzTitle: '编辑角色' }, { roleName: role.roleName, roleDesc: role.roleDesc })
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe(({ modalValue, status }) => {
+            if (status === ModalBtnStatus.Cancel) {
+              return;
+            }
+            this.listLoading.set(true);
+            this.rbacTestService
+              .updateRole(row.id, modalValue as RbacRolePayload)
+              .pipe(
+                finalize(() => {
+                  this.listLoading.set(false);
+                  this.cdr.markForCheck();
+                }),
+                takeUntilDestroyed(this.destroyRef)
+              )
+              .subscribe(() => this.loadRolePage(this.rolePageIndex()));
+          });
+      });
+  }
+
+  delRole(id: number): void {
+    this.confirmDeleteRoles([id]);
+  }
+
+  batchDelRoles(): void {
+    if (this.selectedRoleIds.size === 0) {
+      this.message.error('请勾选数据');
+      return;
+    }
+    this.confirmDeleteRoles([...this.selectedRoleIds]);
+  }
+
+  isRoleChecked(row: RbacRolePageItem): boolean {
+    return this.selectedRoleIds.has(row.id);
+  }
+
+  onRoleChecked(row: RbacRolePageItem, checked: boolean): void {
+    if (checked) {
+      this.selectedRoleIds.add(row.id);
+    } else {
+      this.selectedRoleIds.delete(row.id);
+    }
+    this.refreshRoleCheckedStatus();
+    this.cdr.markForCheck();
+  }
+
+  onAllRoleChecked(checked: boolean): void {
+    for (const row of this.rolePageList()) {
+      if (checked) {
+        this.selectedRoleIds.add(row.id);
+      } else {
+        this.selectedRoleIds.delete(row.id);
+      }
+    }
+    this.refreshRoleCheckedStatus();
+    this.cdr.markForCheck();
+  }
+
+  private refreshRoleCheckedStatus(): void {
+    const list = this.rolePageList();
+    if (list.length === 0) {
+      this.allRoleChecked = false;
+      this.roleIndeterminate = false;
+      return;
+    }
+    const checkedCount = list.filter(r => this.selectedRoleIds.has(r.id)).length;
+    this.allRoleChecked = checkedCount === list.length;
+    this.roleIndeterminate = checkedCount > 0 && checkedCount < list.length;
+  }
+
+  private confirmDeleteRoles(ids: number[]): void {
+    this.modalSrv.confirm({
+      nzTitle: '确定要删除吗？',
+      nzContent: '删除后不可恢复',
+      nzOnOk: () => {
+        this.listLoading.set(true);
+        this.rbacTestService
+          .deleteRole(ids)
+          .pipe(
+            finalize(() => {
+              this.listLoading.set(false);
+              this.cdr.markForCheck();
+            }),
+            takeUntilDestroyed(this.destroyRef)
+          )
+          .subscribe(() => {
+            ids.forEach(id => this.selectedRoleIds.delete(id));
+            if (this.rolePageList().length === ids.length && this.rolePageIndex() > 1) {
+              this.loadRolePage(this.rolePageIndex() - 1);
+            } else {
+              this.loadRolePage(this.rolePageIndex());
+            }
+          });
+      }
+    });
   }
 
   searchRoles(): void {

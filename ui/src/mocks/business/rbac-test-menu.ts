@@ -55,7 +55,7 @@ let testMenus: TestMenuRecord[] = [
   {
     id: 1003,
     fatherId: 1001,
-    menuName: '角色分配',
+    menuName: '角色管理（测试）',
     menuType: 'C',
     alIcon: '',
     icon: 'team',

@@ -10,7 +10,7 @@ export default [
   },
   {
     path: 'role-assignment',
-    title: '角色分配',
+    title: '角色管理（测试）',
     data: { key: 'rbac-role-assignment' },
     loadComponent: () => import('./role-assignment/role-list.component').then(m => m.RoleListComponent)
   },
@@ -36,21 +36,18 @@ export default [
     path: 'oauth2-client',
     title: 'OAuth2 客户端',
     data: { key: 'rbac-test-oauth2-client' },
-    loadComponent: () =>
-      import('./oauth2-admin/client/oauth2-client-list.component').then(m => m.OAuth2ClientListComponent)
+    loadComponent: () => import('./oauth2-admin/client/oauth2-client-list.component').then(m => m.OAuth2ClientListComponent)
   },
   {
     path: 'oauth2-authorization',
     title: 'OAuth2 授权记录',
     data: { key: 'rbac-test-oauth2-authorization' },
-    loadComponent: () =>
-      import('./oauth2-admin/authorization/oauth2-authorization-list.component').then(m => m.OAuth2AuthorizationListComponent)
+    loadComponent: () => import('./oauth2-admin/authorization/oauth2-authorization-list.component').then(m => m.OAuth2AuthorizationListComponent)
   },
   {
     path: 'oauth2-consent',
     title: 'OAuth2 授权同意',
     data: { key: 'rbac-test-oauth2-consent' },
-    loadComponent: () =>
-      import('./oauth2-admin/consent/oauth2-consent-list.component').then(m => m.OAuth2ConsentListComponent)
+    loadComponent: () => import('./oauth2-admin/consent/oauth2-consent-list.component').then(m => m.OAuth2ConsentListComponent)
   }
 ] satisfies Route[];

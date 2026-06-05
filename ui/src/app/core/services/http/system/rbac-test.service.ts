@@ -1,7 +1,17 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { PermissionListFilters, PermissionListQuery, RbacPermission, RbacPermissionPageItem, RbacPermissionPayload, RbacRole, RbacRolePageItem, RoleListFilters } from '@app/pages/system/test/models/rbac.models';
+import {
+  PermissionListFilters,
+  PermissionListQuery,
+  RbacPermission,
+  RbacPermissionPageItem,
+  RbacPermissionPayload,
+  RbacRole,
+  RbacRolePageItem,
+  RbacRolePayload,
+  RoleListFilters
+} from '@app/pages/system/test/models/rbac.models';
 import { PageInfo, SearchCommonVO } from '@core/services/types';
 import { BaseHttpService } from '@services/base-http.service';
 
@@ -43,6 +53,18 @@ export class RbacTestService {
 
   getRole(id: number): Observable<RbacRole> {
     return this.http.get(`/rbac/roles/${id}`);
+  }
+
+  createRole(payload: RbacRolePayload): Observable<RbacRole> {
+    return this.http.post('/role/create', payload, { needSuccessInfo: true });
+  }
+
+  updateRole(id: number, payload: RbacRolePayload): Observable<RbacRole> {
+    return this.http.put(`/role/${id}`, payload, { needSuccessInfo: true });
+  }
+
+  deleteRole(ids: number[]): Observable<void> {
+    return this.http.post('/role/del', { ids }, { needSuccessInfo: true });
   }
 
   assignRolePermissions(roleId: number, permissionIds: number[]): Observable<void> {

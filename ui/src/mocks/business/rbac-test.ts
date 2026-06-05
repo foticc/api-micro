@@ -1,6 +1,14 @@
 import { http, HttpResponse } from 'msw';
 
-import type { PermissionApi, RbacPermission, RbacPermissionPageItem, RbacPermissionPayload, RbacRole, RbacRolePageItem } from '@app/pages/system/test/models/rbac.models';
+import type {
+  PermissionApi,
+  RbacPermission,
+  RbacPermissionPageItem,
+  RbacPermissionPayload,
+  RbacRole,
+  RbacRolePageItem,
+  RbacRolePayload
+} from '@app/pages/system/test/models/rbac.models';
 
 let nextPermId = 100;
 let nextRoleId = 10;
@@ -372,6 +380,46 @@ export const rbacTest = [
   http.get('/site/api/rbac/roles/:id', ({ params }) => {
     const item = roles.find(r => r.id === Number(params['id']));
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: item ?? null });
+  }),
+
+  http.post('/site/api/rbac/roles', async ({ request }) => {
+    const body = (await request.json()) as RbacRolePayload;
+    if (roles.some(r => r.roleName === body.roleName)) {
+      return HttpResponse.json({ code: 400, msg: '角色名称已存在', data: null }, { status: 200 });
+    }
+    const item: RbacRole = {
+      id: nextRoleId++,
+      roleName: body.roleName,
+      roleDesc: body.roleDesc ?? '',
+      permissionIds: []
+    };
+    roles.push(item);
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: item });
+  }),
+
+  http.put('/site/api/rbac/roles/:id', async ({ request, params }) => {
+    const id = Number(params['id']);
+    const body = (await request.json()) as RbacRolePayload;
+    const idx = roles.findIndex(r => r.id === id);
+    if (idx === -1) {
+      return HttpResponse.json({ code: 404, msg: '角色不存在', data: null });
+    }
+    if (roles.some(r => r.roleName === body.roleName && r.id !== id)) {
+      return HttpResponse.json({ code: 400, msg: '角色名称已存在', data: null }, { status: 200 });
+    }
+    roles[idx] = { ...roles[idx], roleName: body.roleName, roleDesc: body.roleDesc ?? '' };
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: roles[idx] });
+  }),
+
+  http.post('/site/api/rbac/roles/del', async ({ request }) => {
+    const { ids } = (await request.json()) as { ids: number[] };
+    ids.forEach(id => {
+      const idx = roles.findIndex(r => r.id === id);
+      if (idx !== -1) {
+        roles.splice(idx, 1);
+      }
+    });
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: null });
   }),
 
   http.post('/site/api/rbac/roles/:roleId/permissions', async ({ request, params }) => {

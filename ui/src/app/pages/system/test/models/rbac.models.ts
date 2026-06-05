@@ -57,6 +57,11 @@ export interface RbacRolePageItem {
   permissionCount: number;
 }
 
+export interface RbacRolePayload {
+  roleName: string;
+  roleDesc?: string;
+}
+
 export interface RoleListFilters {
   keyword?: string;
 }
