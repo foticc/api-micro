@@ -1,0 +1,73 @@
+<app-page-header [pageHeaderInfo]="pageHeader" />
+
+<div class="normal-table-wrap">
+  <nz-card class="m-b-10" nzHoverable [nzBodyStyle]="{ 'padding-bottom': 0 }">
+    <form nz-form>
+      <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24 }">
+        <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+          <nz-form-item>
+            <nz-form-label>Client ID</nz-form-label>
+            <nz-form-control>
+              <input nz-input name="registeredClientId" [(ngModel)]="searchParam.registeredClientId" (keyup.enter)="getDataList({ pageIndex: 1 })" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+          <nz-form-item>
+            <nz-form-label>用户名</nz-form-label>
+            <nz-form-control>
+              <input nz-input name="principalName" placeholder="模糊匹配" [(ngModel)]="searchParam.principalName" (keyup.enter)="getDataList({ pageIndex: 1 })" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+          <nz-form-item>
+            <nz-form-label>Grant Type</nz-form-label>
+            <nz-form-control>
+              <input nz-input name="authorizationGrantType" [(ngModel)]="searchParam.authorizationGrantType" (keyup.enter)="getDataList({ pageIndex: 1 })" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="text-right p-0 m-b-10" nz-col [nzSpan]="24">
+          <button nz-button nzType="primary" (click)="getDataList({ pageIndex: 1 })">
+            <i nz-icon nzType="search"></i>
+            搜索
+          </button>
+          <button class="m-l-15" nz-button (click)="resetSearch()">
+            <i nz-icon nzType="close-circle"></i>
+            重置
+          </button>
+        </div>
+      </div>
+    </form>
+  </nz-card>
+
+  <app-card-table-wrap [btnTpl]="tableBtns" [tableTitle]="'授权记录'" (reload)="reloadTable()">
+    <app-ant-table
+      [checkedCashArrayFromComment]="checkedCashArray"
+      [tableConfig]="tableConfig()"
+      [tableData]="dataList()"
+      (changePageIndex)="getDataList($event)"
+      (changePageSize)="changePageSize($event)"
+      (selectedChange)="selectedChecked($event)"
+    />
+    <ng-template #scopesTpl let-row="$$dataItem">
+      {{ scopesText(row) }}
+    </ng-template>
+    <ng-template #tokenTpl let-row="$$dataItem">
+      <span class="text-ellipsis" [title]="tokenHint(row)">{{ tokenHint(row) }}</span>
+    </ng-template>
+    <ng-template #operationTpl let-id="id" let-row="$$dataItem">
+      <span class="operate-text" (click)="viewDetail(id)">详情</span>
+      <span class="operate-text" (click)="revoke(id, row)">撤销</span>
+      <span class="operate-text" (click)="remove(id)">删除</span>
+    </ng-template>
+  </app-card-table-wrap>
+</div>
+
+<ng-template #tableBtns>
+  <button nz-button nzDanger (click)="allDel()">
+    <i nz-icon nzType="delete"></i>
+    批量删除
+  </button>
+</ng-template>

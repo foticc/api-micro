@@ -47,6 +47,34 @@ let testUsers: TestUserRecord[] = [
 
 let nextId = 2003;
 
+function sortUsers(list: TestUserRecord[], sort?: string): TestUserRecord[] {
+  if (!sort?.trim()) {
+    return list;
+  }
+  const [field, dir] = sort.split(',');
+  if (!field || (dir !== 'asc' && dir !== 'desc')) {
+    return list;
+  }
+  const factor = dir === 'asc' ? 1 : -1;
+  return [...list].sort((a, b) => {
+    const av = a[field as keyof TestUserRecord];
+    const bv = b[field as keyof TestUserRecord];
+    if (av == null && bv == null) {
+      return 0;
+    }
+    if (av == null) {
+      return -1 * factor;
+    }
+    if (bv == null) {
+      return 1 * factor;
+    }
+    if (field === 'lastLoginTime') {
+      return (new Date(String(av)).getTime() - new Date(String(bv)).getTime()) * factor;
+    }
+    return String(av).localeCompare(String(bv), 'zh-CN') * factor;
+  });
+}
+
 function filterUsers(filters?: Partial<TestUserRecord>): TestUserRecord[] {
   let list = [...testUsers];
   if (filters?.userName) {
@@ -63,9 +91,14 @@ function filterUsers(filters?: Partial<TestUserRecord>): TestUserRecord[] {
 
 export const rbacTestUser = [
   http.post('/site/api/rbac/users/page', async ({ request }) => {
-    const body = (await request.json()) as { pageIndex: number; pageSize: number; filters?: Partial<TestUserRecord> };
-    const { pageIndex, pageSize, filters } = body;
-    const list = filterUsers(filters);
+    const body = (await request.json()) as {
+      pageIndex: number;
+      pageSize: number;
+      filters?: Partial<TestUserRecord>;
+      sort?: string;
+    };
+    const { pageIndex, pageSize, filters, sort } = body;
+    const list = sortUsers(filterUsers(filters), sort);
     const total = list.length;
     const start = (pageIndex - 1) * pageSize;
     return HttpResponse.json({

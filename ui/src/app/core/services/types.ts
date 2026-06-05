@@ -25,6 +25,8 @@ export interface SearchCommonVO<T> {
   pageIndex: number;
   pageSize: number;
   filters?: T;
+  /** 排序，格式：field,asc 或 field,desc，多字段用分号分隔 */
+  sort?: string;
 }
 
 // 分页

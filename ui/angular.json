@@ -81,13 +81,9 @@
               }
             ],
             "stylePreprocessorOptions": {
-              "includePaths": [
-                "src/styles/themes"
-              ]
+              "includePaths": ["src/styles/themes"]
             },
-            "scripts": [
-              "node_modules/driver.js/dist/driver.js.iife.js"
-            ],
+            "scripts": ["node_modules/driver.js/dist/driver.js.iife.js"],
             "allowedCommonJsDependencies": [
               "crypto-js",
               "qs",
@@ -148,7 +144,8 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json"
+            "proxyConfig": "proxy.conf.json",
+            "allowedHosts": ["spring-oauth-client"]
           },
           "configurations": {
             "production": {
@@ -174,18 +171,13 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.less"
-            ]
+            "styles": ["src/styles.less"]
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         },
         "deploy": {

@@ -73,6 +73,7 @@
       (changePageIndex)="getDataList($event)"
       (changePageSize)="changePageSize($event)"
       (selectedChange)="selectedChecked($event)"
+      (sortFn)="changeSort($event)"
     ></app-ant-table>
     <ng-template #operationTpl let-id="id">
       <span *appAuth="ActionCode.AccountEdit" class="operate-text" (click)="edit(id)">编辑</span>

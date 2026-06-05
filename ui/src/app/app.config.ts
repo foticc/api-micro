@@ -37,6 +37,7 @@ import { NZ_I18N, zh_CN } from 'ng-zorro-antd/i18n';
 import { NZ_ICONS } from 'ng-zorro-antd/icon';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ViewTransitionService } from '@core/services/common/view-transition.service';
+import { provideTestOAuth2 } from '@app/pages/system/test/oauth2/providers/provide-test-oauth2';
 
 const icons = [MenuFoldOutline, MenuUnfoldOutline, DashboardOutline, FormOutline];
 
@@ -151,6 +152,7 @@ export const appConfig: ApplicationConfig = {
     ...APPINIT_PROVIDES, // 项目启动之前，需要调用的一系列方法
     provideHttpClient(withInterceptors([httpInterceptorService]), withInterceptorsFromDi()),
     { provide: HTTP_INTERCEPTORS, useClass: LoginExpiredService, multi: true },
+    provideTestOAuth2(),
     provideZonelessChangeDetection() // 开启 zoneless
   ]
 };

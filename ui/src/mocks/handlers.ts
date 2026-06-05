@@ -10,6 +10,7 @@ import { rbacTest } from './business/rbac-test';
 import { rbacTestMenu } from './business/rbac-test-menu';
 import { rbacTestUser } from './business/rbac-test-user';
 import { rbacTestApiSync } from './business/rbac-test-api-sync';
+import { oauth2Admin } from './business/oauth2-admin';
 import { example } from './business/example';
 
 export const handlers = [
@@ -27,4 +28,5 @@ export const handlers = [
   ...rbacTestMenu,
   ...rbacTestUser,
   ...rbacTestApiSync,
+  ...oauth2Admin,
 ];

@@ -1,0 +1,20 @@
+<form nz-form [formGroup]="form">
+  <nz-form-item>
+    <nz-form-label nzRequired>Registered Client ID</nz-form-label>
+    <nz-form-control nzErrorTip="必填">
+      <input nz-input formControlName="registeredClientId" placeholder="客户端内部 ID（UUID）" />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label nzRequired>Principal Name</nz-form-label>
+    <nz-form-control nzErrorTip="必填">
+      <input nz-input formControlName="principalName" placeholder="用户名" />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label>Authorities / Scopes</nz-form-label>
+    <nz-form-control nzExtra="每行一个 scope 或 authority">
+      <textarea nz-input rows="4" formControlName="authoritiesText" placeholder="openid&#10;profile&#10;SCOPE_read"></textarea>
+    </nz-form-control>
+  </nz-form-item>
+</form>

@@ -17,6 +17,13 @@ export default [
         loadComponent: () => import('./login-form/login-form.component').then(m => m.LoginFormComponent)
       },
       {
+        path: 'oauth-callback',
+        title: 'OAuth2 登录回调',
+        data: { key: 'oauth-callback', shouldDetach: 'no' },
+        loadComponent: () =>
+          import('@app/pages/system/test/oauth2/oauth2-callback.component').then(m => m.OAuth2CallbackComponent)
+      },
+      {
         path: 'register-form',
         title: 'login.registerPageTitle',
         data: { key: 'register-form', shouldDetach: 'no' },

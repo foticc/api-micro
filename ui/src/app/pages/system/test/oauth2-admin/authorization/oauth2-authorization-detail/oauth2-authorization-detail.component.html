@@ -1,0 +1,66 @@
+<h4 class="section-title">基本信息</h4>
+<nz-descriptions nzBordered [nzColumn]="2" nzSize="small">
+  <nz-descriptions-item nzTitle="授权 ID" [nzSpan]="2">{{ detail.id || '—' }}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="Client ID">{{ detail.registeredClientId || '—' }}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="用户">{{ detail.principalName || '—' }}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="Grant Type">{{ detail.authorizationGrantType || '—' }}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="Scopes">{{ scopesText() }}</nz-descriptions-item>
+</nz-descriptions>
+
+<nz-divider />
+
+<h4 class="section-title">敏感参数</h4>
+@for (field of secretFields; track field.key) {
+  @if (field.value) {
+    <div class="token-card">
+      <div class="token-card-head">
+        <span class="token-card-title">{{ field.label }}</span>
+        <button nz-button nzType="link" nzSize="small" type="button" (click)="toggleVisible(field.key)">
+          <i nz-icon [nzType]="isVisible(field.key) ? 'eye-invisible' : 'eye'"></i>
+          {{ isVisible(field.key) ? '隐藏' : '显示' }}
+        </button>
+      </div>
+      <div class="secret-row">
+        <div class="secret-value" [class.masked]="!isVisible(field.key)">{{ displayValue(field.key, field.value) }}</div>
+      </div>
+    </div>
+  }
+}
+
+<nz-divider />
+
+<h4 class="section-title">凭证信息</h4>
+@if (hasTokenBlocks()) {
+  @for (block of tokenBlocks; track block.key) {
+    @if (block.summary?.tokenValue) {
+      <div class="token-card">
+        <div class="token-card-head">
+          <span class="token-card-title">{{ block.label }}</span>
+          <button nz-button nzType="link" nzSize="small" type="button" (click)="toggleVisible(block.key)">
+            <i nz-icon [nzType]="isVisible(block.key) ? 'eye-invisible' : 'eye'"></i>
+            {{ isVisible(block.key) ? '隐藏' : '显示' }}
+          </button>
+        </div>
+        <div class="secret-row">
+          <div class="secret-value" [class.masked]="!isVisible(block.key)">
+            {{ displayValue(block.key, block.summary!.tokenValue) }}
+          </div>
+        </div>
+        <div class="token-meta">
+          <span>签发：{{ formatTime(block.summary!.issuedAt) }}</span>
+          <span>过期：{{ formatTime(block.summary!.expiresAt) }}</span>
+          <span>
+            状态：
+            @if (block.summary!.invalidated) {
+              <nz-tag nzColor="error">已失效</nz-tag>
+            } @else {
+              <nz-tag nzColor="success">有效</nz-tag>
+            }
+          </span>
+        </div>
+      </div>
+    }
+  }
+} @else {
+  <div class="empty-tip">暂无 Token / Code 凭证</div>
+}

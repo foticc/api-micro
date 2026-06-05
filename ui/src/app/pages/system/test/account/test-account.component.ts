@@ -8,7 +8,7 @@ import { TestUser } from '@app/pages/system/test/models/test-account.models';
 import { TestAccountModalService } from '@app/pages/system/test/account/services/test-account-modal.service';
 import { TestAccountService } from '@app/pages/system/test/account/services/test-account.service';
 import { OptionsInterface, SearchCommonVO } from '@core/services/types';
-import { AntTableConfig, AntTableComponent } from '@shared/components/ant-table/ant-table.component';
+import { AntTableConfig, AntTableComponent, SortFile } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { AuthDirective } from '@shared/directives/auth.directive';
@@ -80,12 +80,27 @@ export class TestAccountComponent implements AfterViewInit {
   private modalService = inject(TestAccountModalService);
   private message = inject(NzMessageService);
 
+  /** 服务端排序：userName,asc / lastLoginTime,desc */
+  private sortParam?: string;
+
   selectedChecked(e: TestUser[]): void {
     this.checkedCashArray = [...e];
   }
 
   resetForm(): void {
     this.searchParam = {};
+    this.sortParam = undefined;
+    this.tableConfig.update(c => ({
+      ...c,
+      pageIndex: 1,
+      headers: c.headers.map(h => ({ ...h, sortDir: undefined }))
+    }));
+    this.getDataList({ pageIndex: 1 });
+  }
+
+  changeSort(e: SortFile): void {
+    this.sortParam = e.sortDir ? `${e.fileName},${e.sortDir}` : undefined;
+    this.tableConfig.update(c => ({ ...c, pageIndex: 1 }));
     this.getDataList({ pageIndex: 1 });
   }
 
@@ -94,7 +109,8 @@ export class TestAccountComponent implements AfterViewInit {
     const params: SearchCommonVO<NzSafeAny> = {
       pageSize: this.tableConfig().pageSize!,
       pageIndex: e?.pageIndex || this.tableConfig().pageIndex!,
-      filters: this.searchParam
+      filters: this.searchParam,
+      sort: this.sortParam
     };
     this.dataService
       .getAccount(params)
@@ -233,7 +249,8 @@ export class TestAccountComponent implements AfterViewInit {
   }
 
   changePageSize(e: number): void {
-    this.tableConfig.update(config => ({ ...config, pageSize: e }));
+    this.tableConfig.update(config => ({ ...config, pageSize: e, pageIndex: 1 }));
+    this.getDataList({ pageIndex: 1 });
   }
 
   toggleCollapse(): void {
@@ -248,12 +265,12 @@ export class TestAccountComponent implements AfterViewInit {
     this.tableConfig.set({
       showCheckbox: true,
       headers: [
-        { title: '用户名称', field: 'userName', width: 100 },
+        { title: '用户名称', field: 'userName', width: 100, showSort: true },
         { title: '是否可用', width: 100, field: 'available', tdTemplate: this.availableTpl() },
         { title: '性别', width: 70, field: 'sex', pipe: 'sex' },
         { title: '手机', width: 100, field: 'mobile' },
         { title: '邮箱', width: 100, field: 'email' },
-        { title: '最后登录时间', width: 120, field: 'lastLoginTime', pipe: 'date:yyyy-MM-dd HH:mm' },
+        { title: '最后登录时间', width: 120, field: 'lastLoginTime', pipe: 'date:yyyy-MM-dd HH:mm', showSort: true },
         { title: '创建时间', width: 100, field: 'createdAt', pipe: 'date:yyyy-MM-dd HH:mm' },
         { title: '电话', width: 100, field: 'telephone' },
         { title: '操作', tdTemplate: this.operationTpl(), width: 150, fixed: true }

@@ -6,6 +6,7 @@ import { finalize } from 'rxjs/operators';
 
 import { LoginInOutService } from '@core/services/common/login-in-out.service';
 import { LoginService } from '@core/services/http/login/login.service';
+import { OAuth2LoginButtonComponent } from '@app/pages/system/test/oauth2/components/oauth2-login-button.component';
 import { SpinService } from '@store/common-store/spin.service';
 import { fnCheckForm } from '@utils/tools';
 
@@ -25,7 +26,7 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzTabsModule, NzGridModule, NzButtonModule, NzInputModule, NzWaveModule, NzCheckboxModule, NzIconModule, RouterLink, TranslateModule]
+  imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzTabsModule, NzGridModule, NzButtonModule, NzInputModule, NzWaveModule, NzCheckboxModule, NzIconModule, RouterLink, TranslateModule, OAuth2LoginButtonComponent]
 })
 export class LoginFormComponent implements OnInit {
   validateForm!: FormGroup;
