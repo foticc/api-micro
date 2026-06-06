@@ -1,4 +1,4 @@
-import { inject, Injectable, Type } from '@angular/core';
+import { inject, Service, Type } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ModalResponse, ModalWrapService } from '@widget/base-modal';
@@ -16,9 +16,7 @@ export interface TaskModalData {
   dueDate?: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class TaskModalService {
   private modalWrapService = inject(ModalWrapService);
 

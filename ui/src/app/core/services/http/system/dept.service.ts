@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { PageInfo, SearchCommonVO } from '../../types';
@@ -15,9 +15,7 @@ export interface Dept {
   orderNum: number;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class DeptService {
   http = inject(BaseHttpService);
 

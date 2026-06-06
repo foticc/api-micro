@@ -1,4 +1,4 @@
-import { ComponentRef, DestroyRef, inject, Injectable, Injector, Signal, TemplateRef, Type } from '@angular/core';
+import { ComponentRef, DestroyRef, inject, Service, Injector, Signal, TemplateRef, Type } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -9,7 +9,7 @@ import { ModalBtnStatus } from '@widget/base-modal';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzDrawerOptions, NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class DrawerWrapService {
   drawerRef!: NzDrawerRef;
   private destroyRef = inject(DestroyRef);

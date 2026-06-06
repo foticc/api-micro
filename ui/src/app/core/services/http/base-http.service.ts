@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 import { filter, map, finalize } from 'rxjs/operators';
 
@@ -23,9 +23,7 @@ export interface ActionResult<T> {
   data: T;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class BaseHttpService {
   uri = environment.production ? localUrl : '/site/api';
   http = inject(HttpClient);

@@ -1,14 +1,12 @@
 import { isPlatformBrowser } from '@angular/common';
-import { inject, Injectable, InjectionToken, PLATFORM_ID } from '@angular/core';
+import { inject, Service, InjectionToken, PLATFORM_ID } from '@angular/core';
 
 const WINDOW_TOKEN = new InjectionToken<Window>('A reference to the window object', {
   factory: () => window
 });
 
 /*window对象封装服务*/
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class WindowService {
   private readonly isBrowser: boolean;
   private readonly platformId = inject(PLATFORM_ID);

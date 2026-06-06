@@ -1,4 +1,4 @@
-import { DestroyRef, inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom, Observable } from 'rxjs';
@@ -18,9 +18,7 @@ import { fnFlatDataHasParentToTree } from '@utils/treeTableTools';
 /*
  * 登录/登出
  * */
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class LoginInOutService {
   private destroyRef = inject(DestroyRef);
   private activatedRoute = inject(ActivatedRoute);

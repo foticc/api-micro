@@ -1,13 +1,11 @@
-import { DestroyRef, inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
 import { RouterStateSnapshot, TitleStrategy } from '@angular/router';
 
 import { TranslateService } from '@ngx-translate/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service({ autoProvided: false })
 export class CustomPageTitleResolverService extends TitleStrategy {
   readonly title = inject(Title);
   private translate = inject(TranslateService);

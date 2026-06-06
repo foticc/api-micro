@@ -1,11 +1,9 @@
-import { inject, Injectable, DOCUMENT } from '@angular/core';
+import { inject, Service, DOCUMENT } from '@angular/core';
 
 /*
  * 顶部滚动pre服务
  * */
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class PreloaderService {
   private readonly doc = inject(DOCUMENT);
 

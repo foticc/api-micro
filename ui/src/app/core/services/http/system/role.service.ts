@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
@@ -36,9 +36,7 @@ export interface Role {
   roleDesc?: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class RoleService {
   http = inject(BaseHttpService);
 

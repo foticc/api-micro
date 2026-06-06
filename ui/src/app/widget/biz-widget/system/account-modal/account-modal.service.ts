@@ -1,4 +1,4 @@
-import { inject, Injectable, Type } from '@angular/core';
+import { inject, Service, Type } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { User } from '@services/system/account.service';
@@ -7,9 +7,7 @@ import { AccountModalComponent } from '@widget/biz-widget/system/account-modal/a
 
 import { ModalOptions } from 'ng-zorro-antd/modal';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class AccountModalService {
   private modalWrapService = inject(ModalWrapService);
 

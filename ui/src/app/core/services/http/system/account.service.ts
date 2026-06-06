@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { PageInfo, SearchCommonVO } from '../../types';
@@ -32,9 +32,7 @@ export interface UserPsd {
   newPassword: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class AccountService {
   http = inject(BaseHttpService);
 

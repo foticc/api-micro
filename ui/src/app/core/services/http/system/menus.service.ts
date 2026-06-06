@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Menu, PageInfo, SearchCommonVO } from '@core/services/types';
@@ -19,9 +19,7 @@ export interface MenuListObj {
   newLinkFlag: 0 | 1;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class MenusService {
   http = inject(BaseHttpService);
 

@@ -1,5 +1,5 @@
 import { DragDrop, DragRef } from '@angular/cdk/drag-drop';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { ModalTypes, NzModalService } from 'ng-zorro-antd/modal';
@@ -7,9 +7,7 @@ import { ModalTypes, NzModalService } from 'ng-zorro-antd/modal';
 /**
  * 对话框拖动服务
  */
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ModalDragService {
   static readonly DRAG_CLS_PREFIX = 'NZ-MODAL-WRAP-CLS-';
 
