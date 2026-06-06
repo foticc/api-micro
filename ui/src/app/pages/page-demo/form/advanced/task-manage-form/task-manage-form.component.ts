@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, forwardRef, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit,  forwardRef, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -29,7 +29,7 @@ const EXE_COUNTER_VALUE_ACCESSOR = {
   selector: 'app-task-manage-form',
   templateUrl: './task-manage-form.component.html',
   styleUrl: './task-manage-form.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   providers: [EXE_COUNTER_VALUE_ACCESSOR],
   imports: [FormsModule, ReactiveFormsModule, NzGridModule, NzFormModule, NzInputModule]
 })

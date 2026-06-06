@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {  Component } from '@angular/core';
 
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 
@@ -9,7 +9,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   selector: 'app-blingbling',
   imports: [PageHeaderComponent, NzCardComponent, NzIconModule],
   templateUrl: './blingbling.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   styleUrl: './blingbling.component.less'
 })
 export class BlingblingComponent {

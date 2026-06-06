@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit } from '@angular/core';
+import { AfterViewInit,  Component, computed, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -30,7 +30,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
       </div>
     }
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [LockScreenComponent, RouterOutlet, NzSpinModule, NzFloatButtonTopComponent]
 })
 export class App implements OnInit, AfterViewInit {

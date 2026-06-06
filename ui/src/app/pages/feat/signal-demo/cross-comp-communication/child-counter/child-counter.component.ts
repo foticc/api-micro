@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, model, output, signal } from '@angular/core';
+import {  Component, model, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTagModule } from 'ng-zorro-antd/tag';
@@ -7,7 +7,7 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 
 @Component({
   selector: 'app-child-counter',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzButtonModule, NzWaveModule, NzTagModule, NzSwitchModule, FormsModule],
   template: `
     <div class="counter-wrap">

@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, InputSignal, linkedSignal, OnChanges, output, SimpleChanges, TemplateRef, signal } from '@angular/core';
+import {  Component, computed, input, InputSignal, linkedSignal, OnChanges, output, SimpleChanges, TemplateRef, signal } from '@angular/core';
 
 import { ContextPipePipe } from '@shared/components/ant-table/context-pipe.pipe';
 
@@ -59,7 +59,7 @@ export interface SortFile {
   templateUrl: './ant-table.component.html',
   styleUrl: './ant-table.component.less',
   providers: [{ provide: AntTableComponentToken, useExisting: AntTableComponent }],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzTableModule, NzResizableModule, NgTemplateOutlet, MapPipe, TableFiledPipe, ContextPipePipe]
 })
 export class AntTableComponent implements OnChanges {

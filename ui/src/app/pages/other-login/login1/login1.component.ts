@@ -1,5 +1,5 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, DestroyRef, viewChild, effect, computed, signal } from '@angular/core';
+import { Component, OnInit,  ChangeDetectorRef, inject, DestroyRef, viewChild, effect, computed, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { map } from 'rxjs/operators';
@@ -42,7 +42,7 @@ interface LoginFormComponentInterface {
   selector: 'app-login1',
   templateUrl: './login1.component.html',
   styleUrl: './login1.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzGridModule, NzCardModule, AdDirective_1, NzSwitchModule, FormsModule, NzDropdownModule, NzIconModule, NzButtonModule, NzMenuModule]
 })
 export class Login1Component {

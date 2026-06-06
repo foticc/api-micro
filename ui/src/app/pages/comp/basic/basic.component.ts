@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 
@@ -11,7 +11,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   selector: 'app-basic',
   templateUrl: './basic.component.html',
   styleUrl: './basic.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzGridModule, NzCardModule, NzButtonModule, NzIconModule]
 })
 export class BasicComponent {

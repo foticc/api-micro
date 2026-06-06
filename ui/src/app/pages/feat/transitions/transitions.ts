@@ -1,5 +1,5 @@
 // https://www.thinktecture.com/angular/view-transition-api-integration-in-angular-a-brave-new-world-part-1/
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {  Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -78,7 +78,7 @@ export const TECH_ITEMS: TechItem[] = [
 
 @Component({
   selector: 'app-transitions',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, ViewTransitionDirective, NzCardModule, NzGridModule, NzTagModule],
   templateUrl: './transitions.html',
   styleUrl: './transitions.less'

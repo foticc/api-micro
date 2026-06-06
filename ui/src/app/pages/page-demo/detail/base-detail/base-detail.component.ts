@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, viewChild } from '@angular/core';
+import { Component, OnInit,  TemplateRef, viewChild } from '@angular/core';
 
 import { AntTableConfig, AntTableComponent } from '@shared/components/ant-table/ant-table.component';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -21,7 +21,7 @@ interface ReturnObj {
 @Component({
   selector: 'app-base-detail',
   templateUrl: './base-detail.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, WaterMarkComponent, NzDescriptionsModule, NzDividerModule, AntTableComponent]
 })
 export class BaseDetailComponent implements OnInit {

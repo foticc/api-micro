@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -11,7 +11,7 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
   selector: 'app-radial-tree',
   template: ` <div class="demo-chart" echarts [options]="options | async"></div> `,
   styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NgxEchartsModule, AsyncPipe]
 })
 export class RadialTreeComponent implements OnInit {

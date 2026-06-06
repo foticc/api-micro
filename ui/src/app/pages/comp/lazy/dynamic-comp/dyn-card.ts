@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import {  Component, input, output } from '@angular/core';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -15,7 +15,7 @@ const THEME_MAP: Record<DynCardTheme, { bg: string; color: string; tag: string }
 
 @Component({
   selector: 'app-dyn-card',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzCardModule, NzButtonModule, NzTagModule],
   template: `
     <nz-card [nzBodyStyle]="{ padding: '20px' }" [style.border-color]="themeStyle().color" class="b-r-8" style="border-width: 2px;">

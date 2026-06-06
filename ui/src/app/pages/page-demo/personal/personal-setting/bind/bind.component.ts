@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, input } from '@angular/core';
+import { Component, OnInit,  input } from '@angular/core';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -8,7 +8,7 @@ import { NzListModule } from 'ng-zorro-antd/list';
   selector: 'app-bind',
   templateUrl: './bind.component.html',
   styleUrl: './bind.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzListModule, NzIconModule, NzButtonModule]
 })
 export class BindComponent implements OnInit {

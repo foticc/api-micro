@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit,  inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 
@@ -15,7 +15,7 @@ import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 @Component({
   selector: 'app-role-manage-modal',
   templateUrl: './role-manage-modal.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzInputModule]
 })
 export class RoleManageModalComponent extends BasicConfirmModalComponent implements OnInit {

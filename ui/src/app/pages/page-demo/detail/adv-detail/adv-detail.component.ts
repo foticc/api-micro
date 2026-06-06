@@ -1,6 +1,6 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, inject, DestroyRef, viewChild, signal, computed } from '@angular/core';
+import { Component, OnInit,  TemplateRef, inject, DestroyRef, viewChild, signal, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AntTableConfig, AntTableComponent } from '@shared/components/ant-table/ant-table.component';
@@ -43,7 +43,7 @@ enum TabEnum {
 @Component({
   selector: 'app-adv-detail',
   templateUrl: './adv-detail.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     PageHeaderComponent,
     NzRadioModule,

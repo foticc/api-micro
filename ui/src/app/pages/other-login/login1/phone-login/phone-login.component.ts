@@ -1,5 +1,5 @@
 
-import { Component, OnInit, ChangeDetectionStrategy, inject, DestroyRef, computed } from '@angular/core';
+import { Component, OnInit,  inject, DestroyRef, computed } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { LoginType } from '@app/pages/other-login/login1/login1.component';
@@ -16,7 +16,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
   selector: 'app-phone-login',
   templateUrl: './phone-login.component.html',
   styleUrl: './phone-login.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzInputModule, NzButtonModule, NzWaveModule]
 })
 export class PhoneLoginComponent implements OnInit {

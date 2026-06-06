@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, AfterViewInit, TemplateRef, inject, viewChild, computed } from '@angular/core';
+import { Component,  AfterViewInit, TemplateRef, inject, viewChild, computed } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
@@ -15,7 +15,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   selector: 'app-card-table',
   templateUrl: './card-table.component.html',
   styleUrl: './card-table.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzGridModule, WaterMarkComponent, NzCardModule, NzIconModule, NzButtonModule, NzAvatarModule]
 })
 export class CardTableComponent implements AfterViewInit {

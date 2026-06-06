@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import {  Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 
@@ -16,7 +16,7 @@ import { NzSliderModule } from 'ng-zorro-antd/slider';
 @Component({
   selector: 'app-append-form-modal',
   templateUrl: './append-form-modal.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzInputModule, NzDatePickerModule, NzSliderModule]
 })
 export class AppendFormModalComponent extends BasicConfirmModalComponent implements OnInit {

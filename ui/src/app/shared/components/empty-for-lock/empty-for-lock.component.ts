@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef, computed } from '@angular/core';
+import { Component,  inject, DestroyRef, computed } from '@angular/core';
 
 import { LockScreenStoreService } from '@store/common-store/lock-screen-store.service';
 
@@ -6,7 +6,7 @@ import { LockScreenStoreService } from '@store/common-store/lock-screen-store.se
 @Component({
   selector: 'app-empty-for-lock',
   template: ``,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class EmptyForLockComponent {
   destroyRef = inject(DestroyRef);

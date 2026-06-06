@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, DestroyRef, inject, signal } from '@angular/core';
+import { Component,  DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { timer } from 'rxjs';
 
@@ -17,7 +17,7 @@ interface StaggerItem {
   selector: 'app-demo-stagger',
   templateUrl: './demo-stagger.component.html',
   styleUrl: './demo-stagger.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzButtonModule, NzCardModule, NzGridModule, NzTagModule, NzDividerModule]
 })
 export class DemoStaggerComponent {

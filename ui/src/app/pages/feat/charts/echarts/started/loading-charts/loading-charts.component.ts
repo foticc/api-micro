@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { EChartsOption } from 'echarts';
 import { NgxEchartsModule } from 'ngx-echarts';
@@ -15,7 +15,7 @@ import { NzWaveModule } from 'ng-zorro-antd/core/wave';
     <div class="demo-chart" echarts theme="macarons" [loading]="isLoading" [options]="options"></div>
   `,
   styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzButtonModule, NzWaveModule, NgxEchartsModule]
 })
 export class LoadingChartsComponent {

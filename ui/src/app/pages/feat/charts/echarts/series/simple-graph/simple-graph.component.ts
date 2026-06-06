@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { EChartsOption } from 'echarts';
 import { NgxEchartsModule } from 'ngx-echarts';
@@ -7,7 +7,7 @@ import { NgxEchartsModule } from 'ngx-echarts';
   selector: 'app-simple-graph',
   template: ` <div class="demo-chart" echarts [options]="options"></div> `,
   styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NgxEchartsModule]
 })
 export class SimpleGraphComponent {

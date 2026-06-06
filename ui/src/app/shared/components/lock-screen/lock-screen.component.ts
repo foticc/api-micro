@@ -1,5 +1,5 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, inject, DestroyRef, computed } from '@angular/core';
+import { Component, OnInit,  inject, DestroyRef, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -27,7 +27,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
   selector: 'app-lock-screen',
   templateUrl: './lock-screen.component.html',
   styleUrl: './lock-screen.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzIconModule, NzButtonModule, NzGridModule, NzAvatarModule, FormsModule, NzFormModule, ReactiveFormsModule, NzInputModule, AsyncPipe, DatePipe, TranslateModule]
 })
 export class LockScreenComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, linkedSignal, signal } from '@angular/core';
+import {  Component, computed, linkedSignal, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
@@ -22,7 +22,7 @@ interface Category {
   selector: 'app-linked-signal-demo',
   imports: [PageHeaderComponent, NzCardModule, NzGridModule, NzButtonModule, NzWaveModule, NzSelectModule, NzTagModule, NzDividerModule, NzDescriptionsModule, NzInputNumberModule, FormsModule],
   templateUrl: './linked-signal-demo.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   styleUrl: './linked-signal-demo.less'
 })
 export class LinkedSignalDemo {

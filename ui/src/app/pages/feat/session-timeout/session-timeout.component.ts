@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
+import { Component, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ExampleService } from '@services/example/example.service';
@@ -13,7 +13,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   selector: 'app-session-timeout',
   templateUrl: './session-timeout.component.html',
   styleUrl: './session-timeout.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzButtonModule, NzWaveModule, NzCardModule, NzIconModule]
 })
 export class SessionTimeoutComponent {

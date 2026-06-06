@@ -1,5 +1,5 @@
 import { KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import {  Component, computed, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 
@@ -34,7 +34,7 @@ import { NzWaveModule } from 'ng-zorro-antd/core/wave';
     KeyValuePipe
   ],
   templateUrl: './signal-reactive-forms.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   styleUrl: './signal-reactive-forms.less'
 })
 export class SignalReactiveForms {

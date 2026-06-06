@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {  Component, input } from '@angular/core';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 
 @Component({
   selector: 'app-heavy-card',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzCardModule, NzTagModule],
   template: `
     <nz-card [nzBodyStyle]="{ padding: '16px' }" style="border-radius: 8px; border: 1px solid #f0f0f0;">

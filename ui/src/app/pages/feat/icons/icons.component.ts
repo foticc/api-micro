@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { IconSelComponent } from '@shared/biz-components/icon-sel/icon-sel.component';
@@ -26,7 +26,7 @@ interface TwotoneIconItem {
   selector: 'app-icons',
   templateUrl: './icons.component.html',
   styleUrl: './icons.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, NzButtonModule, NzWaveModule, NzInputModule, FormsModule, IconSelComponent, NzIconModule]
 })
 export class IconsComponent {

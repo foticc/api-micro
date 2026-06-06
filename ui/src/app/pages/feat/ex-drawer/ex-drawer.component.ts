@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef, signal } from '@angular/core';
+import { Component, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 
@@ -16,7 +16,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
   selector: 'app-ex-drawer',
   templateUrl: './ex-drawer.component.html',
   styleUrl: './ex-drawer.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzInputModule, FormsModule, NzButtonModule, NzCardModule, NzIconModule, NzTagModule]
 })
 export class ExDrawerComponent {

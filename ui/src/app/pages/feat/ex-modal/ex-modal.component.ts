@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
-import { Component, ChangeDetectionStrategy, TemplateRef, inject, DestroyRef, viewChild } from '@angular/core';
+import { Component, TemplateRef, inject, DestroyRef, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -19,7 +19,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
   selector: 'app-ex-modal',
   templateUrl: './ex-modal.component.html',
   styleUrl: './ex-modal.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzButtonModule, NzCardModule, NzIconModule, NzModalModule, ModalDragDirective, ModalResizeDirective, CdkDrag, CdkDragHandle]
 })
 export class ExModalComponent {

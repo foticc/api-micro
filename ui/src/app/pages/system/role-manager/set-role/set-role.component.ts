@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, ViewEncapsulation, input, signal } from '@angular/core';
+import {  Component, DestroyRef, inject, OnInit, ViewEncapsulation, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -25,7 +25,7 @@ import { NzResultModule } from 'ng-zorro-antd/result';
   selector: 'app-set-role',
   templateUrl: './set-role.component.html',
   styleUrl: './set-role.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   encapsulation: ViewEncapsulation.None,
   imports: [
     PageHeaderComponent,

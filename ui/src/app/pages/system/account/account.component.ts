@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, inject, DestroyRef, viewChild, signal } from '@angular/core';
+import { Component, OnInit,  TemplateRef, inject, DestroyRef, viewChild, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -38,7 +38,7 @@ interface SearchParam {
 @Component({
   selector: 'app-account',
   templateUrl: './account.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     PageHeaderComponent,
     NzGridModule,

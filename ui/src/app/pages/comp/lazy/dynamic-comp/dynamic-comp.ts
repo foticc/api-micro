@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ComponentRef, ViewContainerRef, signal, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ComponentRef, ViewContainerRef, signal, viewChild } from '@angular/core';
 import { ComponentPortal, CdkPortalOutletAttachedRef, PortalModule } from '@angular/cdk/portal';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 
@@ -28,7 +28,7 @@ const PORTAL_STEPS: Record<PortalStep, { title: string; desc: string; icon: stri
   selector: 'app-dynamic-comp',
   imports: [PageHeaderComponent, PortalModule, NzTabsModule, NzCardModule, NzGridModule, NzButtonModule, NzTagModule, NzDividerModule],
   templateUrl: './dynamic-comp.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   styleUrl: './dynamic-comp.less'
 })
 export class DynamicComp implements AfterViewInit {

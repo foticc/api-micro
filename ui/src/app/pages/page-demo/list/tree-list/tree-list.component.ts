@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, inject, signal, viewChild } from '@angular/core';
+import { Component, OnInit,  TemplateRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AntTableConfig, SortFile } from '@shared/components/ant-table/ant-table.component';
@@ -29,7 +29,7 @@ interface SearchParam {
 @Component({
   selector: 'app-tree-list',
   templateUrl: './tree-list.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     PageHeaderComponent,
     NzCardModule,

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { TabService } from '@core/services/common/tab.service';
@@ -15,7 +15,7 @@ import { NzSpaceCompactComponent } from 'ng-zorro-antd/space';
   selector: 'app-tabs',
   templateUrl: './tabs.component.html',
   styleUrl: './tabs.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, NzButtonModule, NzInputModule, NzIconModule, NzSpaceCompactComponent]
 })
 export class TabsComponent {

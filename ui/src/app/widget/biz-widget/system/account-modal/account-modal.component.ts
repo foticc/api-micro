@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import {  Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 
@@ -25,7 +25,7 @@ import { NzTreeSelectModule } from 'ng-zorro-antd/tree-select';
 @Component({
   selector: 'app-account-modal',
   templateUrl: './account-modal.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzInputModule, NzRadioModule, NzSwitchModule, NzTreeSelectModule, NzSelectModule]
 })
 export class AccountModalComponent extends BasicConfirmModalComponent implements OnInit {

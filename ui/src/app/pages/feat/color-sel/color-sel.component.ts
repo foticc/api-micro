@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { ColorPickerDirective } from 'ngx-color-picker';
@@ -11,7 +11,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   selector: 'app-color-sel',
   templateUrl: './color-sel.component.html',
   styleUrl: './color-sel.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, NzGridModule, NzIconModule, ColorPickerDirective]
 })
 export class ColorSelComponent {

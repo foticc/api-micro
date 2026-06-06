@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -12,7 +12,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   selector: 'app-ripple',
   templateUrl: './ripple.component.html',
   styleUrl: './ripple.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, NzCheckboxModule, NzIconModule, FormsModule, RippleDirective]
 })
 export class RippleComponent {

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, AfterViewInit, ElementRef, inject, DestroyRef, viewChild, DOCUMENT, signal } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, inject, DestroyRef, viewChild, DOCUMENT, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, merge, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -14,7 +14,7 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
   selector: 'app-click-out-side',
   templateUrl: './click-out-side.component.html',
   styleUrl: './click-out-side.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, NzIconModule]
 })
 export class ClickOutSideComponent implements AfterViewInit {
