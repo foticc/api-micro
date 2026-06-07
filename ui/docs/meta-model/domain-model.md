@@ -137,7 +137,7 @@ interface Dept {
 }
 ```
 
-**API**：`/department/list`、`/department/{id}`、`/department/create`、`/department/update`、`/department/del/`
+**API**：`/department/list`、`/department/{id}`、`/department/create`、`/department/update`、`/department/del`
 
 ---
 

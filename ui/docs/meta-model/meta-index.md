@@ -97,7 +97,7 @@ Mock：MSW v2（开发环境）
 | 用户 | POST `/user/list` | POST `/user/create` | PUT `/user/update` | POST `/user/del/` |
 | 角色 | POST `/role/list` | POST `/role/create` | PUT `/role/update` | POST `/role/del` |
 | 菜单 | POST `/menu/list` | POST `/menu/create` | PUT `/menu/update` | POST `/menu/del` |
-| 部门 | POST `/department/list` | POST `/department/create` | PUT `/department/update` | POST `/department/del/` |
+| 部门 | POST `/department/list` | POST `/department/create` | PUT `/department/update` | POST `/department/del` |
 
 ---
 

@@ -1,8 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, OnInit,  TemplateRef, inject, DestroyRef, signal, viewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, inject, DestroyRef, signal, viewChild, computed, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs/operators';
 
 import { ActionCode } from '@app/config/actionCode';
 import { OptionsInterface, SearchCommonVO } from '@core/services/types';
@@ -62,18 +61,41 @@ export class DeptComponent implements OnInit {
   readonly state = viewChild.required<TemplateRef<NzSafeAny>>('state');
   ActionCode = ActionCode;
   searchParam: Partial<SearchParam> = {};
-  destroyRef = inject(DestroyRef);
   readonly pageHeaderInfo: Partial<PageHeaderType> = {
     title: '部门管理',
     breadcrumb: ['首页', '系统管理', '部门管理']
   };
-  dataList = signal<TreeNodeInterface[]>([]);
   readonly stateOptions: OptionsInterface[] = [...MapPipe.transformMapToArray(MapSet.available, MapKeyType.Boolean)];
 
-  private deptModalService = inject(DeptManageModalService);
   private dataService = inject(DeptService);
+  private deptModalService = inject(DeptManageModalService);
   private modalSrv = inject(NzModalService);
   private message = inject(NzMessageService);
+  private destroyRef = inject(DestroyRef);
+
+  private searchFilters = signal<Partial<SearchParam>>({});
+  private currentSortFile = signal<SortFile | undefined>(undefined);
+
+  deptResource = this.dataService.getDeptsResource(() => ({
+    pageSize: 0,
+    pageIndex: 0,
+    filters: this.searchFilters() as NzSafeAny
+  }));
+
+  dataList = computed(() => {
+    if (!this.deptResource.hasValue()) {
+      return [] as TreeNodeInterface[];
+    }
+    const deptList = this.deptResource.value();
+    const target = fnFlatDataHasParentToTree(deptList.list);
+    let list = fnFlattenTreeDataByDataList(target);
+    // 因为前段要对后端返回的数据进行处理，所以排序这里交给了前段来做
+    const sortFile = this.currentSortFile();
+    if (sortFile) {
+      fnSortTreeData(list, sortFile);
+    }
+    return list;
+  });
 
   tableConfig = signal<AntTableConfig>({
     headers: [],
@@ -84,40 +106,22 @@ export class DeptComponent implements OnInit {
     pageIndex: 1
   });
 
+  private syncTableConfig = effect(() => {
+    const isLoading = this.deptResource.isLoading();
+    this.tableConfig.update(c => ({ ...c, loading: isLoading }));
+  });
+
   reloadTable(): void {
     this.message.info('已经刷新了');
-    this.getDataList();
-  }
-
-  tableLoading(isLoading: boolean): void {
-    this.tableConfig.update(config => ({ ...config, loading: isLoading }));
+    this.deptResource.reload();
   }
 
   getDataList(sortFile?: SortFile): void {
-    this.tableLoading(true);
-    const params: SearchCommonVO<NzSafeAny> = {
-      pageSize: 0,
-      pageIndex: 0,
-      filters: this.searchParam
-    };
-    this.dataService
-      .getDepts(params)
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(deptList => {
-        const target = fnFlatDataHasParentToTree(deptList.list);
-        let list = fnFlattenTreeDataByDataList(target);
-        // 因为前段要对后端返回的数据进行处理，所以排序这里交给了前段来做
-        if (sortFile) {
-          fnSortTreeData(list, sortFile);
-        }
-        this.dataList.set(list);
-        this.tableLoading(false);
-      });
+    this.searchFilters.set({ ...this.searchParam });
+    if (sortFile) {
+      this.currentSortFile.set(sortFile);
+    }
+    this.deptResource.reload();
   }
 
   /*查看*/
@@ -128,39 +132,29 @@ export class DeptComponent implements OnInit {
   /*重置*/
   resetForm(): void {
     this.searchParam = {};
-    this.getDataList();
+    this.searchFilters.set({});
+    this.currentSortFile.set(undefined);
   }
 
   add(fatherId: number): void {
     this.deptModalService
       .show({ nzTitle: '新增' })
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(res => {
         if (!res || res.status === ModalBtnStatus.Cancel) {
           return;
         }
         const param = { ...res.modalValue };
         param.fatherId = fatherId;
-        this.tableLoading(true);
         this.addEditData(param, 'addDepts');
       });
   }
 
   addEditData(param: Dept, methodName: 'editDepts' | 'addDepts'): void {
     this.dataService[methodName](param)
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.getDataList();
+        this.deptResource.reload();
       });
   }
 
@@ -170,21 +164,15 @@ export class DeptComponent implements OnInit {
       nzTitle: '确定要删除吗？',
       nzContent: '删除后不可恢复',
       nzOnOk: () => {
-        this.tableLoading(true);
         this.dataService
           .delDepts(ids)
-          .pipe(
-            finalize(() => {
-              this.tableLoading(false);
-            }),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
             // 例如分页第二页只有一条数据，此时删除这条数据，跳转到第一页，并重新查询一下列表,pageIndex改变会由changePageIndex自动触发表格查询getDataList（）
             if (this.dataList().length === 1 && this.tableConfig().pageIndex !== 1) {
               this.tableConfig.update(config => ({ ...config, pageIndex: config.pageIndex! - 1 }));
             } else {
-              this.getDataList();
+              this.deptResource.reload();
             }
           });
       }
@@ -199,19 +187,13 @@ export class DeptComponent implements OnInit {
       .subscribe(res => {
         this.deptModalService
           .show({ nzTitle: '编辑' }, res)
-          .pipe(
-            finalize(() => {
-              this.tableLoading(false);
-            }),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(({ modalValue, status }) => {
             if (status === ModalBtnStatus.Cancel) {
               return;
             }
             modalValue.id = id;
             modalValue.fatherId = fatherId;
-            this.tableLoading(true);
             this.addEditData(modalValue, 'editDepts');
           });
       });

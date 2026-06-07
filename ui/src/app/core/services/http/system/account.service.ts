@@ -1,4 +1,5 @@
 import { inject, Service } from '@angular/core';
+import { HttpResourceRef } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { PageInfo, SearchCommonVO } from '../../types';
@@ -36,8 +37,8 @@ export interface UserPsd {
 export class AccountService {
   http = inject(BaseHttpService);
 
-  public getAccount(param: SearchCommonVO<User>): Observable<PageInfo<User>> {
-    return this.http.post('/user/list', param);
+  getAccountResource(param: () => SearchCommonVO<User>): HttpResourceRef<PageInfo<User>> {
+    return this.http.postResource<PageInfo<User>>('/user/list', param);
   }
 
   public getAccountDetail(id: number): Observable<User> {

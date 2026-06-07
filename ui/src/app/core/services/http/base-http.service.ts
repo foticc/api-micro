@@ -1,5 +1,5 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { inject, Service } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams, httpResource, HttpResourceRef } from '@angular/common/http';
+import { inject, Injector, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 import * as qs from 'qs';
 
@@ -17,6 +17,33 @@ export interface HttpCustomConfig {
 @Service()
 export class BaseHttpService {
   http = inject(HttpClient);
+  private injector = inject(Injector);
+
+  getResource<T>(path: string, param?: NzSafeAny, config?: HttpCustomConfig): HttpResourceRef<T> {
+    const params = new HttpParams({ fromString: qs.stringify(param) });
+    const context = buildHttpContext(config);
+    return httpResource<T>(
+      () => ({
+        url: this.getUrl(path, config),
+        params,
+        context
+      }),
+      { injector: this.injector }
+    ) as HttpResourceRef<T>;
+  }
+
+  postResource<T>(path: string, param: () => NzSafeAny, config?: HttpCustomConfig): HttpResourceRef<T> {
+    const context = buildHttpContext(config);
+    return httpResource<T>(
+      () => ({
+        url: this.getUrl(path, config),
+        method: 'POST',
+        body: param(),
+        context
+      }),
+      { injector: this.injector }
+    ) as HttpResourceRef<T>;
+  }
 
   get<T>(path: string, param?: NzSafeAny, config?: HttpCustomConfig): Observable<T> {
     const params = new HttpParams({ fromString: qs.stringify(param) });

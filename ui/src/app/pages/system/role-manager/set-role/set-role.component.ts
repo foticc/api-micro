@@ -1,9 +1,8 @@
 import { NgTemplateOutlet } from '@angular/common';
-import {  Component, DestroyRef, inject, OnInit, ViewEncapsulation, input, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, ViewEncapsulation, input, signal, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { concatMap } from 'rxjs/operators';
 
 import { Menu } from '@core/services/types';
 import { MenusService } from '@services/system/menus.service';
@@ -12,6 +11,7 @@ import { FooterSubmitComponent } from '@shared/components/footer-submit/footer-s
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { fnAddTreeDataGradeAndLeaf, fnFlatDataHasParentToTree, fnFlattenTreeDataByDataList } from '@utils/treeTableTools';
 
+import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
@@ -39,7 +39,7 @@ import { NzResultModule } from 'ng-zorro-antd/result';
     NgTemplateOutlet,
     FooterSubmitComponent,
     NzWaveModule
-]
+  ]
 })
 export class SetRoleComponent implements OnInit {
   pageHeaderInfo = signal<Partial<PageHeaderType>>({
@@ -47,9 +47,6 @@ export class SetRoleComponent implements OnInit {
     desc: '当前角色：',
     breadcrumb: ['首页', '用户管理', '角色管理', '设置权限']
   });
-  authCodeArr: string[] = [];
-  permissionList = signal<Array<Menu & { isOpen?: boolean; checked?: boolean }>>([]);
-  destroyRef = inject(DestroyRef);
   readonly id = input.required<string>(); // 从路由中获取的角色id，ng16支持的新特性
   readonly roleName = input.required<string>(); // 从路由中获取的角色名称，ng16支持的新特性
 
@@ -57,30 +54,26 @@ export class SetRoleComponent implements OnInit {
   private menusService = inject(MenusService);
   private router = inject(Router);
   private message = inject(NzMessageService);
+  private destroyRef = inject(DestroyRef);
 
-  // 初始化数据
-  initPermission(): void {
-    // 通过角色id获取这个角色拥有的权限码
-    this.dataService
-      .getPermissionById(this.id())
-      .pipe(
-        concatMap(authCodeArr => {
-          this.authCodeArr = authCodeArr;
-          // 获取所有菜单
-          return this.menusService.getMenuList({ pageSize: 0, pageIndex: 0, filters: {} });
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(response => {
-        // isOpen表示 节点是否展开
-        const menuArray: Array<Menu & { isOpen?: boolean; checked?: boolean }> = response.list;
-        menuArray.forEach(item => {
-          item.isOpen = false;
-          item.checked = this.authCodeArr.includes(item.code);
-        });
-        this.permissionList.set(fnAddTreeDataGradeAndLeaf(fnFlatDataHasParentToTree(menuArray)));
-      });
-  }
+  // 通过角色id获取这个角色拥有的权限码
+  authCodeResource = this.dataService.getPermissionByIdResource(() => this.id());
+  // 获取所有菜单
+  menuListResource = this.menusService.getMenuListResource(() => ({ pageSize: 0, pageIndex: 0, filters: {} as NzSafeAny }));
+
+  permissionList = computed<Array<Menu & { isOpen?: boolean; checked?: boolean }>>(() => {
+    if (!this.authCodeResource.hasValue() || !this.menuListResource.hasValue()) {
+      return [];
+    }
+    const authCodes = this.authCodeResource.value();
+    // isOpen表示 节点是否展开
+    const menuArray: Array<Menu & { isOpen?: boolean; checked?: boolean }> = this.menuListResource.value().list;
+    menuArray.forEach(item => {
+      item.isOpen = false;
+      item.checked = authCodes.includes(item.code);
+    });
+    return fnAddTreeDataGradeAndLeaf(fnFlatDataHasParentToTree(menuArray));
+  });
 
   getRoleName(): void {
     this.pageHeaderInfo.update(v => ({ ...v, desc: `当前角色：${this.roleName()}` }));
@@ -117,6 +110,5 @@ export class SetRoleComponent implements OnInit {
 
   ngOnInit(): void {
     this.getRoleName();
-    this.initPermission();
   }
 }

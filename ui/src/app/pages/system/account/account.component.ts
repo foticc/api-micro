@@ -1,11 +1,9 @@
-import { Component, OnInit,  TemplateRef, inject, DestroyRef, viewChild, signal } from '@angular/core';
+import { Component, OnInit, TemplateRef, inject, DestroyRef, viewChild, signal, computed, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { finalize } from 'rxjs/operators';
 
 import { ActionCode } from '@app/config/actionCode';
-import { OptionsInterface, SearchCommonVO } from '@core/services/types';
+import { OptionsInterface } from '@core/services/types';
 import { AccountService, User } from '@services/system/account.service';
 import { AntTableConfig, AntTableComponent } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
@@ -60,13 +58,11 @@ export class AccountComponent implements OnInit {
   readonly operationTpl = viewChild.required<TemplateRef<NzSafeAny>>('operationTpl');
   readonly availableFlag = viewChild.required<TemplateRef<NzSafeAny>>('availableFlag');
   searchParam: Partial<SearchParam> = {};
-  tableConfig = signal<AntTableConfig>({ headers: [], total: 0, showCheckbox: true, loading: false, pageSize: 10, pageIndex: 1 });
   readonly pageHeaderInfo: Partial<PageHeaderType> = {
     title: '账号管理',
     breadcrumb: ['首页', '用户管理', '账号管理'],
     desc: '移除了左侧部门的布局，如果有需要可以看v20及以下的模版代码'
   };
-  dataList = signal<User[]>([]);
   checkedCashArray: User[] = [];
   ActionCode = ActionCode;
   isCollapse = true;
@@ -76,8 +72,47 @@ export class AccountComponent implements OnInit {
   private dataService = inject(AccountService);
   private modalSrv = inject(NzModalService);
   private modalService = inject(AccountModalService);
-  private router = inject(Router);
   private message = inject(NzMessageService);
+
+  private requestPageSize = signal(10);
+  private requestPageIndex = signal(1);
+  private searchFilters = signal<Partial<SearchParam>>({});
+
+  accountResource = this.dataService.getAccountResource(() => ({
+    pageSize: this.requestPageSize(),
+    pageIndex: this.requestPageIndex(),
+    filters: this.searchFilters() as NzSafeAny
+  }));
+
+  dataList = computed(() => {
+    if (this.accountResource.hasValue()) {
+      return [...this.accountResource.value().list];
+    }
+    return [] as User[];
+  });
+
+  tableConfig = signal<AntTableConfig>({ headers: [], total: 0, showCheckbox: true, loading: false, pageSize: 10, pageIndex: 1 });
+
+  // 自动同步 httpResource 的状态到 tableConfig signal
+  private syncTableConfig = effect(() => {
+    // 1. 读取 resource 的 loading 状态
+    //    当 httpResource 发起请求时 isLoading() = true，请求完成时 = false
+    const isLoading = this.accountResource.isLoading();
+    // 2. 读取 resource 是否有值
+    //    首次加载前 hasValue() = false，请求成功后 = true
+    const hasValue = this.accountResource.hasValue();
+    // 3. 将 resource 的状态合并到 tableConfig 中
+    this.tableConfig.update(c => ({
+      ...c,
+      loading: isLoading, // 控制表格的 loading 动画
+      ...(hasValue
+        ? {
+            total: this.accountResource.value().total!, // 总条数，控制分页器
+            pageIndex: this.accountResource.value().pageIndex! // 当前页码
+          }
+        : {})
+    }));
+  });
 
   selectedChecked(e: User[]): void {
     this.checkedCashArray = [...e];
@@ -85,63 +120,32 @@ export class AccountComponent implements OnInit {
 
   resetForm(): void {
     this.searchParam = {};
-    this.getDataList({ pageIndex: 1 });
+    this.searchFilters.set({});
+    this.requestPageIndex.set(1);
   }
 
   getDataList(e?: { pageIndex: number }): void {
-    this.tableLoading(true);
-    const params: SearchCommonVO<NzSafeAny> = {
-      pageSize: this.tableConfig().pageSize!,
-      pageIndex: e?.pageIndex || this.tableConfig().pageIndex!,
-      filters: this.searchParam
-    };
-    this.dataService
-      .getAccount(params)
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(data => {
-        const { list, total, pageIndex } = data;
-        this.dataList.set([...list]);
-        this.tableConfig.update(c => ({ ...c, total: total!, pageIndex: pageIndex! }));
-        this.tableLoading(false);
-        this.checkedCashArray = [...this.checkedCashArray];
-      });
-  }
-
-  // 设置权限
-  setRole(id: number): void {
-    this.router.navigate(['/default/system/role-manager/set-role'], { queryParams: { id: id } });
-  }
-
-  tableLoading(isLoading: boolean): void {
-    this.tableConfig.update(config => ({ ...config, loading: isLoading }));
+    this.searchFilters.set({ ...this.searchParam });
+    if (e?.pageIndex) {
+      this.requestPageIndex.set(e.pageIndex);
+    }
   }
 
   add(): void {
     this.modalService
       .show({ nzTitle: '新增' })
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(res => {
         if (!res || res.status === ModalBtnStatus.Cancel) {
           return;
         }
-        this.tableLoading(true);
         this.addEditData(res.modalValue, 'addAccount');
       });
   }
 
   reloadTable(): void {
+    this.accountResource.reload();
     this.message.info('刷新成功');
-    this.getDataList();
   }
 
   // 在这里做了一个示例，用于获取选中列的数据，而不通过接口，这里可以通过dataItem获取到当前列的数据，也可以通过id从dataList中找到匹配的数据
@@ -155,18 +159,12 @@ export class AccountComponent implements OnInit {
       .subscribe(res => {
         this.modalService
           .show({ nzTitle: '编辑' }, res)
-          .pipe(
-            finalize(() => {
-              this.tableLoading(false);
-            }),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(({ modalValue, status }) => {
             if (status === ModalBtnStatus.Cancel) {
               return;
             }
             modalValue.id = id;
-            this.tableLoading(true);
             this.addEditData(modalValue, 'editAccount');
           });
       });
@@ -174,33 +172,9 @@ export class AccountComponent implements OnInit {
 
   addEditData(param: User, methodName: 'editAccount' | 'addAccount'): void {
     this.dataService[methodName](param)
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.getDataList();
-      });
-  }
-
-  changeStatus(e: boolean, id: number): void {
-    this.tableLoading(true);
-    const people: Partial<User> = {
-      id,
-      available: !e
-    };
-    this.dataService
-      .editAccount(people as User)
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(() => {
-        this.getDataList();
+        this.accountResource.reload();
       });
   }
 
@@ -214,20 +188,15 @@ export class AccountComponent implements OnInit {
           this.checkedCashArray.forEach(item => {
             tempArrays.push(item.id);
           });
-          this.tableLoading(true);
           this.dataService
             .delAccount(tempArrays)
-            .pipe(
-              finalize(() => {
-                this.tableLoading(false);
-              }),
-              takeUntilDestroyed(this.destroyRef)
-            )
+            .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
               if (this.dataList().length === 1) {
-                this.tableConfig.update(c => ({ ...c, pageIndex: c.pageIndex! - 1 }));
+                this.requestPageIndex.update(p => Math.max(1, p - 1));
+              } else {
+                this.accountResource.reload();
               }
-              this.getDataList();
               this.checkedCashArray = [];
             });
         }
@@ -244,21 +213,15 @@ export class AccountComponent implements OnInit {
       nzTitle: '确定要删除吗？',
       nzContent: '删除后不可恢复',
       nzOnOk: () => {
-        this.tableLoading(true);
         this.dataService
           .delAccount(ids)
-          .pipe(
-            finalize(() => {
-              this.tableLoading(false);
-            }),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
             // 例如分页第二页只有一条数据，此时删除这条数据，跳转到第一页，并重新查询一下列表,pageIndex改变会由changePageIndex自动触发表格查询getDataList（）
             if (this.dataList().length === 1 && this.tableConfig().pageIndex !== 1) {
-              this.tableConfig.update(c => ({ ...c, pageIndex: c.pageIndex! - 1 }));
+              this.requestPageIndex.update(p => Math.max(1, p - 1));
             } else {
-              this.getDataList();
+              this.accountResource.reload();
             }
           });
       }
@@ -267,12 +230,7 @@ export class AccountComponent implements OnInit {
 
   // 修改一页几条
   changePageSize(e: number): void {
-    this.tableConfig.update(config => ({ ...config, pageSize: e }));
-  }
-
-  searchDeptIdUser(departmentId: number): void {
-    this.searchParam.departmentId = departmentId;
-    this.getDataList();
+    this.requestPageSize.set(e);
   }
 
   /*展开*/

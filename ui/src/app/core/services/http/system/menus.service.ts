@@ -1,4 +1,5 @@
 import { inject, Service } from '@angular/core';
+import { HttpResourceRef } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { Menu, PageInfo, SearchCommonVO } from '@core/services/types';
@@ -23,8 +24,12 @@ export interface MenuListObj {
 export class MenusService {
   http = inject(BaseHttpService);
 
-  public getMenuList(param: SearchCommonVO<NzSafeAny>): Observable<PageInfo<Menu>> {
-    return this.http.post('/menu/list', param);
+  getMenuListResource(param: () => SearchCommonVO<NzSafeAny>): HttpResourceRef<PageInfo<Menu>> {
+    return this.http.postResource<PageInfo<Menu>>('/menu/list', param);
+  }
+
+  public getMenuDetail(id: number): Observable<MenuListObj> {
+    return this.http.get(`/menu/${id}`);
   }
 
   public addMenus(param: MenuListObj): Observable<void> {
@@ -37,9 +42,5 @@ export class MenusService {
 
   public delMenus(id: number): Observable<void> {
     return this.http.post('/menu/del', { ids: [id] }, { needSuccessInfo: true });
-  }
-
-  public getMenuDetail(id: number): Observable<MenuListObj> {
-    return this.http.get(`/menu/${id}`);
   }
 }
