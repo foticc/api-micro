@@ -91,14 +91,14 @@ export class SearchTableComponent implements OnInit {
   // 刷新页面
   reloadTable(): void {
     this.message.info('已经刷新了');
-    this.getDataList();
+    this.getDataList(1);
   }
 
   tableLoading(isLoading: boolean): void {
     this.tableConfig.update(config => ({ ...config, loading: isLoading }));
   }
 
-  getDataList(e?: NzTableQueryParams): void {
+  getDataList(e: number): void {
     this.tableLoading(true);
     this.dataList.set([]);
     setTimeout(() => {
@@ -158,7 +158,7 @@ export class SearchTableComponent implements OnInit {
           obj: { a: { b: '点出来的值1' } }
         }
       ]);
-      this.tableConfig.update(c => ({ ...c, total: 13, pageIndex: 1 }));
+      this.tableConfig.update(c => ({ ...c, total: 13, pageIndex: e }));
       this.checkedCashArray = [...this.checkedCashArray];
       this.tableLoading(false);
     });
@@ -185,7 +185,7 @@ export class SearchTableComponent implements OnInit {
   /*重置*/
   resetForm(): void {
     this.searchParam = {};
-    this.getDataList();
+    this.getDataList(1);
   }
 
   /*展开*/
@@ -246,7 +246,7 @@ export class SearchTableComponent implements OnInit {
 
         setTimeout(() => {
           this.message.info(`id数组(支持分页保存):${JSON.stringify(id)}`);
-          this.getDataList();
+          this.getDataList(1);
           this.checkedCashArray.splice(
             this.checkedCashArray.findIndex(item => item.id === id),
             1
@@ -278,7 +278,7 @@ export class SearchTableComponent implements OnInit {
           // }, error => this.tableLoading(false));
           setTimeout(() => {
             this.message.info(`id数组(支持分页保存):${JSON.stringify(tempArrays)}`);
-            this.getDataList();
+            this.getDataList(1);
             this.checkedCashArray = [];
             this.tableLoading(false);
           }, 1000);

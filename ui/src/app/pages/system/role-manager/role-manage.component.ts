@@ -109,11 +109,9 @@ export class RoleManageComponent implements OnInit {
     this.requestPageIndex.set(1);
   }
 
-  getDataList(e?: { pageIndex: number }): void {
+  getDataList(e: number): void {
     this.searchFilters.set({ ...this.searchParam });
-    if (e?.pageIndex) {
-      this.requestPageIndex.set(e.pageIndex);
-    }
+    this.requestPageIndex.set(e);
   }
 
   // 设置权限

@@ -43,7 +43,7 @@ export class TreeTableComponent implements OnChanges {
   readonly cashArray = input<NzSafeAny[]>([]);
   checkedCashArrayFromComment: NzSafeAny[] = [];
   readonly sortFn = output<SortFile>();
-  readonly changePageIndex = output<NzTableQueryParams>();
+  readonly changePageIndex = output<number>();
   readonly changePageSize = output<number>();
   mapOfExpandedData: Record<string, TreeNodeInterface[]> = {};
   readonly tableConfig = input.required<AntTableConfig>();
@@ -109,7 +109,7 @@ export class TreeTableComponent implements OnChanges {
   }
 
   // 分页页码改变
-  onQueryParamsChange(tableQueryParams: NzTableQueryParams): void {
+  onPageIndexChange(tableQueryParams: number): void {
     this.changePageIndex.emit(tableQueryParams);
   }
 
