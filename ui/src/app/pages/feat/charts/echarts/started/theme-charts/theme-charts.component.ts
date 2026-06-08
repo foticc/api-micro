@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { EChartsOption } from 'echarts';
 import { ThemeOption, NgxEchartsModule } from 'ngx-echarts';
@@ -19,7 +19,7 @@ import { CoolTheme } from './data';
     <div class="demo-chart" echarts [options]="options" [theme]="theme"></div>
   `,
   styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzButtonModule, NzWaveModule, NgxEchartsModule]
 })
 export class ThemeChartsComponent {

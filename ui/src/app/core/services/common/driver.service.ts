@@ -1,4 +1,4 @@
-import { computed, DestroyRef, inject, Injectable, DOCUMENT } from '@angular/core';
+import { computed, DestroyRef, inject, Service, DOCUMENT } from '@angular/core';
 
 import { ThemeService } from '@store/common-store/theme.service';
 import { driver, DriveStep } from 'driver.js';
@@ -8,9 +8,7 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
  * https://madewith.cn/766
  * 引导页
  * */
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class DriverService {
   themesService = inject(ThemeService);
   destroyRef = inject(DestroyRef);

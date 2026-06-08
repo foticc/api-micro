@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, TemplateRef, inject } from '@angular/core';
+import { Component, TemplateRef, inject } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 
@@ -20,7 +20,7 @@ type confirmType = common | 'info' | 'confirm';
   selector: 'app-button',
   templateUrl: './msg.component.html',
   styleUrl: './msg.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, NzButtonModule, NzWaveModule, NzIconModule, NzGridModule]
 })
 export class MsgComponent {

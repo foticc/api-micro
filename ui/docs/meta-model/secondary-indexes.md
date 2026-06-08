@@ -132,7 +132,7 @@ type: project
 | GET | `/department/{id}` | `DeptService.getDeptsDetail()` | 部门详情 |
 | POST | `/department/create` | `DeptService.addDepts()` | 新增部门 |
 | PUT | `/department/update` | `DeptService.editDepts()` | 编辑部门 |
-| POST | `/department/del/` | `DeptService.delDepts()` | 删除部门（批量） |
+| POST | `/department/del` | `DeptService.delDepts()` | 删除部门（批量） |
 
 ---
 

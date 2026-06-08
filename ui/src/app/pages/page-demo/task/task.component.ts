@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {  Component } from '@angular/core';
 
 import { TaskListPanelComponent } from '@app/pages/page-demo/task/task-list-panel/task-list-panel.component';
 import { TaskSearchInfoComponent } from '@app/pages/page-demo/task/task-search-info/task-search-info.component';
@@ -11,7 +11,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
   selector: 'app-task',
   imports: [NzGridModule, TaskSearchInfoComponent, NzCardModule, TaskListPanelComponent],
   templateUrl: './task.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class TaskComponent {
   pageHeaderInfo: Partial<PageHeaderType> = {

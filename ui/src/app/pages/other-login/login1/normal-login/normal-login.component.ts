@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject, DestroyRef, computed } from '@angular/core';
+import { Component, OnInit,  inject, DestroyRef, computed } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -22,7 +22,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
   selector: 'app-normal-login',
   templateUrl: './normal-login.component.html',
   styleUrl: './normal-login.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzInputModule, NzButtonModule, NzIconModule, NzCheckboxModule, NzWaveModule, NzDividerModule]
 })
 export class NormalLoginComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, TemplateRef, input } from '@angular/core';
+import {  Component, inject, TemplateRef, input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
@@ -18,7 +18,7 @@ export interface PageHeaderType {
   selector: 'app-page-header',
   templateUrl: './page-header.component.html',
   styleUrl: './page-header.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzPageHeaderModule, NzBreadCrumbModule, NzOutletModule]
 })
 export class PageHeaderComponent {

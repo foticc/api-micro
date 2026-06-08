@@ -1,11 +1,9 @@
-import { Injectable, signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 
 import { Menu } from '@core/services/types';
 
 // 菜单store service
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class MenuStoreService {
   $menuArray = signal<Menu[]>([]);
 

@@ -1,5 +1,5 @@
-import { DragDrop, DragRef } from '@angular/cdk/drag-drop';
-import { inject, Injectable } from '@angular/core';
+import { createDragRef, DragRef } from '@angular/cdk/drag-drop';
+import { inject, Injector, Service } from '@angular/core';
 
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { ModalTypes, NzModalService } from 'ng-zorro-antd/modal';
@@ -7,14 +7,12 @@ import { ModalTypes, NzModalService } from 'ng-zorro-antd/modal';
 /**
  * 对话框拖动服务
  */
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ModalDragService {
   static readonly DRAG_CLS_PREFIX = 'NZ-MODAL-WRAP-CLS-';
 
   modal = inject(NzModalService);
-  dragDrop = inject(DragDrop);
+  injector = inject(Injector);
 
   /**
    * 创建拖拽手柄
@@ -28,7 +26,7 @@ export class ModalDragService {
     const handle = nzModalType === 'confirm' ? rootElement.querySelector<HTMLDivElement>('.ant-modal-body')! : rootElement.querySelector<HTMLDivElement>('.ant-modal-header')!;
     this.fixedWrapElementStyle(wrapElement);
     this.setMaxZIndex(rootElement, wrapElement);
-    return this.dragDrop.createDrag(handle).withHandles([handle]).withRootElement(rootElement);
+    return createDragRef<T>(this.injector, handle).withHandles([handle]).withRootElement(rootElement);
   }
 
   /**

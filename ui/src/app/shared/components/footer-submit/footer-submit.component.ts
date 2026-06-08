@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, ChangeDetectionStrategy, TemplateRef, Renderer2, ElementRef, inject, effect, input } from '@angular/core';
+import { Component,  TemplateRef, Renderer2, ElementRef, inject, effect, input } from '@angular/core';
 
 import { CollapsedNavWidth, SideNavWidth } from '@app/config/constant';
 import { SplitNavStoreService } from '@store/common-store/split-nav-store.service';
@@ -12,7 +12,7 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
   selector: 'app-footer-submit',
   templateUrl: './footer-submit.component.html',
   styleUrl: './footer-submit.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzCardModule, NgTemplateOutlet]
 })
 export class FooterSubmitComponent {

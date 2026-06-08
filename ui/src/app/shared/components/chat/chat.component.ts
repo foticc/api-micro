@@ -1,5 +1,5 @@
 
-import { Component, OnInit, ChangeDetectionStrategy, ElementRef, OnDestroy, inject, output, viewChild, computed, signal, DestroyRef } from '@angular/core';
+import { Component, OnInit,  ElementRef, OnDestroy, inject, output, viewChild, computed, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { timer } from 'rxjs';
@@ -20,7 +20,7 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzCardModule, NzTypographyModule, NzGridModule, NzAvatarModule, NzResultModule, NzIconModule, NzButtonModule, FormsModule, ReactiveFormsModule, NzInputModule]
 })
 export class ChatComponent implements OnInit, OnDestroy {

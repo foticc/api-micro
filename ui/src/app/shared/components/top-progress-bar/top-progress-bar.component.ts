@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, DestroyRef } from '@angular/core';
+import {  Component, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, RouteConfigLoadEnd, RouteConfigLoadStart, Router } from '@angular/router';
 import { timer } from 'rxjs';
@@ -7,7 +7,7 @@ import { timer } from 'rxjs';
   selector: 'app-top-progress-bar',
   templateUrl: './top-progress-bar.component.html',
   styleUrl: './top-progress-bar.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: []
 })
 export class TopProgressBarComponent {

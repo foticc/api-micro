@@ -1,4 +1,4 @@
-import { inject, Injectable, Type } from '@angular/core';
+import { inject, Service, Type } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ModalResponse, ModalWrapService } from '@widget/base-modal';
@@ -7,9 +7,7 @@ import { ModalOptions } from 'ng-zorro-antd/modal';
 
 import { SearchRouteComponent } from './search-route.component';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class SearchRouteService {
   private modalWrapService = inject(ModalWrapService);
 

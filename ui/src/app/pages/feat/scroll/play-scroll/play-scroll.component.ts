@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DOCUMENT } from '@angular/core';
+import { Component, inject, DOCUMENT } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 
@@ -12,7 +12,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   selector: 'app-play-scroll',
   templateUrl: './play-scroll.component.html',
   styleUrl: './play-scroll.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, NzGridModule, NzButtonModule, NzIconModule]
 })
 export class PlayScrollComponent {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {  Component } from '@angular/core';
 
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
@@ -7,7 +7,7 @@ import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.com
   selector: 'app-water-mark-demo',
   imports: [PageHeaderComponent, WaterMarkComponent],
   templateUrl: './water-mark.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class WaterMarkDemoComponent {
   pageHeaderInfo: Partial<PageHeaderType> = {

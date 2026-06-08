@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject, DestroyRef, signal } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 
@@ -9,7 +9,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 @Component({
   selector: 'app-detail',
   templateUrl: './detail.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzInputModule, NumberLoopPipe]
 })
 export class DetailComponent implements OnInit {

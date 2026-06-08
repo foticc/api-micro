@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Service, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -10,9 +10,7 @@ export interface UserInfo {
   authCode: string[];
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class UserInfoStoreService {
   $userInfo = signal<UserInfo>({ userId: -1, userName: '', authCode: [] });
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, resource } from '@angular/core';
+import {  Component, signal, resource } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
 import { delay } from 'rxjs/operators';
@@ -30,7 +30,7 @@ function mockFetch(id: number): Promise<UserData> {
   selector: 'app-resource',
   imports: [PageHeaderComponent, NzCardModule, NzGridModule, NzButtonModule, NzWaveModule, NzSelectModule, NzTagModule, NzDividerModule, NzDescriptionsModule, NzSpinModule, FormsModule],
   templateUrl: './resource.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   styleUrl: './resource.less'
 })
 export class Resource {

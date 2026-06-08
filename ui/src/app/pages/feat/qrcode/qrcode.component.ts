@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {  Component } from '@angular/core';
 
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 
@@ -11,7 +11,7 @@ import { NzQRCodeModule } from 'ng-zorro-antd/qr-code';
   imports: [NzQRCodeModule, PageHeaderComponent, NzCardModule, NzIconModule],
   templateUrl: './qrcode.component.html',
   styleUrl: './qrcode.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class QrcodeComponent {
   pageHeaderInfo: Partial<PageHeaderType> = {

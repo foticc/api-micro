@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
+import { Component,  inject, computed } from '@angular/core';
 
 import { ThemeService } from '@store/common-store/theme.service';
 
@@ -8,7 +8,6 @@ import { NavBarComponent } from '../nav-bar/nav-bar.component';
   selector: 'app-side-nav',
   templateUrl: './side-nav.component.html',
   styleUrl: './side-nav.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NavBarComponent]
 })
 export class SideNavComponent {

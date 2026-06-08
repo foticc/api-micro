@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 
 // import { MENU_TOKEN } from '@config/menu';
@@ -11,9 +11,7 @@ export interface UserLogin {
   password: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class LoginService {
   http = inject(BaseHttpService);
   // private menus = inject(MENU_TOKEN);

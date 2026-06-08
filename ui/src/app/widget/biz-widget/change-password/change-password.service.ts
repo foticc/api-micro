@@ -1,4 +1,4 @@
-import { inject, Injectable, Type } from '@angular/core';
+import { inject, Service, Type } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ChangePasswordComponent } from '@widget/biz-widget/change-password/change-password.component';
@@ -7,9 +7,7 @@ import { ModalOptions } from 'ng-zorro-antd/modal';
 
 import { ModalResponse, ModalWrapService } from '../../base-modal';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ChangePasswordService {
   private modalWrapService = inject(ModalWrapService);
 

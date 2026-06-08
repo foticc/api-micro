@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
+import { Component,  inject, computed } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { LoginInOutService } from '@core/services/common/login-in-out.service';
@@ -31,7 +31,7 @@ import { HomeNoticeComponent } from '../home-notice/home-notice.component';
   selector: 'app-layout-head-right-menu',
   templateUrl: './layout-head-right-menu.component.html',
   styleUrl: './layout-head-right-menu.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NgTemplateOutlet, NzTooltipModule, NzIconModule, NzButtonModule, ToggleFullscreenDirective, NzDropdownModule, NzBadgeModule, NzMenuModule, HomeNoticeComponent, ScreenLessHiddenDirective, TranslateModule]
 })
 export class LayoutHeadRightMenuComponent {

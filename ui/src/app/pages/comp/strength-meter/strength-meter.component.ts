@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { PasswordStrengthMeterComponent } from '@shared/biz-components/password-strength-meter/password-strength-meter.component';
@@ -13,7 +13,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
   selector: 'app-strength-meter',
   templateUrl: './strength-meter.component.html',
   styleUrl: './strength-meter.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzGridModule, NzCardModule, NzInputModule, FormsModule, PasswordStrengthMeterComponent, NzIconModule]
 })
 export class StrengthMeterComponent {

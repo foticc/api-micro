@@ -1,5 +1,5 @@
 
-import { Component, ChangeDetectionStrategy, booleanAttribute, output, input, signal, computed } from '@angular/core';
+import { Component,  booleanAttribute, output, input, signal, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -23,7 +23,7 @@ interface IconItem {
 @Component({
   selector: 'app-icon-sel',
   templateUrl: './icon-sel.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzIconModule, NzButtonModule, NzPopoverModule, NzInputModule, NzCardModule, NzEmptyModule, NzPaginationModule]
 })
 export class IconSelComponent {

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 
 import { getInstanceByDom, connect, EChartsOption } from 'echarts';
 import { NgxEchartsModule } from 'ngx-echarts';
@@ -20,7 +20,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
     </div>
   `,
   styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzGridModule, NgxEchartsModule]
 })
 export class ConnectChartsComponent implements AfterViewInit {

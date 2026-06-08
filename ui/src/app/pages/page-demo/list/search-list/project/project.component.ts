@@ -1,5 +1,5 @@
 
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component,  inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
@@ -21,7 +21,7 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
   selector: 'app-project',
   templateUrl: './project.component.html',
   styleUrl: './project.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     NzCardModule,
     WaterMarkComponent,

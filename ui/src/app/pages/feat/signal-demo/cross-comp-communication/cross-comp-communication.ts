@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {  Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
@@ -31,7 +31,7 @@ import { SharedSignalService } from './shared-signal.service';
     ChildCounterComponent
   ],
   templateUrl: './cross-comp-communication.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   styleUrl: './cross-comp-communication.less'
 })
 export class CrossCompCommunication {

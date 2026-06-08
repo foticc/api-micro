@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, TemplateRef, viewChild } from '@angular/core';
+import { AfterViewInit,  Component, DestroyRef, inject, OnInit, TemplateRef, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -22,7 +22,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
   selector: 'app-base',
   templateUrl: './base.component.html',
   styleUrl: './base.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     PageHeaderComponent,
     NzCardModule,

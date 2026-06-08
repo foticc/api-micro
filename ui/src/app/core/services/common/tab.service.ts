@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Service, signal } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, Params, Router, UrlSegment } from '@angular/router';
 
 import { getDeepReuseStrategyKeyFn, fnGetPathWithoutParam } from '@utils/tools';
@@ -15,9 +15,7 @@ export interface TabModel {
 /*
  * tab操作的服务
  * */
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class TabService {
   $tabArray = signal<TabModel[]>([]);
   $currSelectedIndexTab = signal(0);

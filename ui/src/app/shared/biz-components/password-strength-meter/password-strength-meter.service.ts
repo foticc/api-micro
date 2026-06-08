@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { zxcvbn, zxcvbnOptions } from '@zxcvbn-ts/core';
 import zxcvbnEnPackage from '@zxcvbn-ts/language-en';
@@ -9,7 +9,7 @@ export const DEFAULT_CONFIG: PSMOptions = {
   translations: zxcvbnEnPackage.translations
 };
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class PasswordStrengthMeterService {
   private options = inject(PSM_CONFIG, { optional: true });
 

@@ -1,11 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 
 import { isEmail, isMobile, isPasswordPass, isTelPhone } from '@utils/validate/validate';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ValidatorsRuleService {
   mobileRule(value: string): ValidationErrors | null {
     if (!value) {

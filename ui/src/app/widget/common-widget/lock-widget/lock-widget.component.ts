@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component,  inject } from '@angular/core';
 import { NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
@@ -25,7 +25,7 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
   selector: 'app-lock-widget',
   templateUrl: './lock-widget.component.html',
   styleUrl: './lock-widget.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzAvatarModule, FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzButtonModule, NzInputModule, NzIconModule, NzWaveModule, TranslateModule]
 })
 export class LockWidgetComponent extends BasicConfirmModalComponent {

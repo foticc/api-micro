@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject, output } from '@angular/core';
+import { Component, OnInit,  inject, output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { fnCheckForm } from '@utils/tools';
@@ -16,7 +16,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
   selector: 'app-step-two',
   templateUrl: './step-two.component.html',
   styleUrl: './step-two.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzAlertModule, NzDescriptionsModule, NzDividerModule, FormsModule, ReactiveFormsModule, NzGridModule, NzFormModule, NzButtonModule, NzInputModule, NzWaveModule]
 })
 export class StepTwoComponent implements OnInit {

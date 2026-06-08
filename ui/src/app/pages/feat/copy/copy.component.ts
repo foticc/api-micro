@@ -1,5 +1,5 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -15,7 +15,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   selector: 'app-copy',
   templateUrl: './copy.component.html',
   styleUrl: './copy.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, NzButtonModule, NzInputModule, FormsModule, NzWaveModule, ClipboardModule, NzIconModule]
 })
 export class CopyComponent {

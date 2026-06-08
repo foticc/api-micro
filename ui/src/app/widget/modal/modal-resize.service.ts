@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
 export interface ModalResizeConfig {
   minWidth?: number;
@@ -10,9 +10,7 @@ export interface ModalResizeConfig {
 /**
  * 对话框调整大小服务
  */
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ModalResizeService {
   private resizeHandles: HTMLElement[] = [];
   private isResizing = false;

@@ -1,4 +1,4 @@
-import { inject, Injectable, Type } from '@angular/core';
+import { inject, Service, Type } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Role } from '@services/system/role.service';
@@ -7,9 +7,7 @@ import { RoleManageModalComponent } from '@widget/biz-widget/system/role-manage-
 
 import { ModalOptions } from 'ng-zorro-antd/modal';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class RoleManageModalService {
   private modalWrapService = inject(ModalWrapService);
 

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { TabModel, TabService } from '@core/services/common/tab.service';
@@ -20,7 +20,6 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
   selector: 'app-tab',
   templateUrl: './tab.component.html',
   styleUrl: './tab.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NzCardModule, NzTabsModule, NzDropdownModule, NzMenuModule, NzButtonModule, MouseHoverShowDirective, NzIconModule, TranslateModule]
 })
 export class TabComponent {

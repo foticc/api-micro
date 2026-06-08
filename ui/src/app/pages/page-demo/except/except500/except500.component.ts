@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
@@ -13,7 +13,7 @@ import { NzResultModule } from 'ng-zorro-antd/result';
       </div>
     </nz-result>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzResultModule, NzButtonModule, NzWaveModule]
 })
 export class Except500Component {}

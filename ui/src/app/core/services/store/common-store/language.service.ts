@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Service, inject, signal } from '@angular/core';
 
 import { LangKey } from '@config/constant';
 import { WindowService } from '@core/services/common/window.service';
@@ -8,9 +8,7 @@ import { NzI18nService, zh_CN, zh_TW, en_US, vi_VN } from 'ng-zorro-antd/i18n';
 
 export type Lang = 'zh_CN' | 'zh_TW' | 'en_US' | 'vi_VN';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class LanguageService {
   private translate = inject(TranslateService);
   private nzI18n = inject(NzI18nService);

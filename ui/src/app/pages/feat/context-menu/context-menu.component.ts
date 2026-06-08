@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 
@@ -15,7 +15,7 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
   selector: 'app-context-menu',
   templateUrl: './context-menu.component.html',
   styleUrl: './context-menu.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, NzButtonModule, NzWaveModule, NzDropdownModule, NzMenuModule, NzIconModule, NzGridModule, NzAlertModule]
 })
 export class ContextMenuComponent {

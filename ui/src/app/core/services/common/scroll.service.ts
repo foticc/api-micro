@@ -1,7 +1,7 @@
 import { Platform } from '@angular/cdk/platform';
-import { inject, Injectable, DOCUMENT } from '@angular/core';
+import { inject,  DOCUMENT, Service } from '@angular/core';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ScrollService {
   private readonly _doc = inject(DOCUMENT);
   private readonly platform = inject(Platform);

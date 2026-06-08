@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import AMapLoader from '@amap/amap-jsapi-loader';
@@ -11,7 +11,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 @Component({
   selector: 'app-gaode-map',
   templateUrl: './gaode-map.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, WaterMarkComponent, NzInputModule, FormsModule]
 })
 export class GaodeMapComponent implements AfterViewInit {

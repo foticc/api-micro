@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 
@@ -12,7 +12,7 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 @Component({
   selector: 'app-desc',
   templateUrl: './desc.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzGridModule, NzCardModule, NzDescriptionsModule, NzTooltipModule, NzIconModule, NzButtonModule]
 })
 export class DescComponent {

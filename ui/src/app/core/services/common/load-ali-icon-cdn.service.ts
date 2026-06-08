@@ -1,11 +1,9 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { NzIconService } from 'ng-zorro-antd/icon';
 
 // 获取阿里图标库
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class LoadAliIconCdnService {
   private iconService = inject(NzIconService);
 

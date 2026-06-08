@@ -1,13 +1,11 @@
-import { computed, inject, Injectable, DOCUMENT } from '@angular/core';
+import { computed, inject, Service, DOCUMENT } from '@angular/core';
 
 import { StyleTheme, ThemeService } from '@store/common-store/theme.service';
 
 /*
  * 切换主题服务
  * */
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ThemeSkinService {
   private readonly doc = inject(DOCUMENT);
   private readonly themesService = inject(ThemeService);

@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component,  inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
@@ -23,7 +23,7 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
   selector: 'app-application',
   templateUrl: './application.component.html',
   styleUrl: './application.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     NzCardModule,
     WaterMarkComponent,
