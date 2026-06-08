@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Signal, TemplateRef, viewChild } from '@angular/core';
+import {  Component, computed, inject, Signal, TemplateRef, viewChild } from '@angular/core';
 
 import { ModalFullStatusStoreService } from '@store/common-store/modal-full-status-store.service';
 import { fnStopMouseEvent } from '@utils/tools';
@@ -17,7 +17,7 @@ export abstract class GlobalModalBtnTplComponentToken {
   imports: [NzIconModule],
   templateUrl: './global-modal-btn-tpl.component.html',
   providers: [{ provide: GlobalModalBtnTplComponentToken, useExisting: GlobalModalBtnTplComponent }],
-  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class GlobalModalBtnTplComponent implements GlobalModalBtnTplComponentToken {
   readonly componentTpl: Signal<TemplateRef<NzSafeAny>> = viewChild.required<TemplateRef<NzSafeAny>>('componentTpl');

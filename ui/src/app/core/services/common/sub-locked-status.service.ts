@@ -1,4 +1,4 @@
-import { DestroyRef, inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Service } from '@angular/core';
 
 import { LockedKey, salt } from '@config/constant';
 import { WindowService } from '@core/services/common/window.service';
@@ -6,9 +6,7 @@ import { LockScreenStoreService } from '@store/common-store/lock-screen-store.se
 import { fnDecrypt, fnEncrypt } from '@utils/tools';
 
 // 监听锁屏状态
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class SubLockedStatusService {
   private windowSer = inject(WindowService);
   private lockScreenStoreService = inject(LockScreenStoreService);

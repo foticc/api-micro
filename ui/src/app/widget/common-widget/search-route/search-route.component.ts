@@ -1,5 +1,5 @@
 import { normalizePassiveListenerOptions } from '@angular/cdk/platform';
-import { Component, ChangeDetectionStrategy, ElementRef, AfterViewInit, inject, DestroyRef, viewChild, signal, effect } from '@angular/core';
+import { Component,  ElementRef, AfterViewInit, inject, DestroyRef, viewChild, signal, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -35,7 +35,7 @@ const passiveEventListenerOptions = normalizePassiveListenerOptions({ passive: t
   selector: 'app-search-route',
   templateUrl: './search-route.component.html',
   styleUrl: './search-route.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzButtonModule, NzInputModule, FormsModule, NzIconModule, NzEmptyModule, NzGridModule, NzDividerModule, TranslateModule],
   host: {
     '(window:keyup.enter)': 'onEnterUp()',

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import {  Component, signal } from '@angular/core';
 
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 
@@ -12,7 +12,7 @@ import { HeavyCard } from './heavy-card';
 
 @Component({
   selector: 'app-lazy-defer',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, HeavyCard, NzCardModule, NzGridModule, NzButtonModule, NzSpinModule, NzDividerModule],
   templateUrl: './lazy-defer.html',
   styleUrl: './lazy-defer.less'

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {  Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -70,7 +70,7 @@ export enum TaskStateSearchCheckPeriodEnum {
   selector: 'app-append-form',
   templateUrl: './append-form.component.html',
   styleUrl: './append-form.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     PageHeaderComponent,
     NzCardModule,

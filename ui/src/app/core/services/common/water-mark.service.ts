@@ -1,11 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
 /*
  * 水印服务
  * */
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class WaterMarkService {
   watermark = '';
 

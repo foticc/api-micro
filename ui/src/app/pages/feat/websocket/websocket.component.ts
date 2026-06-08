@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnDestroy, AfterViewInit, inject, DestroyRef, signal } from '@angular/core';
+import { Component, OnDestroy, AfterViewInit, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
@@ -18,7 +18,7 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
 @Component({
   selector: 'app-websocket',
   templateUrl: './websocket.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzGridModule, NzInputModule, FormsModule, NzButtonModule, NzWaveModule, NzCardModule, NzResultModule, NzTypographyModule, CdkTextareaAutosize]
 })
 export class WebsocketComponent implements OnDestroy, AfterViewInit {

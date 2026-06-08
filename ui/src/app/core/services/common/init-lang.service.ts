@@ -1,12 +1,10 @@
-import { Injectable, inject } from '@angular/core';
+import { Service, inject } from '@angular/core';
 
 import { LangKey } from '@config/constant';
 import { WindowService } from '@core/services/common/window.service';
 import { Lang, LanguageService } from '@store/common-store/language.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class InitLangService {
   private windowServe = inject(WindowService);
   private languageService = inject(LanguageService);

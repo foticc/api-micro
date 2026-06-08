@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, signal, untracked } from '@angular/core';
+import {  Component, computed, signal, untracked } from '@angular/core';
 
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -18,7 +18,7 @@ interface ListItem {
   selector: 'app-performance-optimization',
   imports: [PageHeaderComponent, NzCardModule, NzGridModule, NzButtonModule, NzWaveModule, NzTagModule, NzDividerModule, NzDescriptionsModule],
   templateUrl: './performance-optimization.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   styleUrl: './performance-optimization.less'
 })
 export class PerformanceOptimization {

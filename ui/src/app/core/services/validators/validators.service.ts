@@ -1,11 +1,9 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 import { ValidatorsRuleService } from './validators-rule.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ValidatorsService {
   private vrService = inject(ValidatorsRuleService);
 

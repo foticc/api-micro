@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 
 import { LazyService } from '@core/services/common/lazy.service';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -10,7 +10,7 @@ declare let BMap: NzSafeAny;
 @Component({
   selector: 'app-baidu-map',
   templateUrl: './baidu-map.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule]
 })
 export class BaiduMapComponent implements OnInit {

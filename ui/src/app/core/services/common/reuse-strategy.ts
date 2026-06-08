@@ -1,5 +1,5 @@
 import { computed, DestroyRef, inject, DOCUMENT } from '@angular/core';
-import { ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy } from '@angular/router';
+import { ActivatedRouteSnapshot, destroyDetachedRouteHandle, DetachedRouteHandle, RouteReuseStrategy } from '@angular/router';
 
 import { ScrollService } from '@core/services/common/scroll.service';
 import { ThemeService } from '@store/common-store/theme.service';
@@ -42,9 +42,7 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
 
   public static deleteRouteSnapshot(key: string): void {
     if (SimpleReuseStrategy.handlers[key]) {
-      if (SimpleReuseStrategy.handlers[key].componentRef) {
-        SimpleReuseStrategy.handlers[key].componentRef.destroy();
-      }
+      destroyDetachedRouteHandle(SimpleReuseStrategy.handlers[key]);
       delete SimpleReuseStrategy.handlers[key];
       delete SimpleReuseStrategy.scrollHandlers[key];
     }
@@ -92,7 +90,7 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
     // 如果待删除的是当前路由则不存储快照
     if (SimpleReuseStrategy.waitDelete === key) {
       this.runHook('_onReuseDestroy', handle.componentRef);
-      handle.componentRef.destroy();
+      destroyDetachedRouteHandle(handle);
       SimpleReuseStrategy.waitDelete = null;
       delete SimpleReuseStrategy.scrollHandlers[key];
       return;

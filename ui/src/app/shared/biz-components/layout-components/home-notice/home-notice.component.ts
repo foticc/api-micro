@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { NumberLoopPipe } from '@shared/pipes/number-loop.pipe';
 
@@ -13,7 +13,7 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
   selector: 'app-home-notice',
   templateUrl: './home-notice.component.html',
   styleUrl: './home-notice.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzCardModule, NzTabsModule, NgTemplateOutlet, NzListModule, NzTypographyModule, NzTagModule, NumberLoopPipe]
 })
 export class HomeNoticeComponent {}

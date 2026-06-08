@@ -1,5 +1,5 @@
 import { registerLocaleData } from '@angular/common';
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
+import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptors } from '@angular/common/http';
 import zh from '@angular/common/locales/zh';
 import {
   ApplicationConfig,
@@ -27,7 +27,7 @@ import { SelectivePreloadingStrategyService } from '@core/services/common/select
 import { SubLockedStatusService } from '@core/services/common/sub-locked-status.service';
 import { SubWindowWithService } from '@core/services/common/sub-window-with.service';
 import { ThemeSkinService } from '@core/services/common/theme-skin.service';
-import { httpInterceptorService } from '@core/services/interceptors/http-interceptor';
+import { httpInterceptors } from '@core/services/interceptors';
 import { LoginExpiredService } from '@core/services/interceptors/login-expired.service';
 import { StartupService } from '@core/startup/startup.service';
 import { getDeepReuseStrategyKeyFn } from '@utils/tools';
@@ -150,7 +150,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideTranslateHttpLoader({ prefix: './i18n/', suffix: '.json' }),
     ...APPINIT_PROVIDES, // 项目启动之前，需要调用的一系列方法
-    provideHttpClient(withInterceptors([httpInterceptorService]), withInterceptorsFromDi()),
+    provideHttpClient(withInterceptors(httpInterceptors)),
     { provide: HTTP_INTERCEPTORS, useClass: LoginExpiredService, multi: true },
     provideTestOAuth2(),
     provideZonelessChangeDetection() // 开启 zoneless

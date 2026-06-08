@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, resource, signal } from '@angular/core';
+import {  Component, computed, resource, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -59,7 +59,7 @@ const MOCK_PRODUCTS: Product[] = [
     NzIconModule
   ],
   templateUrl: './signal-comprehensive-practical.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   styleUrl: './signal-comprehensive-practical.less'
 })
 export class SignalComprehensivePractical {

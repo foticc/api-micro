@@ -1,6 +1,6 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 
-import { Component, OnInit, ChangeDetectionStrategy, inject, DestroyRef, viewChild, signal } from '@angular/core';
+import { Component, OnInit,  inject, DestroyRef, viewChild, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AdComponent, DynamicComponent } from '@core/services/types';
@@ -27,7 +27,7 @@ interface TabInterface {
   selector: 'app-personal-setting',
   templateUrl: './personal-setting.component.html',
   styleUrl: './personal-setting.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzCardModule, NzMenuModule, NzButtonModule, NzGridModule, NzTypographyModule, AdDirective_1]
 })
 export class PersonalSettingComponent implements OnInit {

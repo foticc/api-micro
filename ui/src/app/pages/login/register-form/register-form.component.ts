@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit,  inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
@@ -17,7 +17,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
   selector: 'app-register-form',
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzButtonModule, NzInputModule, NzSelectModule, NzWaveModule, RouterLink, TranslateModule]
 })
 export class RegisterFormComponent implements OnInit {

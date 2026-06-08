@@ -1,4 +1,5 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
+import { HttpResourceRef } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
@@ -36,18 +37,16 @@ export interface Role {
   roleDesc?: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class RoleService {
   http = inject(BaseHttpService);
 
-  public getRoles(param: SearchCommonVO<Role>): Observable<Role[]> {
-    return this.http.post('/role/list', param, { showLoading: true, loadingText: '请求中' });
+  getRolesResource(param: () => SearchCommonVO<Role>): HttpResourceRef<PageInfo<Role>> {
+    return this.http.postResource<PageInfo<Role>>('/role/list', param, { showLoading: true, loadingText: '请求中' });
   }
 
-  public getRolesPages(param: SearchCommonVO<Role>): Observable<PageInfo<Role>> {
-    return this.http.post('/role/page', param, { showLoading: true, loadingText: '请求中' });
+  getPermissionByIdResource(id: () => string): HttpResourceRef<string[]> {
+    return this.http.getResource<string[]>(`/permission/list-role-resources/${id()}`);
   }
 
   public getRolesDetail(id: number): Observable<Role> {
@@ -64,10 +63,6 @@ export class RoleService {
 
   public editRoles(param: Role): Observable<void> {
     return this.http.put('/role/update', param, { needSuccessInfo: true });
-  }
-
-  public getPermissionById(id: string): Observable<string[]> {
-    return this.http.get(`/permission/list-role-resources/${id}`);
   }
 
   public updatePermission(param: PutPermissionParam): Observable<NzSafeAny> {

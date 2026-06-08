@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject, DestroyRef, computed } from '@angular/core';
+import { Component, OnInit,  inject, DestroyRef, computed } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { LoginType } from '@app/pages/other-login/login1/login1.component';
@@ -15,7 +15,7 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
   selector: 'app-qr-login',
   templateUrl: './qr-login.component.html',
   styleUrl: './qr-login.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzTypographyModule, NzButtonModule, NzWaveModule, NzQRCodeModule]
 })
 export class QrLoginComponent implements OnInit {

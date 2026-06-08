@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
+import { Component,  inject, computed } from '@angular/core';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageService, Lang } from '@core/services/store/common-store/language.service';
@@ -37,7 +37,7 @@ interface TranslationKey {
   selector: 'app-multilingual',
   templateUrl: './multilingual.html',
   styleUrl: './multilingual.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [TranslateModule, PageHeaderComponent, AntTableComponent, NzCardModule, NzTagModule, NzDividerModule, NzBadgeModule, NzIconModule, NzGridModule, NzStatisticModule, NzTimelineModule, NzAlertModule]
 })
 export class Multilingual {

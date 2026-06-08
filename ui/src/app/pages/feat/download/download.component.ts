@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
+import { Component, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ip } from '@env/environment.prod';
@@ -15,7 +15,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   selector: 'app-download',
   templateUrl: './download.component.html',
   styleUrl: './download.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, NzButtonModule, NzGridModule, NzIconModule]
 })
 export class DownloadComponent {

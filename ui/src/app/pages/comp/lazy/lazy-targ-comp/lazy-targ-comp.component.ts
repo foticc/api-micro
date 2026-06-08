@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, SimpleChanges, OnChanges, inject, DestroyRef, input, computed, output } from '@angular/core';
+import { Component,  SimpleChanges, OnChanges, inject, DestroyRef, input, computed, output } from '@angular/core';
 
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -16,7 +16,7 @@ export enum LazySelPeopleEnum {
   selector: 'app-lazy-targ-comp',
   templateUrl: './lazy-targ-comp.component.html',
   styleUrl: './lazy-targ-comp.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzCardModule, NzAvatarModule, NzButtonModule, NzWaveModule]
 })
 export class LazyTargCompComponent implements OnChanges {

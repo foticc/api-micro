@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, inject, signal, viewChild } from '@angular/core';
+import { Component, OnInit,  TemplateRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AntTableConfig, SortFile } from '@shared/components/ant-table/ant-table.component';
@@ -29,7 +29,7 @@ interface SearchParam {
 @Component({
   selector: 'app-tree-list',
   templateUrl: './tree-list.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     PageHeaderComponent,
     NzCardModule,
@@ -66,14 +66,14 @@ export class TreeListComponent implements OnInit {
 
   reloadTable(): void {
     this.message.info('已经刷新了');
-    this.getDataList();
+    this.getDataList(1);
   }
 
   tableLoading(isLoading: boolean): void {
     this.tableConfig.update(config => ({ ...config, loading: isLoading }));
   }
 
-  getDataList(e?: NzTableQueryParams): void {
+  getDataList(e: number): void {
     this.tableLoading(true);
     this.dataList.set([]);
     setTimeout(() => {
@@ -249,7 +249,7 @@ export class TreeListComponent implements OnInit {
   /*重置*/
   resetForm(): void {
     this.searchParam = {};
-    this.getDataList();
+    this.getDataList(1);
   }
 
   add(): void {
@@ -269,7 +269,7 @@ export class TreeListComponent implements OnInit {
       nzOnOk: () => {
         this.tableLoading(true);
         this.message.info(`id数组(支持分页保存):${JSON.stringify(id)}`);
-        this.getDataList();
+        this.getDataList(1);
         this.checkedCashArray.splice(
           this.checkedCashArray.findIndex(item => item.id === id),
           1
@@ -299,7 +299,7 @@ export class TreeListComponent implements OnInit {
           });
           this.tableLoading(true);
           this.message.info(`数组(支持分页保存):${JSON.stringify(tempArrays)}`);
-          this.getDataList();
+          this.getDataList(1);
           this.checkedCashArray = [];
           this.tableLoading(false);
           // 注释的是模拟接口的调用

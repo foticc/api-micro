@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject, signal, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { timer } from 'rxjs';
 
@@ -14,7 +14,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   selector: 'app-full-screen',
   templateUrl: './full-screen.component.html',
   styleUrl: './full-screen.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, NzButtonModule, NzTagModule, NzIconModule]
 })
 export class FullScreenComponent implements OnInit {

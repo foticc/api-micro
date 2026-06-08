@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, inject, TemplateRef, viewChild } from '@angular/core';
+import { afterNextRender,  Component, computed, inject, TemplateRef, viewChild } from '@angular/core';
 
 import { Radar } from '@antv/g2plot';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -22,7 +22,7 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
   selector: 'app-workbench',
   templateUrl: './workbench.component.html',
   styleUrl: './workbench.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     PageHeaderComponent,
     NzGridModule,

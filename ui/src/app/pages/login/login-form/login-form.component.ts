@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit,  inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -25,7 +25,6 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzTabsModule, NzGridModule, NzButtonModule, NzInputModule, NzWaveModule, NzCheckboxModule, NzIconModule, RouterLink, TranslateModule, OAuth2LoginButtonComponent]
 })
 export class LoginFormComponent implements OnInit {
@@ -89,8 +88,8 @@ export class LoginFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // 进入登录页仅清理本地会话，不调用登出接口（主动退出时 loginOut 已通知过后端）
-    this.loginInOutService.clearSessionCash();
+    // 只要进入登录页面，就清除各种缓存
+    this.loginInOutService.loginOut();
     this.validateForm = this.fb.group({
       userName: [null, [Validators.required]],
       password: [null, [Validators.required]],

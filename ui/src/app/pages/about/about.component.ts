@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { DateFormat } from '@shared/pipes/map.pipe';
@@ -11,7 +11,6 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 @Component({
   selector: 'app-about',
   templateUrl: './about.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PageHeaderComponent, NzCardModule, NzDescriptionsModule, NzTagModule, DatePipe]
 })
 export class AboutComponent {

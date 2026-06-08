@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 
@@ -14,7 +14,7 @@ import { DemoStaggerComponent } from './demo-stagger/demo-stagger.component';
   selector: 'app-transition',
   templateUrl: './transition.component.html',
   styleUrl: './transition.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, NzIconModule, NzTabsModule, DemoCssTransitionComponent, DemoEnterLeaveComponent, DemoStaggerComponent]
 })
 export class TransitionComponent {

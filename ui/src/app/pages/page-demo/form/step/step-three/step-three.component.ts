@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output, InputSignal } from '@angular/core';
+import { Component,  input, output, InputSignal } from '@angular/core';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
@@ -9,7 +9,7 @@ import { NzResultModule } from 'ng-zorro-antd/result';
   selector: 'app-step-three',
   templateUrl: './step-three.component.html',
   styleUrl: './step-three.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzResultModule, NzButtonModule, NzWaveModule, NzDescriptionsModule]
 })
 export class StepThreeComponent {

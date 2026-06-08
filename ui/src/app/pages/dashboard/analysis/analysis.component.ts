@@ -1,4 +1,4 @@
-import { afterNextRender, ChangeDetectionStrategy, Component } from '@angular/core';
+import { afterNextRender,  Component } from '@angular/core';
 
 import { Chart } from '@antv/g2';
 import { Pie, RingProgress, TinyColumn, TinyArea, Progress } from '@antv/g2plot';
@@ -30,7 +30,7 @@ interface DataItem {
   selector: 'app-analysis',
   templateUrl: './analysis.component.html',
   styleUrl: './analysis.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     NzCardModule,
     NzBreadCrumbModule,

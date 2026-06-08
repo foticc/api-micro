@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, ChangeDetectionStrategy, OnChanges, SimpleChanges, input, InputSignal, output, computed, linkedSignal, signal } from '@angular/core';
+import { Component,  OnChanges, SimpleChanges, input, InputSignal, output, computed, linkedSignal, signal } from '@angular/core';
 
 import { AntTableConfig, SortFile, TableHeader } from '@shared/components/ant-table/ant-table.component';
 import { fnGetFlattenTreeDataByMap, fnTreeDataToMap } from '@utils/treeTableTools';
@@ -33,7 +33,7 @@ export abstract class AntTreeTableComponentToken {
   templateUrl: './tree-table.component.html',
   styleUrl: './tree-table.component.less',
   providers: [{ provide: AntTreeTableComponentToken, useExisting: TreeTableComponent }],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzTableModule, NzResizableModule, NgTemplateOutlet, MapPipe, TableFiledPipe]
 })
 export class TreeTableComponent implements OnChanges {
@@ -43,7 +43,7 @@ export class TreeTableComponent implements OnChanges {
   readonly cashArray = input<NzSafeAny[]>([]);
   checkedCashArrayFromComment: NzSafeAny[] = [];
   readonly sortFn = output<SortFile>();
-  readonly changePageIndex = output<NzTableQueryParams>();
+  readonly changePageIndex = output<number>();
   readonly changePageSize = output<number>();
   mapOfExpandedData: Record<string, TreeNodeInterface[]> = {};
   readonly tableConfig = input.required<AntTableConfig>();
@@ -109,7 +109,7 @@ export class TreeTableComponent implements OnChanges {
   }
 
   // 分页页码改变
-  onQueryParamsChange(tableQueryParams: NzTableQueryParams): void {
+  onPageIndexChange(tableQueryParams: number): void {
     this.changePageIndex.emit(tableQueryParams);
   }
 

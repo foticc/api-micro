@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import {  Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 
@@ -18,7 +18,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 @Component({
   selector: 'app-task-modal',
   templateUrl: './task-modal.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     FormsModule,
     NzFormModule,

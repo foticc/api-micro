@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 
@@ -17,7 +17,7 @@ interface ImgItem {
   selector: 'app-img-preview',
   templateUrl: './img-preview.component.html',
   styleUrl: './img-preview.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzImageModule, NzButtonModule, NzWaveModule, NzCardModule, NzIconModule]
 })
 export class ImgPreviewComponent {

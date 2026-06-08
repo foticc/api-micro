@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, TemplateRef, viewChild } from '@angular/core';
+import {  Component, computed, DestroyRef, inject, TemplateRef, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterEvent, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -22,7 +22,7 @@ interface TabInterface {
 @Component({
   selector: 'app-search-list',
   templateUrl: './search-list.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, WaterMarkComponent, NzButtonModule, NzInputModule, NzWaveModule, NzTabsModule, RouterOutlet, NzSpaceCompactComponent]
 })
 export class SearchListComponent {

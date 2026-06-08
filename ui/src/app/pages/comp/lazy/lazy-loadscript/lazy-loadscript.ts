@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {  Component, inject, signal } from '@angular/core';
 
 import { LazyService } from '@core/services/common/lazy.service';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
@@ -13,7 +13,7 @@ type LoadStatus = 'idle' | 'loading' | 'done' | 'cached' | 'error';
 
 @Component({
   selector: 'app-lazy-loadscript',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, NzCardModule, NzGridModule, NzButtonModule, NzTagModule, NzDividerModule],
   templateUrl: './lazy-loadscript.html',
   styleUrl: './lazy-loadscript.less'

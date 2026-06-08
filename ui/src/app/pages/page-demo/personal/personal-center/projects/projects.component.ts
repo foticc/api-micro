@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { NumberLoopPipe } from '@shared/pipes/number-loop.pipe';
 
@@ -12,7 +12,7 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
   selector: 'app-projects',
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzGridModule, NzCardModule, NzTypographyModule, NzAvatarModule, NzTooltipModule, NumberLoopPipe]
 })
 export class ProjectsComponent {}

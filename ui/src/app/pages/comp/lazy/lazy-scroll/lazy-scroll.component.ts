@@ -1,5 +1,5 @@
 import { normalizePassiveListenerOptions } from '@angular/cdk/platform';
-import { AfterViewInit, Component, ChangeDetectionStrategy, DestroyRef, inject, viewChild } from '@angular/core';
+import { AfterViewInit, Component,  DestroyRef, inject, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, take } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
@@ -13,7 +13,7 @@ const passiveEventListenerOptions = normalizePassiveListenerOptions({ passive: t
 @Component({
   selector: 'app-lazy-scroll',
   templateUrl: './lazy-scroll.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   providers: [LazyServiceService],
   imports: [PageHeaderComponent, AdDirective]
 })

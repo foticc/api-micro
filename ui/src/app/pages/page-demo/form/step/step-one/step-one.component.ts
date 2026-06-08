@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject, input, output, InputSignal } from '@angular/core';
+import { Component, OnInit,  inject, input, output, InputSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { fnCheckForm } from '@utils/tools';
@@ -16,7 +16,7 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
   selector: 'app-step-one',
   templateUrl: './step-one.component.html',
   styleUrl: './step-one.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzSelectModule, NzButtonModule, NzInputModule, NzWaveModule, NzDividerModule, NzTypographyModule]
 })
 export class StepOneComponent implements OnInit {

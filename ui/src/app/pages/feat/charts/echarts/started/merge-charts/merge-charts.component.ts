@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 
 import { NgxEchartsModule } from 'ngx-echarts';
 
@@ -8,7 +8,7 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
   selector: 'app-merge-charts',
   template: `<div class="demo-chart" echarts [merge]="updateOptions()" [options]="options"></div>`,
   styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NgxEchartsModule]
 })
 export class MergeChartsComponent implements OnInit, OnDestroy {
