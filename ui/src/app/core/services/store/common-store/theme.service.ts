@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, Service, signal } from '@angular/core';
 
 import { Theme, ThemeMode } from '@app/layout/default/setting-drawer/setting-drawer.component';
 
@@ -24,9 +24,7 @@ export type StyleTheme = 'default' | 'dark' | 'aliyun' | 'compact'; // 默认主
 // 主题风格
 export type StyleThemeInterface = Record<StyleTheme, boolean>;
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ThemeService {
   $themeStyle = signal<StyleTheme>('default'); // 主题风格，暗黑，默认，紧凑，阿里云
   $isNightTheme = computed(() => this.$themeStyle() === 'dark'); // 暗黑主题

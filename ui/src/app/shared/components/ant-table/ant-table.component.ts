@@ -1,11 +1,11 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, InputSignal, linkedSignal, OnChanges, output, SimpleChanges, TemplateRef, signal } from '@angular/core';
+import {  Component, computed, input, InputSignal, linkedSignal, OnChanges, output, SimpleChanges, TemplateRef, signal } from '@angular/core';
 
 import { ContextPipePipe } from '@shared/components/ant-table/context-pipe.pipe';
 
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzResizableModule, NzResizeEvent } from 'ng-zorro-antd/resizable';
-import { NzTableModule, NzTableQueryParams, NzTableSize } from 'ng-zorro-antd/table';
+import { NzTableModule, NzTableSize } from 'ng-zorro-antd/table';
 
 import { MapPipe } from '../../pipes/map.pipe';
 import { TableFiledPipe } from '../../pipes/table-filed.pipe';
@@ -59,7 +59,7 @@ export interface SortFile {
   templateUrl: './ant-table.component.html',
   styleUrl: './ant-table.component.less',
   providers: [{ provide: AntTableComponentToken, useExisting: AntTableComponent }],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzTableModule, NzResizableModule, NgTemplateOutlet, MapPipe, TableFiledPipe, ContextPipePipe]
 })
 export class AntTableComponent implements OnChanges {
@@ -82,14 +82,14 @@ export class AntTableComponent implements OnChanges {
 
   _dataList = computed(() => {
     if (this._showCheckbox()) {
-     return this.tableData().map(item => ({ ...item, _checked: false }));
+      return this.tableData().map(item => ({ ...item, _checked: false }));
     }
     return this.tableData();
   });
 
   _scrollConfig = computed(() => this.setScrollConfig(this._tableConfig()));
 
-  readonly changePageIndex = output<NzTableQueryParams>();
+  readonly changePageIndex = output<number>();
   readonly changePageSize = output<number>();
   readonly selectedChange = output<NzSafeAny[]>();
   readonly sortFn = output<SortFile>();
@@ -116,11 +116,7 @@ export class AntTableComponent implements OnChanges {
     const nextDir = index === sortDicArray.length - 1 ? sortDicArray[0] : sortDicArray[index + 1];
     this._tableConfig.update(config => ({
       ...config,
-      headers: config.headers.map(item =>
-        item.field === tableHeader.field
-          ? { ...item, sortDir: nextDir }
-          : { ...item, sortDir: undefined }
-      )
+      headers: config.headers.map(item => (item.field === tableHeader.field ? { ...item, sortDir: nextDir } : { ...item, sortDir: undefined }))
     }));
     this.sortFn.emit({ fileName: tableHeader.field!, sortDir: nextDir });
   }
@@ -132,7 +128,7 @@ export class AntTableComponent implements OnChanges {
   onResize({ width }: NzResizeEvent, col: string): void {
     this._tableConfig.update(config => ({
       ...config,
-      headers: config.headers.map(e => e.title === col ? { ...e, width: +`${width}` } : e) as TableHeader[]
+      headers: config.headers.map(e => (e.title === col ? { ...e, width: +`${width}` } : e)) as TableHeader[]
     }));
   }
 
@@ -149,8 +145,8 @@ export class AntTableComponent implements OnChanges {
   }
 
   // 分页页码改变
-  onQueryParamsChange(tableQueryParams: NzTableQueryParams): void {
-    this.changePageIndex.emit(tableQueryParams);
+  onPageIndexChange($event: number): void {
+    this.changePageIndex.emit($event);
   }
 
   // 修改一页几条的页码

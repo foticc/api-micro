@@ -1,5 +1,5 @@
 
-import { Component, OnInit, ChangeDetectionStrategy, inject, DestroyRef, computed } from '@angular/core';
+import { Component, OnInit,  inject, DestroyRef, computed } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 
 import { LoginType } from '@app/pages/other-login/login1/login1.component';
@@ -20,7 +20,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
   selector: 'app-regist-login',
   templateUrl: './regist-login.component.html',
   styleUrl: './regist-login.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzInputModule, NzButtonModule, NzWaveModule, PasswordStrengthMeterComponent, NzIconModule, NzCheckboxModule]
 })
 export class RegistLoginComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
+import {  Component, computed, effect, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
@@ -15,7 +15,7 @@ import { NzWaveModule } from 'ng-zorro-antd/core/wave';
   selector: 'app-basic-advanced',
   imports: [PageHeaderComponent, NzCardModule, NzGridModule, NzButtonModule, NzWaveModule, NzTagModule, NzDividerModule, NzInputNumberModule, NzDescriptionsModule, FormsModule],
   templateUrl: './basic-advanced.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   styleUrl: './basic-advanced.less'
 })
 export class BasicAdvanced {

@@ -1,4 +1,4 @@
-import { inject, Injectable, DOCUMENT } from '@angular/core';
+import { inject, Service, DOCUMENT } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 
@@ -16,7 +16,7 @@ export interface LazyResult {
 /**
  * 延迟加载资源（js 或 css）服务
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class LazyService {
   private list: Record<string, boolean> = {};
   private cached: Record<string, LazyResult> = {};

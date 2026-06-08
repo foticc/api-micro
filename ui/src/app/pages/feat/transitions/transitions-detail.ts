@@ -1,5 +1,5 @@
 
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import {  Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -15,7 +15,7 @@ import { NzCardComponent } from 'ng-zorro-antd/card';
 
 @Component({
   selector: 'app-transitions-detail',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [PageHeaderComponent, RouterLink, ViewTransitionDirective, NzButtonModule, NzIconModule, NzTagModule, NzGridModule, NzCardComponent],
   templateUrl: './transitions-detail.html',
   styleUrl: './transitions.less'

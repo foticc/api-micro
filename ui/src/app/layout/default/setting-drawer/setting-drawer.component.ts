@@ -1,5 +1,5 @@
 import { CdkDrag } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, OnInit, Renderer2, signal, DOCUMENT } from '@angular/core';
+import {  Component, computed, DestroyRef, effect, inject, OnInit, Renderer2, signal, DOCUMENT } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -51,7 +51,6 @@ type SettingKey = Exclude<keyof SettingInterface, ExcludedKeys>;
   selector: 'app-setting-drawer',
   templateUrl: './setting-drawer.component.html',
   styleUrl: './setting-drawer.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CdkDrag, NzIconModule, NzButtonModule, NzDrawerModule, NzTooltipModule, NzDividerModule, NzListModule, NzSwitchModule, FormsModule, TranslateModule]
 })
 export class SettingDrawerComponent implements OnInit {

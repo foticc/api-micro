@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -17,7 +17,7 @@ interface ItemData {
 @Component({
   selector: 'app-user-member-manage',
   templateUrl: './user-member-manage.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzTableModule, NzInputModule, FormsModule, NzPopconfirmModule, NzButtonModule, NzWaveModule, NzIconModule]
 })
 export class UserMemberManageComponent implements OnInit {

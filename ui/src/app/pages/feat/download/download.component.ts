@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
+import { Component, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ip } from '@env/environment.prod';
@@ -8,13 +8,15 @@ import FileSaver from 'file-saver';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 @Component({
   selector: 'app-download',
   templateUrl: './download.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PageHeaderComponent, NzCardModule, NzButtonModule, NzWaveModule]
+  styleUrl: './download.component.less',
+
+  imports: [PageHeaderComponent, NzCardModule, NzButtonModule, NzGridModule, NzIconModule]
 })
 export class DownloadComponent {
   pageHeaderInfo: Partial<PageHeaderType> = {

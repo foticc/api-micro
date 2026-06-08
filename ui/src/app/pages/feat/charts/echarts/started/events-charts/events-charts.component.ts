@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { NgxEchartsModule } from 'ngx-echarts';
 import LinearGradient from 'zrender/lib/graphic/LinearGradient';
@@ -25,7 +25,7 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
     ></div>
   `,
   styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NgxEchartsModule]
 })
 export class EventsChartsComponent implements OnInit {

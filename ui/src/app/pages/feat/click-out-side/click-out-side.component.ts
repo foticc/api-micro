@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, AfterViewInit, ElementRef, inject, DestroyRef, viewChild, DOCUMENT, signal } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, inject, DestroyRef, viewChild, DOCUMENT, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, merge, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -6,19 +6,22 @@ import { tap } from 'rxjs/operators';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { fnStopMouseEvent } from '@utils/tools';
 
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 
 @Component({
   selector: 'app-click-out-side',
   templateUrl: './click-out-side.component.html',
   styleUrl: './click-out-side.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PageHeaderComponent]
+
+  imports: [PageHeaderComponent, NzCardModule, NzIconModule]
 })
 export class ClickOutSideComponent implements AfterViewInit {
   pageHeaderInfo: Partial<PageHeaderType> = {
-    title: '点内外部触发事件，点一点总会有好运',
-    breadcrumb: ['首页', '功能', 'clickOutSide']
+    title: '点击区域检测',
+    breadcrumb: ['首页', '功能', 'clickOutSide'],
+    desc: '通过监听 document click 与目标元素 click 的冒泡差异，区分点击内部与外部'
   };
   destroyRef = inject(DestroyRef);
   text = signal('点击内部或者外部');

@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import {  Component, computed, input } from '@angular/core';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 
 @Component({
   selector: 'app-child-display',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzDescriptionsModule, NzTagModule],
   template: `
     <nz-descriptions nzBordered [nzColumn]="1" nzSize="small">

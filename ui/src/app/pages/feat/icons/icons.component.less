@@ -1,13 +1,64 @@
-i.example {
-  font-size: 40px;
-}
+.selector-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 
-:host ::ng-deep {
-  nz-card {
-    margin-bottom: 30px;
+  [nz-button] {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 8px;
+    transition: all 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+
+    &:active {
+      transform: scale(0.97) translateY(1px);
+    }
   }
 }
 
-.icon-checked {
-  border: 1px solid deepskyblue;
+.selector-input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px;
+}
+
+.icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+
+  &:hover {
+    border-color: #1677ff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &__icon {
+    font-size: 24px;
+
+    &--pink { color: hotpink; }
+    &--blue { color: #1677ff; }
+  }
+
+  &__label {
+    font-size: 11px;
+    opacity: 0.55;
+    text-align: center;
+    word-break: break-all;
+  }
 }

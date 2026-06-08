@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, AfterViewInit, inject, viewChild } from '@angular/core';
+import { Component,  AfterViewInit, inject, viewChild } from '@angular/core';
 
 import { LazyServiceService } from '@app/pages/comp/lazy/lazy-service.service';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -11,7 +11,7 @@ import { NzWaveModule } from 'ng-zorro-antd/core/wave';
   selector: 'app-lazy-basic',
   templateUrl: './lazy-basic.component.html',
   styleUrl: './lazy-basic.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   providers: [LazyServiceService],
   imports: [PageHeaderComponent, NzButtonModule, NzWaveModule, AdDirective]
 })

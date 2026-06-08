@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 
 import { EChartsOption } from 'echarts';
 import { NgxEchartsModule } from 'ngx-echarts';
@@ -19,7 +19,7 @@ const Data = [
   selector: 'app-draggable-charts',
   template: `<div echarts style="height: 600px;" [options]="options" (chartInit)="onChartReady($event)"></div>`,
   styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NgxEchartsModule]
 })
 export class DraggableChartsComponent implements OnDestroy {

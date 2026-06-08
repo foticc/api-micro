@@ -1,10 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 
@@ -12,8 +11,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   selector: 'app-basic',
   templateUrl: './basic.component.html',
   styleUrl: './basic.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PageHeaderComponent, NzGridModule, NzCardModule, NzButtonModule, NzWaveModule, NzIconModule]
+
+  imports: [PageHeaderComponent, NzGridModule, NzCardModule, NzButtonModule, NzIconModule]
 })
 export class BasicComponent {
   pageHeaderInfo: Partial<PageHeaderType> = {

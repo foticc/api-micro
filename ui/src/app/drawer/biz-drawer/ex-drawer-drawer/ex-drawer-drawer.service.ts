@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { DrawerWrapService } from '@app/drawer/base-drawer';
@@ -7,9 +7,7 @@ import { ExDrawerDrawerComponent } from '@app/drawer/biz-drawer/ex-drawer-drawer
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzDrawerOptions } from 'ng-zorro-antd/drawer';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ExDrawerDrawerService {
   private drawerWrapService = inject(DrawerWrapService);
 

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ElementRef, viewChild, signal, afterNextRender, inject, Injector } from '@angular/core';
+import { Component,  ElementRef, viewChild, signal, afterNextRender, inject, Injector } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AdComponent, DynamicComponent } from '@core/services/types';
@@ -30,7 +30,7 @@ interface TabInterface {
   selector: 'app-personal-center',
   templateUrl: './personal-center.component.html',
   styleUrl: './personal-center.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     NzGridModule,
     NzCardModule,

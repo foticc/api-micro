@@ -54,7 +54,7 @@
   <nz-form-item>
     <nz-form-label nzFor="departmentId" nzRequired [nzSm]="4" [nzXs]="24">所属部门</nz-form-label>
     <nz-form-control [nzErrorTip]="combineTpl" [nzSm]="18" [nzXs]="24">
-      <nz-tree-select formControlName="departmentId" nzPlaceHolder="Please select" nzShowSearch nzDropdownMatchSelectWidth [nzNodes]="deptNodes"></nz-tree-select>
+      <nz-tree-select formControlName="departmentId" nzDropdownMatchSelectWidth nzPlaceHolder="Please select" nzShowSearch [nzNodes]="deptNodes()"></nz-tree-select>
     </nz-form-control>
   </nz-form-item>
 
@@ -62,7 +62,7 @@
     <nz-form-label nzFor="roleId" nzRequired [nzSm]="4" [nzXs]="24">用户角色</nz-form-label>
     <nz-form-control [nzErrorTip]="combineTpl" [nzSm]="18" [nzXs]="24">
       <nz-select formControlName="roleId" nzMode="multiple" nzPlaceHolder="角色">
-        @for (option of roleOptions; track option) {
+        @for (option of roleOptions(); track option) {
           <nz-option [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
         }
       </nz-select>

@@ -27,7 +27,7 @@ import { SelectivePreloadingStrategyService } from '@core/services/common/select
 import { SubLockedStatusService } from '@core/services/common/sub-locked-status.service';
 import { SubWindowWithService } from '@core/services/common/sub-window-with.service';
 import { ThemeSkinService } from '@core/services/common/theme-skin.service';
-import { httpInterceptorService } from '@core/services/interceptors/http-interceptor';
+import { httpInterceptors } from '@core/services/interceptors';
 import { StartupService } from '@core/startup/startup.service';
 import { getDeepReuseStrategyKeyFn } from '@utils/tools';
 
@@ -148,7 +148,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideTranslateHttpLoader({ prefix: './i18n/', suffix: '.json' }),
     ...APPINIT_PROVIDES, // 项目启动之前，需要调用的一系列方法
-    provideHttpClient(withInterceptors([httpInterceptorService])),
+    provideHttpClient(withInterceptors(httpInterceptors)),
     provideZonelessChangeDetection() // 开启 zoneless
   ]
 };

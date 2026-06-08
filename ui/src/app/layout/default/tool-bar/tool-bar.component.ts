@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-tool-bar',
@@ -9,6 +9,5 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
     </div>
   `,
   styleUrl: './tool-bar.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToolBarComponent {}

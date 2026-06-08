@@ -1,9 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 import { ViewTransitionInfo } from '@angular/router';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ViewTransitionService {
   currentTransition = signal<ViewTransitionInfo | null>(null);
 }

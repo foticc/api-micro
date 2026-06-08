@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component,  inject } from '@angular/core';
 import { NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 
@@ -12,7 +12,6 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 @Component({
   selector: 'app-ex-drawer-drawer',
   templateUrl: './ex-drawer-drawer.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, ReactiveFormsModule, NzGridModule, NzFormModule, NzInputModule]
 })
 export class ExDrawerDrawerComponent {

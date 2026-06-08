@@ -1,5 +1,5 @@
 import { computed, DestroyRef, inject, DOCUMENT } from '@angular/core';
-import { ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy } from '@angular/router';
+import { ActivatedRouteSnapshot, destroyDetachedRouteHandle, DetachedRouteHandle, RouteReuseStrategy } from '@angular/router';
 
 import { ScrollService } from '@core/services/common/scroll.service';
 import { ThemeService } from '@store/common-store/theme.service';
@@ -42,9 +42,7 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
 
   public static deleteRouteSnapshot(key: string): void {
     if (SimpleReuseStrategy.handlers[key]) {
-      if (SimpleReuseStrategy.handlers[key].componentRef) {
-        SimpleReuseStrategy.handlers[key].componentRef.destroy();
-      }
+      destroyDetachedRouteHandle(SimpleReuseStrategy.handlers[key]);
       delete SimpleReuseStrategy.handlers[key];
       delete SimpleReuseStrategy.scrollHandlers[key];
     }
@@ -52,13 +50,11 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
 
   // 删除全部的缓存，在退出登录，不使用多标签 等操作中需要用到
   public static deleteAllRouteSnapshot(route: ActivatedRouteSnapshot): Promise<void> {
-    return new Promise(resolve => {
-      Object.keys(SimpleReuseStrategy.handlers).forEach(key => {
-        SimpleReuseStrategy.deleteRouteSnapshot(key);
-      });
-      SimpleReuseStrategy.waitDelete = getDeepReuseStrategyKeyFn(route);
-      resolve();
+    Object.keys(SimpleReuseStrategy.handlers).forEach(key => {
+      SimpleReuseStrategy.deleteRouteSnapshot(key);
     });
+    SimpleReuseStrategy.waitDelete = getDeepReuseStrategyKeyFn(route);
+    return Promise.resolve();
   }
 
   // 是否允许复用路由
@@ -94,7 +90,7 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
     // 如果待删除的是当前路由则不存储快照
     if (SimpleReuseStrategy.waitDelete === key) {
       this.runHook('_onReuseDestroy', handle.componentRef);
-      handle.componentRef.destroy();
+      destroyDetachedRouteHandle(handle);
       SimpleReuseStrategy.waitDelete = null;
       delete SimpleReuseStrategy.scrollHandlers[key];
       return;

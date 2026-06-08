@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, viewChild } from '@angular/core';
+import { AfterViewInit,  Component, computed, DestroyRef, effect, inject, viewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { SettingDrawerComponent, Theme } from '@app/layout/default/setting-drawer/setting-drawer.component';
@@ -28,7 +28,6 @@ import { ToolBarComponent } from './tool-bar/tool-bar.component';
   selector: 'app-default',
   templateUrl: './default.component.html',
   styleUrl: './default.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TopProgressBarComponent,
     NzLayoutModule,
@@ -36,8 +35,6 @@ import { ToolBarComponent } from './tool-bar/tool-bar.component';
     SettingDrawerComponent,
     ChatComponent,
     NzMenuModule,
-    NzButtonModule,
-    NzIconModule,
     SideNavComponent,
     NgTemplateOutlet,
     ToolBarComponent,

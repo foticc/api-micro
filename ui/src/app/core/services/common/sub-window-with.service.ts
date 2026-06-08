@@ -1,5 +1,5 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { DestroyRef, inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Service } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs/operators';
 
@@ -8,9 +8,7 @@ import { ThemeService } from '@store/common-store/theme.service';
 import { EquipmentWidth, WindowsWidthService } from '@store/common-store/windows-width.service';
 
 /*监听屏幕宽度服务*/
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class SubWindowWithService {
   subWidthObj: Record<string, [EquipmentWidth, [number, number]]> = {
     '(max-width: 575.98px)': [EquipmentWidth.xs, [0, 575.98]],

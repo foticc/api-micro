@@ -1,5 +1,5 @@
 import { DecimalPipe, PercentPipe } from '@angular/common';
-import { afterNextRender, ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { afterNextRender,  Component, inject } from '@angular/core';
 
 import { Gauge, Liquid, RingProgress, TinyArea, WordCloud } from '@antv/g2plot';
 import { LazyService } from '@core/services/common/lazy.service';
@@ -17,7 +17,7 @@ declare let BMap: NzSafeAny;
   selector: 'app-monitor',
   templateUrl: './monitor.component.html',
   styleUrl: './monitor.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [NzCardModule, NzBreadCrumbModule, NzGridModule, NzStatisticModule, NzTypographyModule, NzEmptyModule, DecimalPipe, PercentPipe]
 })
 export class MonitorComponent {

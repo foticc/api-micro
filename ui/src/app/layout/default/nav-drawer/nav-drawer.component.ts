@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef, signal, effect, computed } from '@angular/core';
+import { Component,  inject, DestroyRef, signal, effect, computed } from '@angular/core';
 
 import { SideNavWidth } from '@app/config/constant';
 import { ThemeService } from '@store/common-store/theme.service';
@@ -12,7 +12,6 @@ import { SideNavComponent } from '../side-nav/side-nav.component';
   selector: 'app-nav-drawer',
   templateUrl: './nav-drawer.component.html',
   styleUrl: './nav-drawer.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NzDrawerModule, NzLayoutModule, SideNavComponent]
 })
 export class NavDrawerComponent {

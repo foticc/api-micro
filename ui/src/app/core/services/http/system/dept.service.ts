@@ -1,4 +1,5 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
+import { HttpResourceRef } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { PageInfo, SearchCommonVO } from '../../types';
@@ -15,14 +16,12 @@ export interface Dept {
   orderNum: number;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class DeptService {
   http = inject(BaseHttpService);
 
-  public getDepts(param: SearchCommonVO<Dept>): Observable<PageInfo<Dept>> {
-    return this.http.post('/department/list', param);
+  getDeptsResource(param: () => SearchCommonVO<Dept>): HttpResourceRef<PageInfo<Dept>> {
+    return this.http.postResource<PageInfo<Dept>>('/department/list', param);
   }
 
   public getDeptsDetail(id: number): Observable<Dept> {
@@ -34,7 +33,7 @@ export class DeptService {
   }
 
   public delDepts(ids: number[]): Observable<void> {
-    return this.http.post('/department/del/', { ids }, { needSuccessInfo: true });
+    return this.http.post('/department/del', { ids }, { needSuccessInfo: true });
   }
 
   public editDepts(param: Dept): Observable<void> {

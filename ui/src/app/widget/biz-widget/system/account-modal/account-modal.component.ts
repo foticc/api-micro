@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, computed } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 
@@ -25,22 +25,43 @@ import { NzTreeSelectModule } from 'ng-zorro-antd/tree-select';
 @Component({
   selector: 'app-account-modal',
   templateUrl: './account-modal.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzInputModule, NzRadioModule, NzSwitchModule, NzTreeSelectModule, NzSelectModule]
 })
 export class AccountModalComponent extends BasicConfirmModalComponent implements OnInit {
   addEditForm!: FormGroup;
   readonly nzModalData: User = inject(NZ_MODAL_DATA);
-  roleOptions: OptionsInterface[] = [];
   isEdit = false;
   value?: string;
-  deptNodes: NzTreeNodeOptions[] = [];
 
   private fb = inject(FormBuilder);
   private validatorsService = inject(ValidatorsService);
   private roleService = inject(RoleService);
   private deptService = inject(DeptService);
   override modalRef = inject(NzModalRef);
+
+  roleResource = this.roleService.getRolesResource(() => ({ pageIndex: 0, pageSize: 0, filters: {} as NzSafeAny }));
+  deptResource = this.deptService.getDeptsResource(() => ({ pageIndex: 0, pageSize: 0, filters: {} as NzSafeAny }));
+
+  roleOptions = computed<OptionsInterface[]>(() => {
+    if (!this.roleResource.hasValue()) return [];
+    return this.roleResource.value().list.map(({ id, roleName }) => ({
+      label: roleName,
+      value: id!
+    }));
+  });
+
+  deptNodes = computed<NzTreeNodeOptions[]>(() => {
+    if (!this.deptResource.hasValue()) return [];
+    const list = this.deptResource.value().list;
+    list.forEach(item => {
+      // @ts-ignore
+      item.title = item.departmentName;
+      // @ts-ignore
+      item.key = item.id;
+    });
+    return fnAddTreeDataGradeAndLeaf(fnFlatDataHasParentToTree(list));
+  });
 
   // 此方法为如果有异步数据需要加载，则在该方法中添加
   protected getAsyncFnData(modalValue: NzSafeAny): Observable<NzSafeAny> {
@@ -53,37 +74,6 @@ export class AccountModalComponent extends BasicConfirmModalComponent implements
       return of(false);
     }
     return of(this.addEditForm.value);
-  }
-
-  getRoleList(): Promise<void> {
-    return new Promise<void>(resolve => {
-      this.roleService.getRoles({ pageIndex: 0, pageSize: 0 }).subscribe(({ list }) => {
-        this.roleOptions = [];
-        list.forEach(({ id, roleName }) => {
-          const obj: OptionsInterface = {
-            label: roleName,
-            value: id!
-          };
-          this.roleOptions.push(obj);
-        });
-        resolve();
-      });
-    });
-  }
-
-  getDeptList(): Promise<void> {
-    return new Promise<void>(resolve => {
-      this.deptService.getDepts({ pageIndex: 0, pageSize: 0 }).subscribe(({ list }) => {
-        list.forEach(item => {
-          // @ts-ignore
-          item.title = item.departmentName;
-          // @ts-ignore
-          item.key = item.id;
-        });
-        this.deptNodes = fnAddTreeDataGradeAndLeaf(fnFlatDataHasParentToTree(list));
-        resolve();
-      });
-    });
   }
 
   initForm(): void {
@@ -103,7 +93,6 @@ export class AccountModalComponent extends BasicConfirmModalComponent implements
   async ngOnInit(): Promise<void> {
     this.initForm();
     this.isEdit = !!this.nzModalData;
-    await Promise.all([this.getRoleList(), this.getDeptList()]);
     if (this.isEdit) {
       this.addEditForm.patchValue(this.nzModalData);
       this.addEditForm.controls['password'].disable();

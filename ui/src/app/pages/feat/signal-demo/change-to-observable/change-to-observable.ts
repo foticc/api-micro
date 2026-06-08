@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import {  Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Subject, interval } from 'rxjs';
@@ -21,7 +21,7 @@ const FRUIT_LIST = ['苹果', '香蕉', '橙子', '葡萄', '草莓', '芒果', 
   selector: 'app-change-to-observable',
   imports: [PageHeaderComponent, NzCardModule, NzGridModule, NzButtonModule, NzWaveModule, NzInputModule, NzTagModule, NzDividerModule, NzDescriptionsModule, NzStatisticModule, FormsModule],
   templateUrl: './change-to-observable.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   styleUrl: './change-to-observable.less'
 })
 export class ChangeToObservable {

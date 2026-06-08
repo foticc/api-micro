@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, TemplateRef, viewChild } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal, TemplateRef, viewChild, computed, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { finalize } from 'rxjs/operators';
 
 import { ActionCode } from '@app/config/actionCode';
 import { SearchCommonVO } from '@core/services/types';
@@ -32,7 +31,7 @@ interface SearchParam {
 @Component({
   selector: 'app-role-manage',
   templateUrl: './role-manage.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     PageHeaderComponent,
     NzCardModule,
@@ -51,21 +50,53 @@ interface SearchParam {
 export class RoleManageComponent implements OnInit {
   readonly operationTpl = viewChild.required<TemplateRef<NzSafeAny>>('operationTpl');
   searchParam: Partial<SearchParam> = {};
-  tableConfig = signal<AntTableConfig>({ headers: [], total: 0, showCheckbox: false, loading: false, pageSize: 10, pageIndex: 1 });
   readonly pageHeaderInfo: Partial<PageHeaderType> = {
     title: '角色管理',
     breadcrumb: ['首页', '用户管理', '角色管理']
   };
-  dataList = signal<Role[]>([]);
   checkedCashArray = [];
   ActionCode = ActionCode;
-  destroyRef = inject(DestroyRef);
 
   private dataService = inject(RoleService);
   private modalSrv = inject(NzModalService);
   private modalService = inject(RoleManageModalService);
   private router = inject(Router);
   private message = inject(NzMessageService);
+  private destroyRef = inject(DestroyRef);
+
+  private requestPageSize = signal(10);
+  private requestPageIndex = signal(1);
+  private searchFilters = signal<Partial<SearchParam>>({});
+
+  roleResource = this.dataService.getRolesResource(() => ({
+    pageSize: this.requestPageSize(),
+    pageIndex: this.requestPageIndex(),
+    filters: this.searchFilters() as NzSafeAny
+  }));
+
+  dataList = computed(() => {
+    if (this.roleResource.hasValue()) {
+      return [...this.roleResource.value().list];
+    }
+    return [] as Role[];
+  });
+
+  tableConfig = signal<AntTableConfig>({ headers: [], total: 0, showCheckbox: false, loading: false, pageSize: 10, pageIndex: 1 });
+
+  private syncTableConfig = effect(() => {
+    const isLoading = this.roleResource.isLoading();
+    const hasValue = this.roleResource.hasValue();
+    this.tableConfig.update(c => ({
+      ...c,
+      loading: isLoading,
+      ...(hasValue
+        ? {
+            total: this.roleResource.value().total!,
+            pageIndex: this.roleResource.value().pageIndex!
+          }
+        : {})
+    }));
+  });
 
   selectedChecked(e: NzSafeAny): void {
     // @ts-ignore
@@ -74,31 +105,13 @@ export class RoleManageComponent implements OnInit {
 
   resetForm(): void {
     this.searchParam = {};
-    this.getDataList({ pageIndex: 1 });
+    this.searchFilters.set({});
+    this.requestPageIndex.set(1);
   }
 
-  getDataList(e?: { pageIndex: number }): void {
-    this.tableLoading(true);
-    const params: SearchCommonVO<NzSafeAny> = {
-      pageSize: this.tableConfig().pageSize!,
-      pageIndex: e?.pageIndex || this.tableConfig().pageIndex!,
-      filters: this.searchParam
-    };
-    this.dataService
-      .getRoles(params)
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(data => {
-        const { list, total, pageIndex } = data;
-        this.dataList.set([...list]);
-        this.tableConfig.update(c => ({ ...c, total: total!, pageIndex: pageIndex! }));
-        this.tableLoading(false);
-        this.checkedCashArray = [...this.checkedCashArray];
-      });
+  getDataList(e: number): void {
+    this.searchFilters.set({ ...this.searchParam });
+    this.requestPageIndex.set(e);
   }
 
   // 设置权限
@@ -106,32 +119,22 @@ export class RoleManageComponent implements OnInit {
     this.router.navigate(['/default/system/role-manager/set-role'], { queryParams: { id, roleName } });
   }
 
-  tableLoading(isLoading: boolean): void {
-    this.tableConfig.update(config => ({ ...config, loading: isLoading }));
-  }
-
   add(): void {
     this.modalService
       .show({ nzTitle: '新增' })
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(res => {
         if (!res || res.status === ModalBtnStatus.Cancel) {
           return;
         }
         const param = { ...res.modalValue };
-        this.tableLoading(true);
         this.addEditData(param, 'addRoles');
       });
   }
 
   reloadTable(): void {
     this.message.info('刷新成功');
-    this.getDataList();
+    this.roleResource.reload();
   }
 
   // 在这里做了一个示例，用于获取选中列的数据，而不通过接口，这里可以通过dataItem获取到当前列的数据，也可以通过id从dataList中找到匹配的数据
@@ -144,18 +147,12 @@ export class RoleManageComponent implements OnInit {
       .subscribe(res => {
         this.modalService
           .show({ nzTitle: '编辑' }, res)
-          .pipe(
-            finalize(() => {
-              this.tableLoading(false);
-            }),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(({ modalValue, status }) => {
             if (status === ModalBtnStatus.Cancel) {
               return;
             }
             modalValue.id = id;
-            this.tableLoading(true);
             this.addEditData(modalValue, 'editRoles');
           });
       });
@@ -165,7 +162,7 @@ export class RoleManageComponent implements OnInit {
     this.dataService[methodName](param)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.getDataList();
+        this.roleResource.reload();
       });
   }
 
@@ -175,21 +172,15 @@ export class RoleManageComponent implements OnInit {
       nzTitle: '确定要删除吗？',
       nzContent: '删除后不可恢复',
       nzOnOk: () => {
-        this.tableLoading(true);
         this.dataService
           .delRoles(ids)
-          .pipe(
-            finalize(() => {
-              this.tableLoading(false);
-            }),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
             // 例如分页第二页只有一条数据，此时删除这条数据，跳转到第一页，并重新查询一下列表,pageIndex改变会由changePageIndex自动触发表格查询getDataList（）
             if (this.dataList().length === 1 && this.tableConfig().pageIndex !== 1) {
               this.tableConfig.update(c => ({ ...c, pageIndex: c.pageIndex! - 1 }));
             } else {
-              this.getDataList();
+              this.roleResource.reload();
             }
           });
       }
@@ -197,7 +188,7 @@ export class RoleManageComponent implements OnInit {
   }
 
   changePageSize(e: number): void {
-    this.tableConfig.update(config => ({ ...config, pageSize: e }));
+    this.requestPageSize.set(e);
   }
 
   ngOnInit(): void {

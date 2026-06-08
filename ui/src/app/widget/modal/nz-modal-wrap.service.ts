@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
@@ -6,9 +6,7 @@ import { ConfirmType, ModalOptions, NzModalRef, NzModalService } from 'ng-zorro-
 
 import { ModalDragService } from './modal-drag.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class NzModalWrapService {
   modal = inject(NzModalService);
   modalDragService = inject(ModalDragService);

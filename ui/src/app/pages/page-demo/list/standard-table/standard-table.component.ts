@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
@@ -24,7 +24,7 @@ import { NzSpaceCompactComponent } from 'ng-zorro-antd/space';
   selector: 'app-standard-table',
   templateUrl: './standard-table.component.html',
   styleUrl: './standard-table.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     PageHeaderComponent,
     NzCardModule,

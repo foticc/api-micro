@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {  Service } from '@angular/core';
 import { PreloadingStrategy, Route } from '@angular/router';
 import { Observable, of } from 'rxjs';
 
@@ -7,9 +7,7 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
 /*
  * 模块预加载service，参考资料：https://dev.to/this-is-angular/optimize-your-angular-apps-user-experience-with-preloading-strategies-3ie7
  * */
-@Injectable({
-  providedIn: 'root'
-})
+@Service({ autoProvided: false })
 export class SelectivePreloadingStrategyService implements PreloadingStrategy {
   preloadedModules: string[] = []; // 这个数组用于记录已经配置预加载的模块。可能有的需求会想要获取它。
 

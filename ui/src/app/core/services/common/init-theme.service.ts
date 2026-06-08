@@ -1,4 +1,4 @@
-import { DestroyRef, inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Service } from '@angular/core';
 
 import { StyleThemeModelKey, ThemeOptionsKey } from '@config/constant';
 import { StyleTheme, ThemeService } from '@store/common-store/theme.service';
@@ -7,9 +7,7 @@ import { WindowService } from './window.service';
 /*
  * 初始化theme
  * */
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class InitThemeService {
   private themesService = inject(ThemeService);
   private windowServe = inject(WindowService);

@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 
 export enum EquipmentWidth {
   xs,
@@ -9,9 +9,7 @@ export enum EquipmentWidth {
   xxl
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class WindowsWidthService {
   $windowWidth = signal<EquipmentWidth>(EquipmentWidth.xxl);
 }
