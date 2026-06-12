@@ -23,12 +23,12 @@
       appToggleFullscreen
       nz-tooltip
       nzTooltipPlacement="bottom"
-      [nzTooltipTitle]="toogleFullScreenDir.isFullscreenFlag() ? ('common.fullscreen' | translate) : ('common.exitFullscreen' | translate)"
+      [nzTooltipTitle]="toogleFullScreenDir.isFullscreenFlag() ? ('common.exitFullscreen' | translate) : ('common.fullscreen' | translate)"
     >
       @if (toogleFullScreenDir.isFullscreenFlag()) {
-        <i nz-icon nzTheme="outline" nzType="fullscreen"></i>
-      } @else {
         <i nz-icon nzTheme="outline" nzType="fullscreen-exit"></i>
+      } @else {
+        <i nz-icon nzTheme="outline" nzType="fullscreen"></i>
       }
     </span>
 

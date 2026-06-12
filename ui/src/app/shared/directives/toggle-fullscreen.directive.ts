@@ -1,6 +1,6 @@
-import { Directive, DestroyRef, inject, signal } from '@angular/core';
+import { Directive, inject } from '@angular/core';
 
-import screenfull from 'screenfull';
+import { FullscreenService } from '@core/services/common/fullscreen.service';
 
 @Directive({
   selector: '[appToggleFullscreen]',
@@ -10,17 +10,10 @@ import screenfull from 'screenfull';
   }
 })
 export class ToggleFullscreenDirective {
-  readonly isFullscreenFlag = signal(true);
-
-  constructor() {
-    const handler = () => this.isFullscreenFlag.update(v => !v);
-    screenfull.on('change', handler);
-    inject(DestroyRef).onDestroy(() => screenfull.off('change', handler));
-  }
+  private readonly fullscreenService = inject(FullscreenService);
+  readonly isFullscreenFlag = this.fullscreenService.isFullscreen;
 
   onClick(): void {
-    if (screenfull.isEnabled) {
-      screenfull.toggle();
-    }
+    this.fullscreenService.toggle();
   }
 }
