@@ -1,18 +1,17 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
+import { HttpResourceRef } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
 import { TestUser, TestUserPsd } from '@app/pages/system/test/models/test-account.models';
 import { PageInfo, SearchCommonVO } from '@core/services/types';
 import { BaseHttpService } from '@services/base-http.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class TestAccountService {
   private http = inject(BaseHttpService);
 
-  getAccount(param: SearchCommonVO<TestUser>): Observable<PageInfo<TestUser>> {
-    return this.http.post('/rbac/users/page', param);
+  getAccountResource(param: () => SearchCommonVO<TestUser>): HttpResourceRef<PageInfo<TestUser>> {
+    return this.http.postResource<PageInfo<TestUser>>('/rbac/users/page', param);
   }
 
   getAccountDetail(id: number): Observable<TestUser> {

@@ -1,8 +1,7 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, signal, TemplateRef, viewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, signal, computed, effect, TemplateRef, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs/operators';
 
 import {
   RegisteredClientDTO,
@@ -11,7 +10,6 @@ import {
 } from '@app/pages/system/test/models/oauth2-admin.models';
 import { OAuth2ClientModalService } from '@app/pages/system/test/oauth2-admin/client/oauth2-client-modal/oauth2-client-modal.service';
 import { OAuth2ClientService } from '@app/pages/system/test/oauth2-admin/services/oauth2-client.service';
-import { SearchCommonVO } from '@core/services/types';
 import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
@@ -62,6 +60,25 @@ export class OAuth2ClientListComponent implements AfterViewInit {
   private destroyRef = inject(DestroyRef);
 
   searchParam: RegisteredClientQueryFilter = {};
+  checkedCashArray: RegisteredClientDTO[] = [];
+
+  private requestPageSize = signal(10);
+  private requestPageIndex = signal(1);
+  private searchFilters = signal<RegisteredClientQueryFilter>({});
+
+  clientResource = this.clientService.pageResource(() => ({
+    pageSize: this.requestPageSize(),
+    pageIndex: this.requestPageIndex(),
+    filters: { ...this.searchFilters() }
+  }));
+
+  dataList = computed(() => {
+    if (this.clientResource.hasValue()) {
+      return [...this.clientResource.value().list];
+    }
+    return [] as RegisteredClientDTO[];
+  });
+
   tableConfig = signal<AntTableConfig>({
     headers: [],
     total: 0,
@@ -70,8 +87,21 @@ export class OAuth2ClientListComponent implements AfterViewInit {
     pageSize: 10,
     pageIndex: 1
   });
-  dataList = signal<RegisteredClientDTO[]>([]);
-  checkedCashArray: RegisteredClientDTO[] = [];
+
+  private syncTableConfig = effect(() => {
+    const isLoading = this.clientResource.isLoading();
+    const hasValue = this.clientResource.hasValue();
+    this.tableConfig.update(c => ({
+      ...c,
+      loading: isLoading,
+      ...(hasValue
+        ? {
+            total: this.clientResource.value().total!,
+            pageIndex: this.clientResource.value().pageIndex!
+          }
+        : {})
+    }));
+  });
 
   readonly pageHeader: Partial<PageHeaderType> = {
     title: 'OAuth2 客户端（RegisteredClient）',
@@ -88,36 +118,23 @@ export class OAuth2ClientListComponent implements AfterViewInit {
 
   resetSearch(): void {
     this.searchParam = {};
-    this.getDataList({ pageIndex: 1 });
+    this.searchFilters.set({});
+    this.requestPageIndex.set(1);
   }
 
-  getDataList(e?: { pageIndex: number }): void {
-    this.tableLoading(true);
-    const params: SearchCommonVO<RegisteredClientQueryFilter> = {
-      pageSize: this.tableConfig().pageSize!,
-      pageIndex: e?.pageIndex ?? this.tableConfig().pageIndex!,
-      filters: { ...this.searchParam }
-    };
-    this.clientService
-      .page(params)
-      .pipe(
-        finalize(() => this.tableLoading(false)),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(data => {
-        this.dataList.set([...data.list]);
-        this.tableConfig.update(c => ({ ...c, total: data.total, pageIndex: data.pageIndex }));
-      });
+  getDataList(pageIndex: number): void {
+    this.searchFilters.set({ ...this.searchParam });
+    this.requestPageIndex.set(pageIndex);
   }
 
   changePageSize(size: number): void {
-    this.tableConfig.update(c => ({ ...c, pageSize: size, pageIndex: 1 }));
-    this.getDataList({ pageIndex: 1 });
+    this.requestPageSize.set(size);
+    this.requestPageIndex.set(1);
   }
 
   reloadTable(): void {
+    this.clientResource.reload();
     this.message.info('刷新成功');
-    this.getDataList();
   }
 
   add(): void {
@@ -128,11 +145,10 @@ export class OAuth2ClientListComponent implements AfterViewInit {
         if (!res || res.status === ModalBtnStatus.Cancel) {
           return;
         }
-        this.tableLoading(true);
         this.clientService
           .create(res.modalValue as RegisteredClientDTO)
-          .pipe(finalize(() => this.tableLoading(false)))
-          .subscribe(() => this.getDataList());
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe(() => this.clientResource.reload());
       });
   }
 
@@ -148,11 +164,10 @@ export class OAuth2ClientListComponent implements AfterViewInit {
             if (status === ModalBtnStatus.Cancel) {
               return;
             }
-            this.tableLoading(true);
             this.clientService
               .update(id, modalValue as RegisteredClientDTO)
-              .pipe(finalize(() => this.tableLoading(false)))
-              .subscribe(() => this.getDataList());
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe(() => this.clientResource.reload());
           });
       });
   }
@@ -161,14 +176,18 @@ export class OAuth2ClientListComponent implements AfterViewInit {
     this.modal.confirm({
       nzTitle: '确定删除该客户端？',
       nzContent: `Client ID：${row.clientId}`,
-      nzOnOk: () => {
-        this.tableLoading(true);
-        return this.clientService
+      nzOnOk: () =>
+        this.clientService
           .delete([id])
-          .pipe(finalize(() => this.tableLoading(false)))
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .toPromise()
-          .then(() => this.getDataList());
-      }
+          .then(() => {
+            if (this.dataList().length === 1 && this.tableConfig().pageIndex !== 1) {
+              this.requestPageIndex.update(p => Math.max(1, p - 1));
+            } else {
+              this.clientResource.reload();
+            }
+          })
     });
   }
 
@@ -181,14 +200,15 @@ export class OAuth2ClientListComponent implements AfterViewInit {
     this.modal.confirm({
       nzTitle: '确定批量删除？',
       nzContent: `已选 ${ids.length} 条`,
-      nzOnOk: () => {
-        this.tableLoading(true);
-        return this.clientService
+      nzOnOk: () =>
+        this.clientService
           .delete(ids)
-          .pipe(finalize(() => this.tableLoading(false)))
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .toPromise()
-          .then(() => this.getDataList());
-      }
+          .then(() => {
+            this.checkedCashArray = [];
+            this.clientResource.reload();
+          })
     });
   }
 
@@ -206,12 +226,8 @@ export class OAuth2ClientListComponent implements AfterViewInit {
         { title: 'PKCE', tdTemplate: this.pkceTpl(), width: 80 },
         { title: '注册时间', tdTemplate: this.issuedAtTpl(), width: 170 },
         { title: '操作', tdTemplate: this.operationTpl(), width: 120, fixed: true, fixedDir: 'right' }
-      ]
+      ],
+      loading: true
     }));
-    this.getDataList();
-  }
-
-  private tableLoading(loading: boolean): void {
-    this.tableConfig.update(c => ({ ...c, loading }));
   }
 }

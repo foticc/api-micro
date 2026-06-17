@@ -13,6 +13,11 @@ export interface MenuPickerTreeNodeOptions extends NzTreeNodeOptions {
   iconfont?: string;
 }
 
+export interface MenuPickerTreeBuildOptions {
+  /** 管理模式下已关联项可勾选/取消，仅展示标签不锁定 */
+  manageMode?: boolean;
+}
+
 /** 构建树前剥离 children/level 等字段，避免重复搜索时在同一对象上叠树导致节点翻倍 */
 function cloneFlatMenusForTreeBuild(flatMenus: Menu[]): Menu[] {
   return flatMenus.map(m => {
@@ -27,25 +32,44 @@ function cloneFlatMenusForTreeBuild(flatMenus: Menu[]): Menu[] {
 }
 
 /** 将扁平菜单转为 nz-tree 勾选节点（菜单选择弹窗） */
-export function buildMenuPickerTreeNodes(flatMenus: Menu[], existingIds: number[] = []): MenuPickerTreeNodeOptions[] {
+export function buildMenuPickerTreeNodes(
+  flatMenus: Menu[],
+  linkedIds: number[] = [],
+  options?: MenuPickerTreeBuildOptions
+): MenuPickerTreeNodeOptions[] {
   if (!flatMenus.length) {
     return [];
   }
-  const existingSet = new Set(existingIds);
+  const linkedSet = new Set(linkedIds);
+  const manageMode = options?.manageMode ?? false;
   const tree = fnAddTreeDataGradeAndLeaf(fnFlatDataHasParentToTree(cloneFlatMenusForTreeBuild(flatMenus))) as Menu[];
-  return mapMenuNodesToPickerTree(tree, existingSet);
+  return mapMenuNodesToPickerTree(tree, linkedSet, manageMode);
 }
 
-function mapMenuNodesToPickerTree(nodes: Menu[], existingSet: Set<number>): MenuPickerTreeNodeOptions[] {
+/** 编辑页「关联菜单」预览树（只读，保留层级） */
+export function buildLinkedMenuPreviewTree(flatMenus: Menu[], linkedIds: number[]): MenuPickerTreeNodeOptions[] {
+  if (!linkedIds.length || !flatMenus.length) {
+    return [];
+  }
+  const filtered = filterFlatMenusByAddedStatus(flatMenus, linkedIds, 'added');
+  return buildMenuPickerTreeNodes(filtered, linkedIds, { manageMode: true });
+}
+
+function mapMenuNodesToPickerTree(
+  nodes: Menu[],
+  linkedSet: Set<number>,
+  manageMode: boolean
+): MenuPickerTreeNodeOptions[] {
   return nodes.map(node => {
     const id = Number(node.id);
     const key = String(id);
-    const isExisting = existingSet.has(id);
-    const children = node.children?.length ? mapMenuNodesToPickerTree(node.children, existingSet) : undefined;
+    const isLinked = linkedSet.has(id);
+    const children = node.children?.length ? mapMenuNodesToPickerTree(node.children, linkedSet, manageMode) : undefined;
     const isLeaf = !children?.length;
     const displayIcon = resolveMenuDisplayIcon(node);
     const antIcon = displayIcon?.kind === 'antd' ? displayIcon.value : undefined;
     const iconfont = displayIcon?.kind === 'iconfont' ? displayIcon.value : undefined;
+    const lockLinked = !manageMode && isLinked;
 
     return {
       title: formatMenuNodeTitle(node),
@@ -53,10 +77,10 @@ function mapMenuNodesToPickerTree(nodes: Menu[], existingSet: Set<number>): Menu
       isLeaf,
       /** NzTreeNodeOptions.icon：与 nzShowIcon 配合；自定义模板下用于 antd 图标 */
       icon: antIcon,
-      disabled: node.status === false || isExisting,
-      disableCheckbox: isExisting,
+      disabled: node.status === false || lockLinked,
+      disableCheckbox: lockLinked,
       children,
-      isExisting,
+      isExisting: isLinked,
       menu: node,
       iconfont
     };
@@ -167,6 +191,146 @@ export function expandMenuIdsWithAncestors(menuIds: number[], flatMenus: Menu[])
   }
 
   return ordered;
+}
+
+function buildMenuChildrenMap(flatMenus: Menu[]): Map<number, number[]> {
+  const childrenMap = new Map<number, number[]>();
+  for (const menu of flatMenus) {
+    const parentId = Number(menu.fatherId);
+    if (parentId === 0) {
+      continue;
+    }
+    const children = childrenMap.get(parentId) ?? [];
+    children.push(Number(menu.id));
+    childrenMap.set(parentId, children);
+  }
+  return childrenMap;
+}
+
+/** 收集节点及其全部子孙 id */
+export function collectDescendantIds(rootIds: number[], flatMenus: Menu[]): number[] {
+  const childrenMap = buildMenuChildrenMap(flatMenus);
+  const result = new Set<number>();
+  const stack = rootIds.map(Number).filter(id => !Number.isNaN(id));
+
+  while (stack.length) {
+    const id = stack.pop()!;
+    if (result.has(id)) {
+      continue;
+    }
+    result.add(id);
+    for (const child of childrenMap.get(id) ?? []) {
+      stack.push(child);
+    }
+  }
+
+  return [...result];
+}
+
+/**
+ * nzCheckStrictly 下补父子联动：勾选/取消父节点级联子孙，但不误选兄弟节点。
+ * @see https://ng.ant.design/components/tree/en#nzcheckstrictly
+ */
+export function applyMenuTreeCheckChange(
+  previousExplicitIds: number[],
+  nextExplicitIds: number[],
+  flatMenus: Menu[]
+): number[] {
+  const previous = new Set(previousExplicitIds);
+  const next = new Set(nextExplicitIds);
+
+  for (const id of previous) {
+    if (!next.has(id)) {
+      for (const descId of collectDescendantIds([id], flatMenus)) {
+        next.delete(descId);
+      }
+    }
+  }
+
+  for (const id of [...next]) {
+    if (!previous.has(id)) {
+      for (const descId of collectDescendantIds([id], flatMenus)) {
+        next.add(descId);
+      }
+    }
+  }
+
+  return [...next];
+}
+
+function hasCheckedDescendant(id: number, checkedSet: Set<number>, childrenMap: Map<number, number[]>): boolean {
+  for (const childId of childrenMap.get(id) ?? []) {
+    if (checkedSet.has(childId)) {
+      return true;
+    }
+    if (hasCheckedDescendant(childId, checkedSet, childrenMap)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** 树上展示用勾选 key：在用户勾选的节点基础上补齐全部祖先 */
+export function getMenuTreeDisplayCheckedKeys(explicitCheckedIds: number[], flatMenus: Menu[]): number[] {
+  return expandMenuIdsWithAncestors(explicitCheckedIds, flatMenus);
+}
+
+/** 从含祖先的 menuIds 中提取应在树上展示为勾选的「最深层」节点（避免父子联动误选兄弟） */
+export function getExplicitCheckedIds(menuIds: number[], flatMenus: Menu[]): number[] {
+  const idSet = new Set(menuIds);
+  const childrenMap = buildMenuChildrenMap(flatMenus);
+
+  return menuIds.filter(id => {
+    const children = childrenMap.get(id) ?? [];
+    return !children.some(childId => idSet.has(childId));
+  });
+}
+
+/** 根据树勾选结果 reconciled：补祖先，并移除无已选子孙的孤儿祖先 */
+export function reconcileMenuSelectionFromTreeChecked(checkedMenuIds: number[], flatMenus: Menu[]): number[] {
+  const checkedSet = new Set(checkedMenuIds);
+  const expanded = expandMenuIdsWithAncestors(checkedMenuIds, flatMenus);
+  const childrenMap = buildMenuChildrenMap(flatMenus);
+
+  return expanded.filter(id => {
+    if (checkedSet.has(id)) {
+      return true;
+    }
+    return hasCheckedDescendant(id, checkedSet, childrenMap);
+  });
+}
+
+/** 从当前关联中移除指定菜单（含子孙），并清理无已选子孙的祖先 */
+export function removeMenusFromSelection(idsToRemove: number[], currentIds: number[], flatMenus: Menu[]): number[] {
+  const removeSet = new Set(collectDescendantIds(idsToRemove, flatMenus));
+  let remaining = currentIds.filter(id => !removeSet.has(id));
+  remaining = pruneOrphanAncestorsFromSelection(remaining, flatMenus);
+  return remaining;
+}
+
+export function pruneOrphanAncestorsFromSelection(menuIds: number[], flatMenus: Menu[]): number[] {
+  const idSet = new Set(menuIds);
+  const childrenMap = buildMenuChildrenMap(flatMenus);
+
+  const hasDescendantInSet = (id: number): boolean => {
+    for (const childId of childrenMap.get(id) ?? []) {
+      if (idSet.has(childId)) {
+        return true;
+      }
+      if (hasDescendantInSet(childId)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  return menuIds.filter(id => {
+    const children = childrenMap.get(id) ?? [];
+    if (children.length === 0) {
+      return true;
+    }
+    return hasDescendantInSet(id);
+  });
 }
 
 /** 根据已选 menuId 解析展示用菜单快照 */

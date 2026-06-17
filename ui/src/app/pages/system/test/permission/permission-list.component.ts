@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal, computed, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 
 import { Menu } from '@core/services/types';
-import { MenusService } from '@services/system/menus.service';
+import { TestMenusService } from '@app/pages/system/test/menu/services/test-menus.service';
 import { ApiResourceDTO } from '@services/system/api-resource.service';
 import { RbacTestService } from '@services/system/rbac-test.service';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
@@ -12,12 +12,14 @@ import { ModalBtnStatus } from '@widget/base-modal';
 import { ApiPickerModalService } from '@app/pages/system/test/shared/api-picker-modal/api-picker-modal.service';
 import { MenuPickerModalService } from '@app/pages/system/test/shared/menu-picker-modal/menu-picker-modal.service';
 import {
+  buildLinkedMenuPreviewTree,
   extractPermissionMenuIds,
-  expandMenuIdsWithAncestors,
+  MenuPickerTreeNodeOptions,
   normalizePermissionMenus,
+  removeMenusFromSelection,
   resolvePermissionMenus
 } from '../shared/permission-menu-tree.util';
-import { PermissionApi, PermissionMenu, RbacPermission, RbacPermissionPageItem, RbacPermissionPayload } from '../models/rbac.models';
+import { PermissionApi, PermissionMenu, RbacPermission, RbacPermissionPageItem, RbacPermissionPayload, PermissionListFilters } from '../models/rbac.models';
 
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -37,6 +39,9 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
+import { NzTreeModule } from 'ng-zorro-antd/tree';
+
+import { NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
 
 type ViewMode = 'list' | 'form';
 
@@ -63,7 +68,8 @@ type ViewMode = 'list' | 'form';
     NzDividerModule,
     NzTagModule,
     NzTooltipModule,
-    NzSpinModule
+    NzSpinModule,
+    NzTreeModule
   ],
   templateUrl: './permission-list.component.html',
   styleUrl: './permission-list.component.less'
@@ -74,27 +80,92 @@ export class PermissionListComponent implements OnInit {
   private modal = inject(NzModalService);
   private apiPickerModal = inject(ApiPickerModalService);
   private menuPickerModal = inject(MenuPickerModalService);
-  private menusService = inject(MenusService);
+  private menusService = inject(TestMenusService);
   private rbacTestService = inject(RbacTestService);
   private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
 
   viewMode = signal<ViewMode>('list');
   keyword = '';
-  loading = signal(false);
   saving = signal(false);
   isEditMode = signal(false);
   menuCount = signal(0);
   apiCount = signal(0);
 
-  menuFlatList = signal<Menu[]>([]);
+  menuFlatResource = this.menusService.getMenuListResource(() => ({
+    pageSize: 0,
+    pageIndex: 0,
+    filters: {}
+  }));
+
+  menuFlatList = computed(() => {
+    if (!this.menuFlatResource.hasValue()) {
+      return [] as Menu[];
+    }
+    return [...this.menuFlatResource.value()];
+  });
+
+  private syncMenuFlatState = effect(() => {
+    this.menuFlatLoading.set(this.menuFlatResource.isLoading());
+    if (this.menuFlatResource.hasValue() && this.viewMode() === 'form') {
+      this.refreshDisplayMenusFromIds({ onlyIfEmpty: true });
+    }
+    this.cdr.markForCheck();
+  });
+
   menuFlatLoading = signal(false);
   displayMenus = signal<PermissionMenu[]>([]);
+  linkedMenuExpandedKeys = signal<string[]>([]);
 
-  pageList = signal<RbacPermissionPageItem[]>([]);
-  total = signal(0);
+  linkedMenuTreeNodes = computed(() => {
+    const menuIds = this.displayMenus()
+      .map(m => Number(m.id))
+      .filter(id => !Number.isNaN(id));
+    if (!menuIds.length || !this.menuFlatList().length) {
+      return [] as MenuPickerTreeNodeOptions[];
+    }
+    return buildLinkedMenuPreviewTree(this.menuFlatList(), menuIds);
+  });
+
+  private syncLinkedMenuTreeExpand = effect(() => {
+    const nodes = this.linkedMenuTreeNodes();
+    if (!nodes.length) {
+      this.linkedMenuExpandedKeys.set([]);
+      return;
+    }
+    this.linkedMenuExpandedKeys.set(this.collectTreeNodeKeys(nodes));
+    this.cdr.markForCheck();
+  });
+
+  private listFilters = signal<PermissionListFilters>({});
   pageIndex = signal(1);
   pageSize = signal(10);
+  total = signal(0);
+  loading = signal(false);
+
+  permissionsResource = this.rbacTestService.getPermissionsPageResource(() => {
+    const keyword = this.listFilters().keyword?.trim();
+    return {
+      pageIndex: this.pageIndex(),
+      pageSize: this.pageSize(),
+      filters: keyword ? { keyword } : {}
+    };
+  });
+
+  pageList = computed(() => {
+    if (this.permissionsResource.hasValue()) {
+      return this.permissionsResource.value().list;
+    }
+    return [] as RbacPermissionPageItem[];
+  });
+
+  private syncPermissionListState = effect(() => {
+    this.loading.set(this.permissionsResource.isLoading());
+    if (this.permissionsResource.hasValue()) {
+      this.total.set(this.permissionsResource.value().total);
+      this.cdr.markForCheck();
+    }
+  });
 
   editingId?: number;
   editingContext = signal<{ id: number; name: string; code: string; module: string } | null>(null);
@@ -118,28 +189,6 @@ export class PermissionListComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadPage();
-    this.loadMenuFlatList();
-  }
-
-  /** 缓存全量菜单，供 menuIds 解析展示名称 */
-  loadMenuFlatList(): void {
-    this.menuFlatLoading.set(true);
-    this.menusService
-      .getMenuList({ pageIndex: 0, pageSize: 0, filters: {} })
-      .pipe(
-        finalize(() => {
-          this.menuFlatLoading.set(false);
-          this.cdr.markForCheck();
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(list => {
-        this.menuFlatList.set([...list]);
-        if (this.viewMode() === 'form') {
-          this.refreshDisplayMenusFromIds({ onlyIfEmpty: true });
-        }
-      });
   }
 
   initForm(): void {
@@ -156,8 +205,26 @@ export class PermissionListComponent implements OnInit {
     this.syncFormStats();
   }
 
-  linkedMenus(): PermissionMenu[] {
-    return this.displayMenus();
+  menuTypeLabel(menuType: string | undefined): string {
+    return menuType === 'F' ? '按钮' : '菜单';
+  }
+
+  menuTypeTagColor(menuType: string | undefined): string {
+    return menuType === 'F' ? 'purple' : 'blue';
+  }
+
+  private collectTreeNodeKeys(nodes: NzTreeNodeOptions[]): string[] {
+    const keys: string[] = [];
+    const walk = (list: NzTreeNodeOptions[]) => {
+      for (const node of list) {
+        keys.push(String(node.key));
+        if (node.children?.length) {
+          walk(node.children);
+        }
+      }
+    };
+    walk(nodes);
+    return keys;
   }
 
   private refreshDisplayMenusFromIds(options?: { onlyIfEmpty?: boolean }): void {
@@ -172,6 +239,9 @@ export class PermissionListComponent implements OnInit {
     this.displayMenus.set(resolvePermissionMenus(menuIds, this.menuFlatList()));
   }
 
+  /** 关联菜单 / 后端 API 预览表格固定滚动高度 */
+  private readonly resourceTableScrollY = '520px';
+
   syncFormStats(): void {
     this.menuCount.set(this.displayMenus().length);
     this.apiCount.set(this.apis?.length ?? 0);
@@ -179,53 +249,32 @@ export class PermissionListComponent implements OnInit {
   }
 
   apiTableScroll(): { y?: string | null } {
-    return this.apiCount() > 0 ? { y: '360px' } : {};
+    return this.apiCount() > 0 ? { y: this.resourceTableScrollY } : {};
   }
 
-  menuTableScroll(): { y?: string | null } {
-    return this.menuCount() > 0 ? { y: '360px' } : {};
-  }
-
-  loadPage(pageIndex = this.pageIndex()): void {
-    this.loading.set(true);
-    const keyword = this.keyword.trim();
-    this.rbacTestService
-      .listPermissionsPage({
-        pageIndex,
-        pageSize: this.pageSize(),
-        filters: keyword ? { keyword } : {}
-      })
-      .pipe(
-        finalize(() => {
-          this.loading.set(false);
-          this.cdr.markForCheck();
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(data => {
-        this.pageList.set(data.list);
-        this.total.set(data.total);
-        this.pageIndex.set(data.pageIndex);
-        this.pageSize.set(data.pageSize);
-      });
+  reloadPage(): void {
+    this.permissionsResource.reload();
   }
 
   search(): void {
-    this.loadPage(1);
+    const kw = this.keyword.trim();
+    this.listFilters.set(kw ? { keyword: kw } : {});
+    this.pageIndex.set(1);
   }
 
   resetSearch(): void {
     this.keyword = '';
-    this.loadPage(1);
+    this.listFilters.set({});
+    this.pageIndex.set(1);
   }
 
   onPageIndexChange(index: number): void {
-    this.loadPage(index);
+    this.pageIndex.set(index);
   }
 
   onPageSizeChange(size: number): void {
     this.pageSize.set(size);
-    this.loadPage(1);
+    this.pageIndex.set(1);
   }
 
   openCreate(): void {
@@ -305,81 +354,84 @@ export class PermissionListComponent implements OnInit {
     this.syncFormStats();
   }
 
-  addMenu(): void {
+  manageMenus(): void {
+    const previousIds = this.getExistingMenuIds();
     this.menuPickerModal
-      .show({ nzTitle: '选择菜单', nzWidth: 920 }, { existingIds: this.getExistingMenuIds() })
+      .show({ nzTitle: '管理关联菜单', nzWidth: 920 }, { existingIds: previousIds, manageMode: true })
       .subscribe(res => {
         if (!res || res.status === ModalBtnStatus.Cancel) {
           return;
         }
         const selected = (res.modalValue ?? []) as Menu[];
-        const selectedIds = selected.map(m => Number(m.id)).filter(id => !Number.isNaN(id));
-        const expandedIds = expandMenuIdsWithAncestors(selectedIds, this.menuFlatList());
-
-        const existingIds = new Set(this.getExistingMenuIds());
-        const addedIds: number[] = [];
-        for (const id of expandedIds) {
-          if (existingIds.has(id)) {
-            continue;
-          }
-          existingIds.add(id);
-          addedIds.push(id);
-        }
-        if (addedIds.length > 0) {
-          const menuIds = [...addedIds, ...this.getExistingMenuIds()];
-          this.form.patchValue({ menuIds });
-          this.displayMenus.set(resolvePermissionMenus(menuIds, this.menuFlatList()));
-          this.message.success(`已添加 ${addedIds.length} 项菜单`);
-        }
-        this.syncFormStats();
-        this.cdr.markForCheck();
+        const menuIds = selected.map(m => Number(m.id)).filter(id => !Number.isNaN(id));
+        this.applyMenuSelection(menuIds, previousIds);
       });
+  }
+
+  private applyMenuSelection(menuIds: number[], previousIds: number[]): void {
+    this.form.patchValue({ menuIds });
+    this.displayMenus.set(resolvePermissionMenus(menuIds, this.menuFlatList()));
+    this.notifySelectionDiff(previousIds, menuIds, '菜单');
+    this.syncFormStats();
+    this.cdr.markForCheck();
   }
 
   removeMenu(menuId: number | string): void {
     const id = Number(menuId);
-    const menuIds = ((this.form.get('menuIds')?.value as number[]) ?? []).filter(mid => mid !== id);
-    this.form.patchValue({ menuIds });
-    this.refreshDisplayMenusFromIds();
-    this.syncFormStats();
+    const previousIds = this.getExistingMenuIds();
+    const menuIds = removeMenusFromSelection([id], previousIds, this.menuFlatList());
+    this.applyMenuSelection(menuIds, previousIds);
   }
 
   private getExistingMenuIds(): number[] {
     return [...((this.form.get('menuIds')?.value as number[]) ?? [])];
   }
 
-  addApi(): void {
+  manageApis(): void {
+    const previousIds = this.getExistingApiIds();
     this.apiPickerModal
-      .show({ nzTitle: '选择 API 资源', nzWidth: 1150 }, { existingIds: this.getExistingApiIds() })
+      .show({ nzTitle: '管理关联 API', nzWidth: 920 }, { existingIds: previousIds, manageMode: true })
       .subscribe(res => {
         if (!res || res.status === ModalBtnStatus.Cancel) {
           return;
         }
         const selected = (res.modalValue ?? []) as ApiResourceDTO[];
-        const existingIds = new Set(this.getExistingApiIds());
-        let added = 0;
-        for (const api of selected) {
-          if (api.id == null || existingIds.has(api.id)) {
-            continue;
-          }
-          existingIds.add(api.id);
-          this.apis.push(
-            this.createApiGroup({
-              id: api.id,
-              method: api.method,
-              path: api.path,
-              description: api.description ?? ''
-            })
-          );
-          added++;
-        }
-        if (added > 0) {
-          this.message.success(`已添加 ${added} 条 API`);
-          this.form.updateValueAndValidity({ emitEvent: false });
-        }
-        this.syncFormStats();
-        this.cdr.markForCheck();
+        this.applyApiSelection(selected, previousIds);
       });
+  }
+
+  private applyApiSelection(selected: ApiResourceDTO[], previousIds: number[]): void {
+    this.apis.clear();
+    for (const api of selected) {
+      if (api.id == null) {
+        continue;
+      }
+      this.apis.push(
+        this.createApiGroup({
+          id: api.id,
+          method: api.method,
+          path: api.path,
+          description: api.description ?? ''
+        })
+      );
+    }
+    const nextIds = selected.map(a => a.id).filter((id): id is number => id != null);
+    this.notifySelectionDiff(previousIds, nextIds, 'API');
+    this.form.updateValueAndValidity({ emitEvent: false });
+    this.syncFormStats();
+    this.cdr.markForCheck();
+  }
+
+  private notifySelectionDiff(previousIds: number[], nextIds: number[], label: string): void {
+    const previousSet = new Set(previousIds);
+    const nextSet = new Set(nextIds);
+    const added = nextIds.filter(id => !previousSet.has(id)).length;
+    const removed = previousIds.filter(id => !nextSet.has(id)).length;
+    if (added || removed) {
+      this.message.success(`已更新${label}：新增 ${added} 项，移除 ${removed} 项`);
+      return;
+    }
+    this.message.info(`关联${label}未变更`);
   }
 
   private getExistingApiIds(): number[] {
@@ -427,7 +479,6 @@ export class PermissionListComponent implements OnInit {
     };
 
     this.saving.set(true);
-    const pageToLoad = this.editingId != null ? this.pageIndex() : 1;
     const request$ =
       this.editingId != null
         ? this.rbacTestService.updatePermission(this.editingId, payload)
@@ -444,7 +495,12 @@ export class PermissionListComponent implements OnInit {
       .subscribe({
         next: () => {
           this.backToList();
-          this.loadPage(pageToLoad);
+          if (this.editingId != null) {
+            this.permissionsResource.reload();
+          } else {
+            this.pageIndex.set(1);
+            this.permissionsResource.reload();
+          }
         },
         error: () => {
           /* needSuccessInfo / 业务错误由拦截器提示 */
@@ -461,7 +517,13 @@ export class PermissionListComponent implements OnInit {
           .deletePermission(row.id)
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
-            next: () => this.loadPage(this.pageIndex())
+            next: () => {
+              if (this.pageList().length === 1 && this.pageIndex() > 1) {
+                this.pageIndex.update(p => Math.max(1, p - 1));
+              } else {
+                this.permissionsResource.reload();
+              }
+            }
           })
     });
   }

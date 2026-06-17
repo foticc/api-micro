@@ -13,7 +13,7 @@
           <nz-form-control>
             <nz-select
               name="addedFilter"
-              nzPlaceHolder="添加状态"
+              nzPlaceHolder="关联状态"
               [(ngModel)]="addedFilter"
               (ngModelChange)="onAddedFilterChange()"
             >
@@ -36,12 +36,19 @@
 </div>
 
 <p class="picker-summary">
-  已选 <strong>{{ selectedCount() }}</strong> 项；灰色「已添加」表示当前资源组中已有，不可重复勾选
+  已关联 <strong>{{ selectedCount() }}</strong> 项
+  @if (initialLinkedCount() > 0) {
+    （打开时 {{ initialLinkedCount() }} 项）
+  }
+  ；勾选子节点将自动勾选上级，勾选父节点将自动勾选其下全部子节点
 </p>
 
 <div class="picker-tree-toolbar">
   <button nz-button nzSize="small" (click)="expandAll()">全部展开</button>
   <button class="m-l-8" nz-button nzSize="small" (click)="collapseAll()">全部收起</button>
+  <button class="m-l-8" nz-button nzSize="small" (click)="clearSelection()" [disabled]="selectedCount() === 0">
+    清空已关联
+  </button>
 </div>
 
 <nz-spin [nzSpinning]="loading()">
@@ -51,15 +58,15 @@
     } @else {
       <nz-tree
         nzCheckable
+        nzCheckStrictly
         nzShowIcon
         [nzCheckedKeys]="checkedKeys()"
         [nzData]="treeNodes()"
         [nzExpandedKeys]="expandedKeys()"
         [nzTreeTemplate]="treeTpl"
-        (nzCheckedKeysChange)="onCheckedKeysChange($event)"
+        (nzCheckboxChange)="onCheckboxChange($event)"
         (nzExpandedKeysChange)="expandedKeys.set($event)"
       />
-      <!-- 参考 ng-zorro Tree Customize Icon：let-origin + ant-tree-iconEle -->
       <ng-template #treeTpl let-node let-origin="origin">
         @if (origin.icon) {
           <span class="ant-tree-iconEle ant-tree-icon__customize">
@@ -75,8 +82,8 @@
           </span>
         }
         <span class="ant-tree-title">{{ node.title }}</span>
-        @if (isExistingOrigin(origin)) {
-          <nz-tag class="tree-node-tag tree-node-extra" nzColor="default">已添加</nz-tag>
+        @if (isMenuLinked(origin)) {
+          <nz-tag class="tree-node-tag tree-node-extra" nzColor="blue">已关联</nz-tag>
         }
       </ng-template>
     }

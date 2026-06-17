@@ -1,11 +1,10 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, inject, DestroyRef, signal, viewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, inject, DestroyRef, signal, viewChild, computed, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs/operators';
 
 import { ActionCode } from '@app/config/actionCode';
-import { OptionsInterface, SearchCommonVO } from '@core/services/types';
+import { OptionsInterface } from '@core/services/types';
 import { TestMenuListObj, TestMenuModalData } from '@app/pages/system/test/models/test-menu.models';
 import { buildMenuCodePrefix, buildMenuPathPrefix, isMenuExternalLink, stripMenuPrefix } from '@app/pages/system/test/shared/menu-prefix.util';
 import { TestMenuModalService } from '@app/pages/system/test/menu/services/test-menu-modal.service';
@@ -31,7 +30,6 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
 
 interface SearchParam {
   menuName: string;
@@ -39,7 +37,7 @@ interface SearchParam {
 }
 
 /**
- * 测试模块内的菜单管理页，与 `system/menu` 行为对齐，路由隔离在 RBAC 试验下。
+ * RBAC 试验模块内的菜单管理页，与 `system/menu` 行为对齐，API 走 `/rbac/menu/*`。
  */
 @Component({
   selector: 'app-test-menu',
@@ -60,8 +58,7 @@ interface SearchParam {
     TreeTableComponent,
     NgTemplateOutlet,
     NzTagModule,
-    AuthDirective,
-    WaterMarkComponent
+    AuthDirective
   ]
 })
 export class TestMenuComponent implements OnInit {
@@ -73,91 +70,87 @@ export class TestMenuComponent implements OnInit {
 
   ActionCode = ActionCode;
   searchParam: Partial<SearchParam> = {};
-  destroyRef = inject(DestroyRef);
-  tableConfig = signal<AntTableConfig>({ headers: [], total: 0, showCheckbox: false, loading: false, pageSize: 10, pageIndex: 1 });
   readonly pageHeaderInfo: Partial<PageHeaderType> = {
     title: '菜单管理（测试）',
     breadcrumb: ['首页', '系统管理', 'RBAC 试验', '菜单管理']
   };
-  dataList = signal<TreeNodeInterface[]>([]);
   readonly visibleOptions: OptionsInterface[] = [...MapPipe.transformMapToArray(MapSet.visible, MapKeyType.Boolean)];
 
   private menuModalService = inject(TestMenuModalService);
   private dataService = inject(TestMenusService);
   private modalSrv = inject(NzModalService);
   private message = inject(NzMessageService);
+  private destroyRef = inject(DestroyRef);
+
+  private searchFilters = signal<Partial<SearchParam>>({});
+  private currentSortFile = signal<SortFile | undefined>(undefined);
+
+  menuResource = this.dataService.getMenuListResource(() => ({
+    pageSize: 0,
+    pageIndex: 0,
+    filters: this.searchFilters() as NzSafeAny
+  }));
+
+  dataList = computed(() => {
+    if (!this.menuResource.hasValue()) {
+      return [] as TreeNodeInterface[];
+    }
+    const menuList = this.menuResource.value();
+    const target = fnFlatDataHasParentToTree(menuList, 'fatherId');
+    let list = fnFlattenTreeDataByDataList(target);
+    const sortFile = this.currentSortFile();
+    if (sortFile) {
+      fnSortTreeData(list, sortFile);
+    }
+    return list;
+  });
+
+  tableConfig = signal<AntTableConfig>({ headers: [], total: 0, showCheckbox: false, loading: false, pageSize: 10, pageIndex: 1 });
+
+  private syncTableConfig = effect(() => {
+    const isLoading = this.menuResource.isLoading();
+    this.tableConfig.update(c => ({ ...c, loading: isLoading }));
+  });
 
   reloadTable(): void {
     this.message.info('已经刷新了');
-    this.getDataList();
-  }
-
-  tableLoading(isLoading: boolean): void {
-    this.tableConfig.update(config => ({ ...config, loading: isLoading }));
+    this.menuResource.reload();
   }
 
   getDataList(sortFile?: SortFile): void {
-    this.tableLoading(true);
-    const params: SearchCommonVO<NzSafeAny> = {
-      pageSize: 0,
-      pageIndex: 0,
-      filters: this.searchParam
-    };
-    this.dataService
-      .getMenuList(params)
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(menuList => {
-        const target = fnFlatDataHasParentToTree(menuList, 'fatherId');
-        let list = fnFlattenTreeDataByDataList(target);
-        if (sortFile) {
-          fnSortTreeData(list, sortFile);
-        }
-        this.dataList.set(list);
-        this.tableLoading(false);
-      });
+    this.searchFilters.set({ ...this.searchParam });
+    if (sortFile) {
+      this.currentSortFile.set(sortFile);
+    }
   }
 
   resetForm(): void {
     this.searchParam = {};
-    this.getDataList();
+    this.searchFilters.set({});
+    this.currentSortFile.set(undefined);
+    this.menuResource.reload();
   }
 
   add(fatherId: number): void {
     const initialData = fatherId > 0 ? this.buildChildMenuDefaults(fatherId) : undefined;
     this.menuModalService
       .show({ nzTitle: '新增' }, initialData)
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(res => {
         if (!res || res.status === ModalBtnStatus.Cancel) {
           return;
         }
         const param = { ...res.modalValue };
         param.fatherId = fatherId;
-        this.tableLoading(true);
         this.addEditData(param, 'addMenus');
       });
   }
 
   addEditData(param: TestMenuListObj, methodName: 'editMenus' | 'addMenus'): void {
     this.dataService[methodName](param)
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.getDataList();
+        this.menuResource.reload();
       });
   }
 
@@ -166,20 +159,14 @@ export class TestMenuComponent implements OnInit {
       nzTitle: '确定要删除吗？',
       nzContent: '删除后不可恢复',
       nzOnOk: () => {
-        this.tableLoading(true);
         this.dataService
           .delMenus(id)
-          .pipe(
-            finalize(() => {
-              this.tableLoading(false);
-            }),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
             if (this.dataList().length === 1 && this.tableConfig().pageIndex !== 1) {
               this.tableConfig.update(c => ({ ...c, pageIndex: c.pageIndex! - 1 }));
             } else {
-              this.getDataList();
+              this.menuResource.reload();
             }
           });
       }
@@ -193,19 +180,13 @@ export class TestMenuComponent implements OnInit {
       .subscribe(res => {
         this.menuModalService
           .show({ nzTitle: '编辑' }, this.buildModalDataWithPrefixes(res, fatherId))
-          .pipe(
-            finalize(() => {
-              this.tableLoading(false);
-            }),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(({ modalValue, status }) => {
             if (status === ModalBtnStatus.Cancel) {
               return;
             }
             modalValue.id = id;
             modalValue.fatherId = fatherId;
-            this.tableLoading(true);
             this.addEditData(modalValue, 'editMenus');
           });
       });
@@ -215,13 +196,15 @@ export class TestMenuComponent implements OnInit {
     this.tableConfig.update(config => ({ ...config, pageSize: e }));
   }
 
-  /** 添加下级时，用前置标签展示上级权限码与路由前缀 */
+  changeSort(e: SortFile): void {
+    this.getDataList(e);
+  }
+
   private buildChildMenuDefaults(fatherId: number): TestMenuModalData | undefined {
     const prefixes = this.getParentMenuPrefixes(fatherId);
     return prefixes ? { menuType: 'C', ...prefixes } : undefined;
   }
 
-  /** 编辑子级时，剥离前缀后回填表单，前缀仍用 addon 展示 */
   private buildModalDataWithPrefixes(data: TestMenuListObj, fatherId: number): TestMenuModalData {
     const prefixes = this.getParentMenuPrefixes(fatherId);
     if (!prefixes) {
@@ -252,77 +235,18 @@ export class TestMenuComponent implements OnInit {
   private initTable(): void {
     this.tableConfig.set({
       headers: [
-        {
-          title: '菜单名称',
-          width: 230,
-          field: 'menuName'
-        },
-        {
-          title: 'zorro图标',
-          field: 'icon',
-          width: 100,
-          tdTemplate: this.zorroIconTpl()
-        },
-        {
-          title: '阿里图标',
-          field: 'alIcon',
-          width: 100,
-          tdTemplate: this.aliIconTpl()
-        },
-        {
-          title: '权限码',
-          field: 'code',
-          width: 300
-        },
-        {
-          title: '路由地址',
-          field: 'path',
-          width: 300
-        },
-        {
-          title: '排序',
-          field: 'orderNum',
-          width: 80
-        },
-        {
-          title: '状态',
-          field: 'status',
-          pipe: 'available',
-          width: 100
-        },
-        {
-          title: '展示',
-          field: 'visible',
-          pipe: 'isOrNot',
-          tdTemplate: this.visibleTpl(),
-          width: 100
-        },
-        {
-          title: '外链',
-          field: 'newLinkFlag',
-          pipe: 'isOrNot',
-          tdTemplate: this.newLinkFlag(),
-          width: 100
-        },
-        {
-          title: '创建时间',
-          field: 'createdAt',
-          pipe: 'date:yyyy-MM-dd HH:mm',
-          width: 180
-        },
-        {
-          title: '更新时间',
-          field: 'updatedAt',
-          pipe: 'date:yyyy-MM-dd HH:mm',
-          width: 180
-        },
-        {
-          title: '操作',
-          tdTemplate: this.operationTpl(),
-          width: 180,
-          fixed: true,
-          fixedDir: 'right'
-        }
+        { title: '菜单名称', width: 230, field: 'menuName' },
+        { title: 'zorro图标', field: 'icon', width: 100, tdTemplate: this.zorroIconTpl() },
+        { title: '阿里图标', field: 'alIcon', width: 100, tdTemplate: this.aliIconTpl() },
+        { title: '权限码', field: 'code', width: 300 },
+        { title: '路由地址', field: 'path', width: 300 },
+        { title: '排序', field: 'orderNum', width: 80 },
+        { title: '状态', field: 'status', pipe: 'available', width: 100 },
+        { title: '展示', field: 'visible', pipe: 'isOrNot', tdTemplate: this.visibleTpl(), width: 100 },
+        { title: '外链', field: 'newLinkFlag', pipe: 'isOrNot', tdTemplate: this.newLinkFlag(), width: 100 },
+        { title: '创建时间', field: 'createdAt', pipe: 'date:yyyy-MM-dd HH:mm', width: 180 },
+        { title: '更新时间', field: 'updatedAt', pipe: 'date:yyyy-MM-dd HH:mm', width: 180 },
+        { title: '操作', tdTemplate: this.operationTpl(), width: 180, fixed: true, fixedDir: 'right' }
       ],
       total: 0,
       showCheckbox: false,

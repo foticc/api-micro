@@ -1,18 +1,17 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
+import { HttpResourceRef } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
 import { ConsentDTO, ConsentKey, ConsentQueryFilter } from '@app/pages/system/test/models/oauth2-admin.models';
 import { PageInfo, SearchCommonVO } from '@core/services/types';
 import { BaseHttpService } from '@services/base-http.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class OAuth2ConsentService {
   private http = inject(BaseHttpService);
 
-  page(param: SearchCommonVO<ConsentQueryFilter>): Observable<PageInfo<ConsentDTO>> {
-    return this.http.post('/manage/oauth2/consent/page', param, { showLoading: true });
+  pageResource(param: () => SearchCommonVO<ConsentQueryFilter>): HttpResourceRef<PageInfo<ConsentDTO>> {
+    return this.http.postResource<PageInfo<ConsentDTO>>('/manage/oauth2/consent/page', param, { showLoading: true });
   }
 
   get(registeredClientId: string, principalName: string): Observable<ConsentDTO> {

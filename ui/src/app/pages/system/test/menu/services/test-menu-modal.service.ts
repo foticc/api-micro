@@ -1,4 +1,4 @@
-import { inject, Injectable, Type } from '@angular/core';
+import { inject, Service, Type } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { TestMenuModalData } from '@app/pages/system/test/models/test-menu.models';
@@ -7,9 +7,7 @@ import { ModalResponse, ModalWrapService } from '@widget/base-modal';
 
 import { ModalOptions } from 'ng-zorro-antd/modal';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class TestMenuModalService {
   private modalWrapService = inject(ModalWrapService);
 

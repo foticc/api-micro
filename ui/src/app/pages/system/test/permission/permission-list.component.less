@@ -73,6 +73,49 @@
   }
 }
 
+.menu-tree-scroll {
+  height: 520px;
+  overflow: auto;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+
+.linked-menu-node {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100% - 24px);
+  vertical-align: middle;
+}
+
+.linked-menu-name {
+  flex-shrink: 0;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.linked-menu-tag {
+  flex-shrink: 0;
+}
+
+.linked-menu-code {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+}
+
+.linked-menu-remove {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
 .form-footer-bar {
   position: sticky;
   bottom: 0;

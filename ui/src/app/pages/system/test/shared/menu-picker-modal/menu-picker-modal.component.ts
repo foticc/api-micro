@@ -1,17 +1,19 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, signal, computed, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Observable, of } from 'rxjs';
-import { finalize } from 'rxjs/operators';
 
+import { TestMenusService } from '@app/pages/system/test/menu/services/test-menus.service';
 import { Menu } from '@core/services/types';
-import { MenusService } from '@services/system/menus.service';
 import {
   buildMenuPickerTreeNodes,
+  collectDescendantIds,
   filterFlatMenus,
   filterFlatMenusByAddedStatus,
+  getExplicitCheckedIds,
+  getMenuTreeDisplayCheckedKeys,
   MenuPickerAddedFilter,
-  MenuPickerTreeNodeOptions
+  MenuPickerTreeNodeOptions,
+  reconcileMenuSelectionFromTreeChecked
 } from '@app/pages/system/test/shared/permission-menu-tree.util';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
 
@@ -21,35 +23,25 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzMessageService } from 'ng-zorro-antd/message';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 
-import { NzTreeNodeKey, NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
+import { NzFormatEmitEvent, NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
 
 export interface MenuPickerModalData {
-  /** 已在表单中的 menu.id */
+  /** 当前已关联的 menu.id，打开弹窗时预勾选 */
   existingIds?: number[];
+  /** 管理模式：已关联项可取消勾选 */
+  manageMode?: boolean;
 }
 
 @Component({
   selector: 'app-menu-picker-modal',
   templateUrl: './menu-picker-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    FormsModule,
-    NzFormModule,
-    NzGridModule,
-    NzInputModule,
-    NzSelectModule,
-    NzButtonModule,
-    NzIconModule,
-    NzTreeModule,
-    NzTagModule,
-    NzSpinModule
-  ],
+  imports: [FormsModule, NzFormModule, NzGridModule, NzInputModule, NzSelectModule, NzButtonModule, NzIconModule, NzTreeModule, NzTagModule, NzSpinModule],
   styles: `
     .picker-search {
       margin-bottom: 12px;
@@ -81,50 +73,58 @@ export class MenuPickerModalComponent extends BasicConfirmModalComponent impleme
   readonly nzModalData: MenuPickerModalData = inject(NZ_MODAL_DATA, { optional: true }) ?? {};
   override modalRef = inject(NzModalRef);
 
-  private menusService = inject(MenusService);
-  private message = inject(NzMessageService);
-  private destroyRef = inject(DestroyRef);
+  private menusService = inject(TestMenusService);
   private cdr = inject(ChangeDetectorRef);
 
   searchKeyword = '';
   addedFilter: MenuPickerAddedFilter = 'all';
   readonly addedFilterOptions: { label: string; value: MenuPickerAddedFilter }[] = [
     { label: '全部', value: 'all' },
-    { label: '未添加', value: 'notAdded' },
-    { label: '已添加', value: 'added' }
+    { label: '未关联', value: 'notAdded' },
+    { label: '已关联', value: 'added' }
   ];
-  loading = signal(false);
   treeNodes = signal<NzTreeNodeOptions[]>([]);
   expandedKeys = signal<string[]>([]);
   checkedKeys = signal<string[]>([]);
 
+  menuResource = this.menusService.getMenuListResource(() => ({
+    pageSize: 0,
+    pageIndex: 0,
+    filters: {}
+  }));
+
+  loading = computed(() => this.menuResource.isLoading());
+  manageMode = false;
+
   private allFlatMenus: Menu[] = [];
   private menuById = new Map<number, Menu>();
   private selectedById = new Map<number, Menu>();
-  private existingIdSet = new Set<number>();
+  private initialLinkedIds: number[] = [];
+  private selectionInitialized = false;
+  /** 用户直接勾选（含向下级联）的节点，不含仅为展示而补的祖先 */
+  private explicitCheckedIds: number[] = [];
+
+  private syncMenuTree = effect(() => {
+    if (!this.menuResource.hasValue()) {
+      return;
+    }
+    this.allFlatMenus = [...this.menuResource.value()];
+    this.menuById = new Map(this.allFlatMenus.map(m => [Number(m.id), m]));
+    this.initializeSelectionIfNeeded();
+    this.applyTreeFilter();
+  });
 
   ngOnInit(): void {
-    this.existingIdSet = new Set(this.nzModalData.existingIds ?? []);
-    this.loadMenus();
+    this.initialLinkedIds = (this.nzModalData.existingIds ?? []).map(id => Number(id)).filter(id => !Number.isNaN(id));
+    this.manageMode = this.nzModalData.manageMode ?? this.initialLinkedIds.length > 0;
   }
 
   selectedCount(): number {
     return this.selectedById.size;
   }
 
-  loadMenus(): void {
-    this.loading.set(true);
-    this.menusService
-      .getMenuList({ pageIndex: 0, pageSize: 0, filters: {} })
-      .pipe(
-        finalize(() => this.loading.set(false)),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(list => {
-        this.allFlatMenus = [...list];
-        this.menuById = new Map(this.allFlatMenus.map(m => [Number(m.id), m]));
-        this.applyTreeFilter();
-      });
+  initialLinkedCount(): number {
+    return this.initialLinkedIds.length;
   }
 
   search(): void {
@@ -161,26 +161,47 @@ export class MenuPickerModalComponent extends BasicConfirmModalComponent impleme
     this.cdr.markForCheck();
   }
 
-  onCheckedKeysChange(keys: NzTreeNodeKey[]): void {
-    const keyStrings = keys.map(k => String(k));
-    const next = new Map<number, Menu>();
-    for (const key of keyStrings) {
-      const id = Number(key);
-      if (Number.isNaN(id) || this.existingIdSet.has(id)) {
-        continue;
-      }
-      const menu = this.menuById.get(id);
-      if (menu) {
-        next.set(id, menu);
-      }
+  clearSelection(): void {
+    if (!this.selectedById.size) {
+      return;
     }
-    this.selectedById = next;
-    this.checkedKeys.set(keyStrings.filter(k => !this.existingIdSet.has(Number(k))));
+    this.selectedById.clear();
+    this.explicitCheckedIds = [];
+    this.checkedKeys.set([]);
     this.cdr.markForCheck();
   }
 
-  isExistingOrigin(origin: MenuPickerTreeNodeOptions | null | undefined): boolean {
-    return origin?.isExisting === true;
+  onCheckboxChange(event: NzFormatEmitEvent): void {
+    const node = event.node;
+    if (!node?.key) {
+      return;
+    }
+    const id = Number(node.key);
+    if (Number.isNaN(id) || !this.menuById.has(id)) {
+      return;
+    }
+
+    const nextExplicit = new Set(this.explicitCheckedIds);
+    const affectedIds = collectDescendantIds([id], this.allFlatMenus);
+
+    if (node.isChecked) {
+      for (const descId of affectedIds) {
+        nextExplicit.add(descId);
+      }
+    } else {
+      for (const descId of affectedIds) {
+        nextExplicit.delete(descId);
+      }
+    }
+
+    this.updateSelectionFromExplicit([...nextExplicit]);
+  }
+
+  isMenuLinked(origin: MenuPickerTreeNodeOptions | null | undefined): boolean {
+    if (!origin?.menu?.id) {
+      return false;
+    }
+    return this.selectedById.has(Number(origin.menu.id));
   }
 
   protected getAsyncFnData(modalValue: unknown): Observable<unknown> {
@@ -188,21 +209,62 @@ export class MenuPickerModalComponent extends BasicConfirmModalComponent impleme
   }
 
   override getCurrentValue(): Observable<unknown> {
-    const list = [...this.selectedById.values()];
-    if (list.length === 0) {
-      this.message.warning('请至少选择一条菜单');
-      return of(false);
-    }
-    return of(list);
+    return of([...this.selectedById.values()]);
   }
 
-  private applyTreeFilter(): void {
+  private initializeSelectionIfNeeded(): void {
+    if (this.selectionInitialized) {
+      return;
+    }
+    const reconciledIds = reconcileMenuSelectionFromTreeChecked(this.initialLinkedIds, this.allFlatMenus);
+    for (const id of reconciledIds) {
+      const menu = this.menuById.get(id);
+      if (menu) {
+        this.selectedById.set(id, menu);
+      }
+    }
+    this.selectionInitialized = true;
+    this.syncCheckedKeysFromSelection();
+  }
+
+  private updateSelectionFromExplicit(explicitIds: number[]): void {
+    this.explicitCheckedIds = explicitIds;
+
+    const reconciledIds = reconcileMenuSelectionFromTreeChecked(explicitIds, this.allFlatMenus);
+    const next = new Map<number, Menu>();
+    for (const id of reconciledIds) {
+      const menu = this.menuById.get(id);
+      if (menu) {
+        next.set(id, menu);
+      }
+    }
+    this.selectedById = next;
+    this.syncTreeCheckedKeys();
+    this.cdr.markForCheck();
+  }
+
+  private syncCheckedKeysFromSelection(): void {
+    this.explicitCheckedIds = getExplicitCheckedIds([...this.selectedById.keys()], this.allFlatMenus);
+    this.syncTreeCheckedKeys();
+  }
+
+  private syncTreeCheckedKeys(): void {
+    const displayKeys = getMenuTreeDisplayCheckedKeys(this.explicitCheckedIds, this.allFlatMenus);
+    this.checkedKeys.set(displayKeys.map(String));
+  }
+
+  private applyTreeFilter(syncCheckedKeys = true): void {
+    const linkedIds = [...this.selectedById.keys()];
     let filtered = filterFlatMenus(this.allFlatMenus, this.searchKeyword);
-    filtered = filterFlatMenusByAddedStatus(filtered, [...this.existingIdSet], this.addedFilter);
-    const nodes = buildMenuPickerTreeNodes(filtered, [...this.existingIdSet]);
-    this.treeNodes.set(nodes);
+    filtered = filterFlatMenusByAddedStatus(filtered, linkedIds, this.addedFilter);
+    this.treeNodes.set(buildMenuPickerTreeNodes(filtered, linkedIds, { manageMode: this.manageMode }));
+
     if (this.searchKeyword.trim() || this.addedFilter !== 'all') {
       this.expandAll();
+    }
+
+    if (syncCheckedKeys) {
+      this.syncTreeCheckedKeys();
     }
     this.cdr.markForCheck();
   }

@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, computed } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 
 import { TestUser } from '@app/pages/system/test/models/test-account.models';
 import { OptionsInterface } from '@core/services/types';
 import { ValidatorsService } from '@core/services/validators/validators.service';
-import { RoleService } from '@services/system/role.service';
+import { RbacTestService } from '@services/system/rbac-test.service';
 import { fnCheckForm } from '@utils/tools';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
 
@@ -27,13 +27,24 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 export class TestAccountModalComponent extends BasicConfirmModalComponent implements OnInit {
   addEditForm!: FormGroup;
   readonly nzModalData: TestUser | null = inject(NZ_MODAL_DATA, { optional: true });
-  roleOptions: OptionsInterface[] = [];
   isEdit = false;
 
   private fb = inject(FormBuilder);
   private validatorsService = inject(ValidatorsService);
-  private roleService = inject(RoleService);
+  private rbacTestService = inject(RbacTestService);
   override modalRef = inject(NzModalRef);
+
+  rolesResource = this.rbacTestService.getRolesListResource();
+
+  roleOptions = computed<OptionsInterface[]>(() => {
+    if (!this.rolesResource.hasValue()) {
+      return [];
+    }
+    return this.rolesResource.value().map(({ id, roleName }) => ({
+      label: roleName,
+      value: id!
+    }));
+  });
 
   protected getAsyncFnData(modalValue: NzSafeAny): Observable<NzSafeAny> {
     return of(modalValue);
@@ -44,18 +55,6 @@ export class TestAccountModalComponent extends BasicConfirmModalComponent implem
       return of(false);
     }
     return of(this.addEditForm.getRawValue());
-  }
-
-  getRoleList(): Promise<void> {
-    return new Promise<void>(resolve => {
-      this.roleService.getRoles({ pageIndex: 0, pageSize: 0 }).subscribe(list => {
-        this.roleOptions = list.map(({ id, roleName }) => ({
-          label: roleName,
-          value: id!
-        }));
-        resolve();
-      });
-    });
   }
 
   initForm(): void {
@@ -71,10 +70,9 @@ export class TestAccountModalComponent extends BasicConfirmModalComponent implem
     });
   }
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
     this.initForm();
     this.isEdit = !!this.nzModalData;
-    await this.getRoleList();
     if (this.isEdit && this.nzModalData) {
       this.addEditForm.patchValue(this.nzModalData);
       this.addEditForm.controls['password'].disable();

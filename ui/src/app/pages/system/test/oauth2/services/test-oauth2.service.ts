@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { LoginInOutService } from '@core/services/common/login-in-out.service';
@@ -16,9 +16,7 @@ type OAuthServiceInternals = OAuthService & {
   revocationEndpoint?: string;
 };
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class TestOAuth2Service {
   private oauthService = inject(OAuthService);
   private loginInOutService = inject(LoginInOutService);

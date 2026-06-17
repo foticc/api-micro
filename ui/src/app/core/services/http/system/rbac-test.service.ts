@@ -1,4 +1,5 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
+import { HttpResourceRef } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import {
@@ -15,7 +16,7 @@ import {
 import { PageInfo, SearchCommonVO } from '@core/services/types';
 import { BaseHttpService } from '@services/base-http.service';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class RbacTestService {
   private http = inject(BaseHttpService);
 
@@ -23,8 +24,8 @@ export class RbacTestService {
     return this.http.post('/rbac/permissions/list', query ?? {});
   }
 
-  listPermissionsPage(param: SearchCommonVO<PermissionListFilters>): Observable<PageInfo<RbacPermissionPageItem>> {
-    return this.http.post('/rbac/permissions/page', param, { showLoading: true });
+  getPermissionsPageResource(param: () => SearchCommonVO<PermissionListFilters>): HttpResourceRef<PageInfo<RbacPermissionPageItem>> {
+    return this.http.postResource<PageInfo<RbacPermissionPageItem>>('/rbac/permissions/page', param, { showLoading: true });
   }
 
   getPermission(id: number): Observable<RbacPermission> {
@@ -44,11 +45,15 @@ export class RbacTestService {
   }
 
   listRoles(): Observable<RbacRole[]> {
-    return this.http.get('/rbac/roles');
+    return this.http.post('/rbac/roles/list', {});
   }
 
-  listRolesPage(param: SearchCommonVO<RoleListFilters>): Observable<PageInfo<RbacRolePageItem>> {
-    return this.http.post('/rbac/roles/page', param, { showLoading: true });
+  getRolesListResource(param: () => Partial<RoleListFilters> = () => ({})): HttpResourceRef<RbacRole[]> {
+    return this.http.postResource<RbacRole[]>('/rbac/roles/list', param);
+  }
+
+  getRolesPageResource(param: () => SearchCommonVO<RoleListFilters>): HttpResourceRef<PageInfo<RbacRolePageItem>> {
+    return this.http.postResource<PageInfo<RbacRolePageItem>>('/rbac/roles/page', param, { showLoading: true });
   }
 
   getRole(id: number): Observable<RbacRole> {

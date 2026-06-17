@@ -91,14 +91,18 @@ export const apiResource = [
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: null });
   }),
 
-  http.put('/site/api/api-resource/update', async ({ request }) => {
-    const body = (await request.json()) as ApiResourceRow;
-    if (duplicate(body, body.id)) {
+  http.put('/site/api/api/resource/:id', async ({ request, params }) => {
+    const id = Number(params['id']);
+    const body = (await request.json()) as Omit<ApiResourceRow, 'id'>;
+    if (duplicate(body, id)) {
       return HttpResponse.json({ code: 400, msg: '相同路径和方法的 API 已存在', data: null }, { status: 200 });
     }
-    const idx = resources.findIndex(r => r.id === body.id);
-    if (idx !== -1) resources[idx] = { ...resources[idx], ...body };
-    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: null });
+    const idx = resources.findIndex(r => r.id === id);
+    if (idx === -1) {
+      return HttpResponse.json({ code: 404, msg: 'API 不存在', data: null }, { status: 200 });
+    }
+    resources[idx] = { ...resources[idx], ...body };
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: resources[idx] });
   }),
 
   http.post('/site/api/api-resource/del', async ({ request }) => {

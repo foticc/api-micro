@@ -15,6 +15,9 @@ export function getHttpErrorMessage(error: HttpErrorResponse): string {
   if (status === 401) {
     return '登录已过期，请重新登录';
   }
+  if (status === 403) {
+    return '无权限访问';
+  }
   if (status >= 400 && status < 500) {
     return `客户端出错，可能是发送的数据有误，状态码为${status}`;
   }

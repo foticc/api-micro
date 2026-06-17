@@ -1,34 +1,51 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+import { LoginInOutService } from '@core/services/common/login-in-out.service';
 import { ActionResult } from '@core/services/http/http-types';
+import { getHttpErrorMessage } from '@core/services/interceptors/http-error.util';
 
-// 只处理 HTTP 错误
-function handleHttpError(error: HttpErrorResponse): Observable<never> {
-  const status = error.status;
-  let errMsg = '';
-  if (status === 0) {
-    errMsg = '网络出现未知的错误，请检查您的网络。';
+import { NzMessageService } from 'ng-zorro-antd/message';
+
+let isHandlingUnauthorized = false;
+
+function handleHttpUnauthorized(message: NzMessageService, loginInOutService: LoginInOutService): void {
+  if (isHandlingUnauthorized) {
+    return;
   }
-  if (status >= 300 && status < 400) {
-    errMsg = `请求被服务器重定向，状态码为${status}`;
-  }
-  if (status >= 400 && status < 500) {
-    errMsg = `客户端出错，可能是发送的数据有误，状态码为${status}`;
-  }
-  if (status >= 500) {
-    errMsg = `服务器发生错误，状态码为${status}`;
+  isHandlingUnauthorized = true;
+  message.error('登录已过期，请重新登录');
+  void loginInOutService.clearSessionAndRedirect().finally(() => {
+    isHandlingUnauthorized = false;
+  });
+}
+
+function handleHttpError(
+  error: HttpErrorResponse,
+  message: NzMessageService,
+  loginInOutService: LoginInOutService
+): Observable<never> {
+  if (error.status === 401) {
+    handleHttpUnauthorized(message, loginInOutService);
+    const errMsg = getHttpErrorMessage(error);
+    return throwError(() => ({ code: 401, msg: errMsg, data: null }) satisfies ActionResult<null>);
   }
 
-  return throwError(() => ({ code: status, msg: errMsg, data: null }) satisfies ActionResult<null>);
+  const errMsg = getHttpErrorMessage(error);
+  message.error(errMsg);
+  return throwError(() => ({ code: error.status, msg: errMsg, data: null }) satisfies ActionResult<null>);
 }
 
 export const errorHandlerInterceptor: HttpInterceptorFn = (req, next) => {
+  const message = inject(NzMessageService);
+  const loginInOutService = inject(LoginInOutService);
+
   return next(req).pipe(
     catchError(error => {
       if (error instanceof HttpErrorResponse) {
-        return handleHttpError(error);
+        return handleHttpError(error, message, loginInOutService);
       }
       return throwError(() => error);
     })

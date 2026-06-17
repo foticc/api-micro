@@ -1,10 +1,9 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, signal, TemplateRef, viewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, signal, computed, effect, TemplateRef, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 
 import { ApiResourceDTO, ApiResourceSearchParam, ApiResourceService } from '@services/system/api-resource.service';
-import { SearchCommonVO } from '@core/services/types';
 import { AntTableConfig, AntTableComponent } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
@@ -23,7 +22,6 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 
 @Component({
@@ -59,6 +57,25 @@ export class ApiListComponent implements AfterViewInit {
   private destroyRef = inject(DestroyRef);
 
   searchParam: ApiResourceSearchParam = {};
+  checkedCashArray: ApiResourceDTO[] = [];
+
+  private requestPageSize = signal(10);
+  private requestPageIndex = signal(1);
+  private searchFilters = signal<ApiResourceSearchParam>({});
+
+  apiResource = this.apiService.getApiResourcePageResource(() => ({
+    pageSize: this.requestPageSize(),
+    pageIndex: this.requestPageIndex(),
+    filters: { ...this.searchFilters() }
+  }));
+
+  dataList = computed(() => {
+    if (this.apiResource.hasValue()) {
+      return [...this.apiResource.value().list];
+    }
+    return [] as ApiResourceDTO[];
+  });
+
   tableConfig = signal<AntTableConfig>({
     headers: [],
     total: 0,
@@ -67,8 +84,22 @@ export class ApiListComponent implements AfterViewInit {
     pageSize: 10,
     pageIndex: 1
   });
-  dataList = signal<ApiResourceDTO[]>([]);
-  checkedCashArray: ApiResourceDTO[] = [];
+
+  private syncTableConfig = effect(() => {
+    const isLoading = this.apiResource.isLoading();
+    const hasValue = this.apiResource.hasValue();
+    this.tableConfig.update(c => ({
+      ...c,
+      loading: isLoading,
+      ...(hasValue
+        ? {
+            total: this.apiResource.value().total!,
+            pageIndex: this.apiResource.value().pageIndex!,
+            pageSize: this.apiResource.value().pageSize!
+          }
+        : {})
+    }));
+  });
 
   readonly listPageHeader: Partial<PageHeaderType> = {
     title: 'API 资源管理（测试）',
@@ -91,52 +122,25 @@ export class ApiListComponent implements AfterViewInit {
     this.checkedCashArray = [...rows];
   }
 
-  getDataList(e?: NzTableQueryParams | { pageIndex: number }): void {
-    this.tableLoading(true);
-    const filters: ApiResourceSearchParam = {};
-    const kw = this.searchParam.keyword?.trim();
-    if (kw) {
-      filters.keyword = kw;
-    }
-    if (this.searchParam.method) {
-      filters.method = this.searchParam.method;
-    }
-    const params: SearchCommonVO<ApiResourceSearchParam> = {
-      pageSize: this.tableConfig().pageSize!,
-      pageIndex: e?.pageIndex ?? this.tableConfig().pageIndex!,
-      filters
-    };
-
-    this.apiService
-      .getApiResourcePage(params)
-      .pipe(
-        finalize(() => this.tableLoading(false)),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(data => {
-        this.dataList.set([...data.list]);
-        this.tableConfig.update(c => ({
-          ...c,
-          total: data.total,
-          pageIndex: data.pageIndex,
-          pageSize: data.pageSize
-        }));
-        this.checkedCashArray = [...this.checkedCashArray];
-      });
+  getDataList(pageIndex: number): void {
+    this.searchFilters.set(this.buildFilters());
+    this.requestPageIndex.set(pageIndex);
   }
 
   resetSearch(): void {
     this.searchParam = {};
-    this.getDataList({ pageIndex: 1 });
+    this.searchFilters.set({});
+    this.requestPageIndex.set(1);
   }
 
   changePageSize(size: number): void {
-    this.tableConfig.update(c => ({ ...c, pageSize: size }));
+    this.requestPageSize.set(size);
+    this.requestPageIndex.set(1);
   }
 
   reloadTable(): void {
+    this.apiResource.reload();
     this.message.info('刷新成功');
-    this.getDataList();
   }
 
   openSync(): void {
@@ -144,23 +148,19 @@ export class ApiListComponent implements AfterViewInit {
       nzTitle: '同步接口资源库',
       nzContent: '将根据后台扫描结果，将尚未登记的 API 自动写入资源库。是否继续？',
       nzOkText: '开始同步',
-      nzOnOk: () => {
-        this.tableLoading(true);
-        return this.apiSyncService
+      nzOnOk: () =>
+        this.apiSyncService
           .runSync()
-          .pipe(
-            finalize(() => this.tableLoading(false)),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(result => {
             if (result.created > 0) {
               this.message.success(`已同步 ${result.created} 条 API`);
-              this.getDataList({ pageIndex: 1 });
+              this.requestPageIndex.set(1);
+              this.apiResource.reload();
             } else {
               this.message.info('无需同步，资源库已与后台一致');
             }
-          });
-      }
+          })
     });
   }
 
@@ -172,15 +172,14 @@ export class ApiListComponent implements AfterViewInit {
         if (!res || res.status === ModalBtnStatus.Cancel) {
           return;
         }
-        this.tableLoading(true);
         this.apiService
           .addApiResource(res.modalValue as ApiResourceDTO)
-          .pipe(
-            finalize(() => this.tableLoading(false)),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
-            next: () => this.getDataList({ pageIndex: 1 }),
+            next: () => {
+              this.requestPageIndex.set(1);
+              this.apiResource.reload();
+            },
             error: err => this.showError(err)
           });
       });
@@ -201,15 +200,12 @@ export class ApiListComponent implements AfterViewInit {
             if (status === ModalBtnStatus.Cancel) {
               return;
             }
-            this.tableLoading(true);
+            const { method, path, description } = modalValue as ApiResourceDTO;
             this.apiService
-              .editApiResource({ ...(modalValue as ApiResourceDTO), id })
-              .pipe(
-                finalize(() => this.tableLoading(false)),
-                takeUntilDestroyed(this.destroyRef)
-              )
+              .editApiResource(id, { method, path, description })
+              .pipe(takeUntilDestroyed(this.destroyRef))
               .subscribe({
-                next: () => this.getDataList(),
+                next: () => this.apiResource.reload(),
                 error: err => this.showError(err)
               });
           });
@@ -225,23 +221,14 @@ export class ApiListComponent implements AfterViewInit {
     this.modal.confirm({
       nzTitle: '确定要批量删除吗？',
       nzContent: `将删除 ${ids.length} 条 API，删除后不可恢复`,
-      nzOnOk: () => {
-        this.tableLoading(true);
-        return this.apiService
+      nzOnOk: () =>
+        this.apiService
           .delApiResource(ids)
-          .pipe(
-            finalize(() => this.tableLoading(false)),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
-            if (this.dataList().length === ids.length && this.tableConfig().pageIndex !== 1) {
-              this.tableConfig.update(c => ({ ...c, pageIndex: c.pageIndex! - 1 }));
-            } else {
-              this.getDataList();
-            }
             this.checkedCashArray = [];
-          });
-      }
+            this.apiResource.reload();
+          })
     });
   }
 
@@ -249,23 +236,30 @@ export class ApiListComponent implements AfterViewInit {
     this.modal.confirm({
       nzTitle: '确定要删除吗？',
       nzContent: `删除 ${row.method} ${row.path}，删除后不可恢复`,
-      nzOnOk: () => {
-        this.tableLoading(true);
-        return this.apiService
+      nzOnOk: () =>
+        this.apiService
           .delApiResource([id])
-          .pipe(
-            finalize(() => this.tableLoading(false)),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
             if (this.dataList().length === 1 && this.tableConfig().pageIndex !== 1) {
-              this.tableConfig.update(c => ({ ...c, pageIndex: c.pageIndex! - 1 }));
+              this.requestPageIndex.update(p => Math.max(1, p - 1));
             } else {
-              this.getDataList();
+              this.apiResource.reload();
             }
-          });
-      }
+          })
     });
+  }
+
+  private buildFilters(): ApiResourceSearchParam {
+    const filters: ApiResourceSearchParam = {};
+    const kw = this.searchParam.keyword?.trim();
+    if (kw) {
+      filters.keyword = kw;
+    }
+    if (this.searchParam.method) {
+      filters.method = this.searchParam.method;
+    }
+    return filters;
   }
 
   private initTable(): void {
@@ -302,10 +296,6 @@ export class ApiListComponent implements AfterViewInit {
       pageSize: 10,
       pageIndex: 1
     });
-  }
-
-  private tableLoading(loading: boolean): void {
-    this.tableConfig.update(c => ({ ...c, loading }));
   }
 
   private showError(err: NzSafeAny): void {

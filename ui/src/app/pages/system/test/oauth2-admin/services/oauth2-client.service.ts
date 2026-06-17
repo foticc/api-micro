@@ -1,4 +1,5 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
+import { HttpResourceRef } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
 import {
@@ -8,14 +9,12 @@ import {
 import { PageInfo, SearchCommonVO } from '@core/services/types';
 import { BaseHttpService } from '@services/base-http.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class OAuth2ClientService {
   private http = inject(BaseHttpService);
 
-  page(param: SearchCommonVO<RegisteredClientQueryFilter>): Observable<PageInfo<RegisteredClientDTO>> {
-    return this.http.post('/manage/oauth2/client/page', param, { showLoading: true });
+  pageResource(param: () => SearchCommonVO<RegisteredClientQueryFilter>): HttpResourceRef<PageInfo<RegisteredClientDTO>> {
+    return this.http.postResource<PageInfo<RegisteredClientDTO>>('/manage/oauth2/client/page', param, { showLoading: true });
   }
 
   get(id: string): Observable<RegisteredClientDTO> {

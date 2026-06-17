@@ -6,6 +6,11 @@ export type ApiPickerAddedFilter = 'all' | 'added' | 'notAdded';
 
 export type ApiPickerSortBy = 'path' | 'method';
 
+export interface ApiPickerTreeBuildOptions {
+  /** 管理模式下已关联项可勾选/取消，仅展示标签不锁定 */
+  manageMode?: boolean;
+}
+
 /** nz-tree 节点扩展字段（配合 nzTreeTemplate 的 let-origin） */
 export interface ApiPickerTreeNodeOptions extends NzTreeNodeOptions {
   api?: ApiResourceDTO;
@@ -43,16 +48,17 @@ function sortApis(apis: ApiResourceDTO[]): ApiResourceDTO[] {
   return [...apis].sort((a, b) => a.path.localeCompare(b.path) || a.method.localeCompare(b.method));
 }
 
-function createApiLeaf(api: ApiResourceDTO, existingSet: Set<number>): ApiPickerTreeNodeOptions {
+function createApiLeaf(api: ApiResourceDTO, linkedSet: Set<number>, manageMode: boolean): ApiPickerTreeNodeOptions {
   const id = api.id!;
-  const isExisting = existingSet.has(id);
+  const isLinked = linkedSet.has(id);
+  const lockLinked = !manageMode && isLinked;
   return {
     title: `${api.method} ${api.path}`,
     key: String(id),
     isLeaf: true,
-    disabled: isExisting,
-    disableCheckbox: isExisting,
-    isExisting,
+    disabled: lockLinked,
+    disableCheckbox: lockLinked,
+    isExisting: isLinked,
     api
   };
 }
@@ -100,13 +106,15 @@ export function filterApisByAddedStatus(
 /** 将 API 列表按 path 首段（/ 分割后第一个非空字符串）分组构建树 */
 export function buildApiPickerTreeNodes(
   apis: ApiResourceDTO[],
-  existingIds: number[] = []
+  linkedIds: number[] = [],
+  options?: ApiPickerTreeBuildOptions
 ): ApiPickerTreeNodeOptions[] {
   if (!apis.length) {
     return [];
   }
 
-  const existingSet = new Set(existingIds);
+  const manageMode = options?.manageMode ?? false;
+  const linkedSet = new Set(linkedIds);
   const groupMap = new Map<string, ApiResourceDTO[]>();
 
   for (const api of apis) {
@@ -124,9 +132,9 @@ export function buildApiPickerTreeNodes(
 
   for (const root of sortedRoots) {
     const items = sortApis(groupMap.get(root) ?? []);
-    const children = items.map(api => createApiLeaf(api, existingSet));
-    const selectableCount = children.filter(c => !c.disableCheckbox).length;
-    const existingCount = children.filter(c => c.isExisting).length;
+    const children = items.map(api => createApiLeaf(api, linkedSet, manageMode));
+    const linkedCount = children.filter(c => c.isExisting).length;
+    const selectableCount = manageMode ? children.length : children.filter(c => !c.disableCheckbox).length;
 
     nodes.push({
       title: root,
@@ -136,9 +144,9 @@ export function buildApiPickerTreeNodes(
       groupPrefix: `/${root}`,
       segmentLabel: root,
       selectableCount,
-      existingCount,
-      disableCheckbox: selectableCount === 0,
-      disabled: selectableCount === 0,
+      existingCount: linkedCount,
+      disableCheckbox: !manageMode && selectableCount === 0,
+      disabled: !manageMode && selectableCount === 0,
       children
     });
   }

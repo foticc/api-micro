@@ -37,7 +37,7 @@
           <i nz-icon nzType="delete"></i>
           批量删除
         </button>
-        <button nz-button (click)="loadRolePage()">
+        <button nz-button (click)="reloadRoleList()">
           <i nz-icon nzType="reload"></i>
           刷新
         </button>
@@ -116,7 +116,7 @@
             </nz-form-item>
           </div>
           <div class="text-right p-0 m-b-10" nz-col [nzLg]="16" [nzMd]="12" [nzSm]="24" [nzXs]="24">
-            <label class="m-r-16" name="onlySelected" nz-checkbox [ngModel]="onlySelected" (ngModelChange)="onOnlySelectedChange($event)"> 仅看已选 </label>
+            <label class="m-r-16" name="onlySelected" nz-checkbox [ngModel]="onlySelected()" (ngModelChange)="onOnlySelectedChange($event)"> 仅看已选 </label>
             <button nz-button nzType="primary" (click)="searchPermissions()">
               <i nz-icon nzType="search"></i>
               搜索

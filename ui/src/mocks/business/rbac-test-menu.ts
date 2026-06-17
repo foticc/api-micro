@@ -163,10 +163,13 @@ function filterMenus(filters?: Partial<TestMenuRecord>): TestMenuRecord[] {
   return list;
 }
 
-export const rbacTestMenu = [
-  http.post('/site/api/rbac/menus/list', async ({ request }) => {
-    const body = (await request.json()) as { pageIndex: number; pageSize: number; filters?: Partial<TestMenuRecord> };
-    const { pageIndex, pageSize, filters } = body;
+function handleMenuList(request: Request) {
+  return request.json().then(body => {
+    const { pageIndex, pageSize, filters } = body as {
+      pageIndex: number;
+      pageSize: number;
+      filters?: Partial<TestMenuRecord>;
+    };
     const list = filterMenus(filters);
 
     if (pageSize === 0) {
@@ -179,11 +182,34 @@ export const rbacTestMenu = [
       msg: 'SUCCESS',
       data: list.slice(start, start + pageSize)
     });
+  });
+}
+
+export const rbacTestMenu = [
+  http.post('/site/api/rbac/menu/list', ({ request }) => handleMenuList(request)),
+  http.post('/site/api/rbac/menus/list', ({ request }) => handleMenuList(request)),
+
+  http.get('/site/api/rbac/menu/:id', ({ params }) => {
+    const item = testMenus.find(m => m.id === Number(params['id']));
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: item ?? null });
   }),
 
   http.get('/site/api/rbac/menus/:id', ({ params }) => {
     const item = testMenus.find(m => m.id === Number(params['id']));
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: item ?? null });
+  }),
+
+  http.post('/site/api/rbac/menu/create', async ({ request }) => {
+    const body = (await request.json()) as Omit<TestMenuRecord, 'id' | 'createdAt' | 'updatedAt'>;
+    const timestamp = now();
+    const newItem: TestMenuRecord = {
+      ...body,
+      id: nextId++,
+      createdAt: timestamp,
+      updatedAt: timestamp
+    };
+    testMenus.push(newItem);
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: null });
   }),
 
   http.post('/site/api/rbac/menus', async ({ request }) => {
@@ -199,6 +225,16 @@ export const rbacTestMenu = [
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: null });
   }),
 
+  http.put('/site/api/rbac/menu/:id', async ({ request, params }) => {
+    const menuId = Number(params['id']);
+    const body = (await request.json()) as Omit<TestMenuRecord, 'id' | 'createdAt' | 'updatedAt'>;
+    const idx = testMenus.findIndex(m => m.id === menuId);
+    if (idx !== -1) {
+      testMenus[idx] = { ...testMenus[idx], ...body, id: menuId, updatedAt: now() };
+    }
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: null });
+  }),
+
   http.put('/site/api/rbac/menus/:id', async ({ request, params }) => {
     const menuId = Number(params['id']);
     const body = (await request.json()) as Omit<TestMenuRecord, 'id' | 'createdAt' | 'updatedAt'>;
@@ -206,6 +242,12 @@ export const rbacTestMenu = [
     if (idx !== -1) {
       testMenus[idx] = { ...testMenus[idx], ...body, id: menuId, updatedAt: now() };
     }
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: null });
+  }),
+
+  http.post('/site/api/rbac/menu/del', async ({ request }) => {
+    const { ids } = (await request.json()) as { ids: number[] };
+    testMenus = testMenus.filter(m => !ids.includes(m.id));
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: null });
   }),
 

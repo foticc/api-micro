@@ -27,19 +27,7 @@ import { NzResultModule } from 'ng-zorro-antd/result';
   styleUrl: './set-role.component.less',
 
   encapsulation: ViewEncapsulation.None,
-  imports: [
-    PageHeaderComponent,
-    NzCardModule,
-    NzCheckboxModule,
-    FormsModule,
-    NzIconModule,
-    NzButtonModule,
-    NzDividerModule,
-    NzResultModule,
-    NgTemplateOutlet,
-    FooterSubmitComponent,
-    NzWaveModule
-  ]
+  imports: [PageHeaderComponent, NzCardModule, NzCheckboxModule, FormsModule, NzIconModule, NzButtonModule, NzDividerModule, NzResultModule, NgTemplateOutlet, FooterSubmitComponent, NzWaveModule]
 })
 export class SetRoleComponent implements OnInit {
   pageHeaderInfo = signal<Partial<PageHeaderType>>({
@@ -110,6 +98,5 @@ export class SetRoleComponent implements OnInit {
 
   ngOnInit(): void {
     this.getRoleName();
-    this.initPermission();
   }
 }

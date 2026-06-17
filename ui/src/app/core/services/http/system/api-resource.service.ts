@@ -1,4 +1,5 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
+import { HttpResourceRef } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { PageInfo, SearchCommonVO } from '../../types';
@@ -16,11 +17,13 @@ export interface ApiResourceSearchParam {
   method?: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ApiResourceService {
   http = inject(BaseHttpService);
+
+  getApiResourcePageResource(param: () => SearchCommonVO<ApiResourceSearchParam>): HttpResourceRef<PageInfo<ApiResourceDTO>> {
+    return this.http.postResource<PageInfo<ApiResourceDTO>>('/api/resource/page', param);
+  }
 
   getApiResourcePage(param: SearchCommonVO<ApiResourceSearchParam>): Observable<PageInfo<ApiResourceDTO>> {
     return this.http.post('/api/resource/page', param);
@@ -34,8 +37,8 @@ export class ApiResourceService {
     return this.http.post('/api/resource/create', param, { needSuccessInfo: true });
   }
 
-  editApiResource(param: ApiResourceDTO): Observable<void> {
-    return this.http.put('/api/resource/update', param, { needSuccessInfo: true });
+  editApiResource(id: number, param: Omit<ApiResourceDTO, 'id'>): Observable<ApiResourceDTO> {
+    return this.http.put<ApiResourceDTO>(`/api/resource/${id}`, param, { needSuccessInfo: true });
   }
 
   delApiResource(ids: number[]): Observable<void> {

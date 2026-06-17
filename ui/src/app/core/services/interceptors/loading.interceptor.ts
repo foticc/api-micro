@@ -26,8 +26,8 @@ export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
       // 如果请求太快（比如 50ms），则延迟 450ms 后再移除 Loading
       // 此时数据已经返回给页面了，但 Loading 还在
       // 如果请求本身就很慢（超过 500ms），remaining 为 0，立即移除
-      const remaining = Math.max(0, 500 - (Date.now() - startTime));
-      setTimeout(() => message.remove(msgRef.messageId), remaining);
+      // const remaining = Math.max(0, 500 - (Date.now() - startTime));
+      setTimeout(() => message.remove(msgRef.messageId), 0);
     })
   );
 };

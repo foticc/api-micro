@@ -8,7 +8,7 @@
           <nz-form-item>
             <nz-form-label>Client ID</nz-form-label>
             <nz-form-control>
-              <input nz-input name="registeredClientId" [(ngModel)]="searchParam.registeredClientId" (keyup.enter)="getDataList({ pageIndex: 1 })" />
+              <input nz-input name="registeredClientId" [(ngModel)]="searchParam.registeredClientId" (keyup.enter)="getDataList(1)" />
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -16,12 +16,12 @@
           <nz-form-item>
             <nz-form-label>用户名</nz-form-label>
             <nz-form-control>
-              <input nz-input name="principalName" placeholder="模糊匹配" [(ngModel)]="searchParam.principalName" (keyup.enter)="getDataList({ pageIndex: 1 })" />
+              <input nz-input name="principalName" placeholder="模糊匹配" [(ngModel)]="searchParam.principalName" (keyup.enter)="getDataList(1)" />
             </nz-form-control>
           </nz-form-item>
         </div>
         <div class="text-right p-0 m-b-10" nz-col [nzLg]="8" [nzMd]="24" [nzSm]="24" [nzXs]="24">
-          <button nz-button nzType="primary" (click)="getDataList({ pageIndex: 1 })">
+          <button nz-button nzType="primary" (click)="getDataList(1)">
             <i nz-icon nzType="search"></i>
             搜索
           </button>

@@ -1,12 +1,10 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, signal, TemplateRef, viewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, signal, computed, effect, TemplateRef, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs/operators';
 
 import { ConsentDTO, ConsentQueryFilter, setToLines } from '@app/pages/system/test/models/oauth2-admin.models';
 import { OAuth2ConsentModalService } from '@app/pages/system/test/oauth2-admin/consent/oauth2-consent-modal/oauth2-consent-modal.service';
 import { OAuth2ConsentService } from '@app/pages/system/test/oauth2-admin/services/oauth2-consent.service';
-import { SearchCommonVO } from '@core/services/types';
 import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
@@ -52,6 +50,25 @@ export class OAuth2ConsentListComponent implements AfterViewInit {
   private destroyRef = inject(DestroyRef);
 
   searchParam: ConsentQueryFilter = {};
+  checkedCashArray: ConsentDTO[] = [];
+
+  private requestPageSize = signal(10);
+  private requestPageIndex = signal(1);
+  private searchFilters = signal<ConsentQueryFilter>({});
+
+  consentResource = this.consentService.pageResource(() => ({
+    pageSize: this.requestPageSize(),
+    pageIndex: this.requestPageIndex(),
+    filters: { ...this.searchFilters() }
+  }));
+
+  dataList = computed(() => {
+    if (this.consentResource.hasValue()) {
+      return [...this.consentResource.value().list];
+    }
+    return [] as ConsentDTO[];
+  });
+
   tableConfig = signal<AntTableConfig>({
     headers: [],
     total: 0,
@@ -60,8 +77,21 @@ export class OAuth2ConsentListComponent implements AfterViewInit {
     pageSize: 10,
     pageIndex: 1
   });
-  dataList = signal<ConsentDTO[]>([]);
-  checkedCashArray: ConsentDTO[] = [];
+
+  private syncTableConfig = effect(() => {
+    const isLoading = this.consentResource.isLoading();
+    const hasValue = this.consentResource.hasValue();
+    this.tableConfig.update(c => ({
+      ...c,
+      loading: isLoading,
+      ...(hasValue
+        ? {
+            total: this.consentResource.value().total!,
+            pageIndex: this.consentResource.value().pageIndex!
+          }
+        : {})
+    }));
+  });
 
   readonly pageHeader: Partial<PageHeaderType> = {
     title: 'OAuth2 授权同意（AuthorizationConsent）',
@@ -78,36 +108,23 @@ export class OAuth2ConsentListComponent implements AfterViewInit {
 
   resetSearch(): void {
     this.searchParam = {};
-    this.getDataList({ pageIndex: 1 });
+    this.searchFilters.set({});
+    this.requestPageIndex.set(1);
   }
 
-  getDataList(e?: { pageIndex: number }): void {
-    this.tableLoading(true);
-    const params: SearchCommonVO<ConsentQueryFilter> = {
-      pageSize: this.tableConfig().pageSize!,
-      pageIndex: e?.pageIndex ?? this.tableConfig().pageIndex!,
-      filters: { ...this.searchParam }
-    };
-    this.consentService
-      .page(params)
-      .pipe(
-        finalize(() => this.tableLoading(false)),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(data => {
-        this.dataList.set([...data.list]);
-        this.tableConfig.update(c => ({ ...c, total: data.total, pageIndex: data.pageIndex }));
-      });
+  getDataList(pageIndex: number): void {
+    this.searchFilters.set({ ...this.searchParam });
+    this.requestPageIndex.set(pageIndex);
   }
 
   changePageSize(size: number): void {
-    this.tableConfig.update(c => ({ ...c, pageSize: size, pageIndex: 1 }));
-    this.getDataList({ pageIndex: 1 });
+    this.requestPageSize.set(size);
+    this.requestPageIndex.set(1);
   }
 
   reloadTable(): void {
+    this.consentResource.reload();
     this.message.info('刷新成功');
-    this.getDataList();
   }
 
   add(): void {
@@ -118,11 +135,10 @@ export class OAuth2ConsentListComponent implements AfterViewInit {
         if (!res || res.status === ModalBtnStatus.Cancel) {
           return;
         }
-        this.tableLoading(true);
         this.consentService
           .create(res.modalValue as ConsentDTO)
-          .pipe(finalize(() => this.tableLoading(false)))
-          .subscribe(() => this.getDataList());
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe(() => this.consentResource.reload());
       });
   }
 
@@ -138,11 +154,10 @@ export class OAuth2ConsentListComponent implements AfterViewInit {
             if (status === ModalBtnStatus.Cancel) {
               return;
             }
-            this.tableLoading(true);
             this.consentService
               .update(row.registeredClientId, row.principalName, modalValue as ConsentDTO)
-              .pipe(finalize(() => this.tableLoading(false)))
-              .subscribe(() => this.getDataList());
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe(() => this.consentResource.reload());
           });
       });
   }
@@ -151,14 +166,18 @@ export class OAuth2ConsentListComponent implements AfterViewInit {
     this.modal.confirm({
       nzTitle: '删除授权同意？',
       nzContent: `${row.principalName} @ ${row.registeredClientId}`,
-      nzOnOk: () => {
-        this.tableLoading(true);
-        return this.consentService
+      nzOnOk: () =>
+        this.consentService
           .delete([{ registeredClientId: row.registeredClientId, principalName: row.principalName }])
-          .pipe(finalize(() => this.tableLoading(false)))
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .toPromise()
-          .then(() => this.getDataList());
-      }
+          .then(() => {
+            if (this.dataList().length === 1 && this.tableConfig().pageIndex !== 1) {
+              this.requestPageIndex.update(p => Math.max(1, p - 1));
+            } else {
+              this.consentResource.reload();
+            }
+          })
     });
   }
 
@@ -174,14 +193,15 @@ export class OAuth2ConsentListComponent implements AfterViewInit {
     this.modal.confirm({
       nzTitle: '批量删除？',
       nzContent: `已选 ${items.length} 条`,
-      nzOnOk: () => {
-        this.tableLoading(true);
-        return this.consentService
+      nzOnOk: () =>
+        this.consentService
           .delete(items)
-          .pipe(finalize(() => this.tableLoading(false)))
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .toPromise()
-          .then(() => this.getDataList());
-      }
+          .then(() => {
+            this.checkedCashArray = [];
+            this.consentResource.reload();
+          })
     });
   }
 
@@ -197,12 +217,8 @@ export class OAuth2ConsentListComponent implements AfterViewInit {
         { title: '用户', field: 'principalName', width: 140 },
         { title: 'Authorities', tdTemplate: this.authoritiesTpl(), width: 240 },
         { title: '操作', tdTemplate: this.operationTpl(), width: 120, fixed: true, fixedDir: 'right' }
-      ]
+      ],
+      loading: true
     }));
-    this.getDataList();
-  }
-
-  private tableLoading(loading: boolean): void {
-    this.tableConfig.update(c => ({ ...c, loading }));
   }
 }

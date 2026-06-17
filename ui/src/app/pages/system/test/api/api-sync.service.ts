@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -6,7 +6,7 @@ import { BaseHttpService } from '@services/base-http.service';
 
 import { ApiSyncResponseData, ApiSyncRunResult } from './models/api-sync.models';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ApiSyncService {
   private readonly http = inject(BaseHttpService);
 

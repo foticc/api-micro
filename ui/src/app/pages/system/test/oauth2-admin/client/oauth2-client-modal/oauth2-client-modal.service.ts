@@ -1,4 +1,4 @@
-import { inject, Injectable, Type } from '@angular/core';
+import { inject, Service, Type } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { RegisteredClientDTO } from '@app/pages/system/test/models/oauth2-admin.models';
@@ -7,7 +7,7 @@ import { ModalResponse, ModalWrapService } from '@widget/base-modal';
 
 import { ModalOptions } from 'ng-zorro-antd/modal';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class OAuth2ClientModalService {
   private modalWrapService = inject(ModalWrapService);
 

@@ -30,7 +30,7 @@
           <nz-form-control>
             <nz-select
               name="addedFilter"
-              nzPlaceHolder="添加状态"
+              nzPlaceHolder="关联状态"
               [(ngModel)]="addedFilter"
               (ngModelChange)="onAddedFilterChange()"
             >
@@ -52,110 +52,54 @@
   </form>
 </div>
 
-<div class="picker-toolbar">
+<p class="picker-summary">
+  已关联 <strong>{{ selectedCount() }}</strong> 条
+  @if (initialLinkedCount() > 0) {
+    （打开时 {{ initialLinkedCount() }} 条）
+  }
+  ；勾选或取消勾选以增删关联，勾选分组可选中该组下全部 API
+</p>
+
+<div class="picker-tree-toolbar">
   <button nz-button nzSize="small" (click)="expandAll()">全部展开</button>
   <button class="m-l-8" nz-button nzSize="small" (click)="collapseAll()">全部收起</button>
   <button class="m-l-8" nz-button nzSize="small" (click)="selectAllFiltered()">选中当前筛选结果</button>
   <button class="m-l-8" nz-button nzSize="small" (click)="clearSelection()" [disabled]="selectedCount() === 0">
-    清空已选
+    清空已关联
   </button>
-  <span class="m-l-16" style="color: rgba(0, 0, 0, 0.45); font-size: 13px">
-    当前筛选可添加 {{ filteredSelectableCount() }} 条；本次已选 {{ selectedCount() }} 条
-  </span>
 </div>
 
-<div class="picker-panels">
-  <div class="picker-panel">
-    <div class="picker-panel-header">
-      <span>可选 API（按首段分组）</span>
-    </div>
-    <p class="picker-panel-hint">勾选分组节点可选中该组下全部未添加 API；灰色「已添加」不可重复选择</p>
-    <div class="picker-panel-body">
-      <nz-spin [nzSpinning]="loading()">
-        @if (treeNodes().length === 0 && !loading()) {
-          <div class="panel-empty">
-            <nz-empty nzNotFoundContent="暂无匹配 API" nzNotFoundImage="simple" />
-          </div>
-        } @else {
-          <nz-tree
-            nzCheckable
-            [nzCheckedKeys]="checkedKeys()"
-            [nzData]="treeNodes()"
-            [nzExpandedKeys]="expandedKeys()"
-            [nzTreeTemplate]="treeTpl"
-            (nzCheckedKeysChange)="onCheckedKeysChange($event)"
-            (nzExpandedKeysChange)="expandedKeys.set($event)"
-          />
-          <ng-template #treeTpl let-node let-origin="origin">
-            <span class="tree-node-title">
-              @if (isGroupOrigin(origin)) {
-                <span class="tree-node-path" nz-tooltip [nzTooltipTitle]="origin.groupPrefix">{{ origin.segmentLabel }}</span>
-                <span class="tree-node-desc">({{ groupSummary(origin) }})</span>
-              } @else if (origin.api) {
-                <nz-tag class="tree-node-tag" [nzColor]="methodTagColor(origin.api.method)">{{ origin.api.method }}</nz-tag>
-                <span class="tree-node-path" nz-tooltip [nzTooltipTitle]="origin.api.path">{{ origin.api.path }}</span>
-                @if (origin.api.description) {
-                  <span class="tree-node-desc">{{ origin.api.description }}</span>
-                }
-                @if (isExistingOrigin(origin)) {
-                  <nz-tag class="tree-node-tag" nzColor="default">已添加</nz-tag>
-                }
-              }
-            </span>
-          </ng-template>
-        }
-      </nz-spin>
-    </div>
-  </div>
-
-  <div class="picker-panel">
-    <div class="picker-panel-header">
-      <span>已选 API（{{ selectedCount() }}）</span>
-      <nz-select
-        nzSize="small"
-        style="width: 120px"
-        [(ngModel)]="sortBy"
-        (ngModelChange)="onSortChange()"
-      >
-        @for (opt of sortOptions; track opt.value) {
-          <nz-option [nzLabel]="opt.label" [nzValue]="opt.value" />
-        }
-      </nz-select>
-    </div>
-    <p class="picker-panel-hint">仅展示本次新选 API，确认后将加入资源组</p>
-    <div class="picker-panel-body">
-      @if (selectedList().length === 0) {
-        <div class="panel-empty">
-          <nz-empty nzNotFoundContent="尚未选择 API" nzNotFoundImage="simple" />
-        </div>
-      } @else {
-        <div class="selected-list">
-          @for (api of selectedList(); track api.id) {
-            <div class="selected-item">
-              <div class="selected-item-main">
-                <div class="selected-item-path">
-                  <nz-tag [nzColor]="methodTagColor(api.method)">{{ api.method }}</nz-tag>
-                  <span nz-tooltip [nzTooltipTitle]="api.path">{{ api.path }}</span>
-                </div>
-                @if (api.description) {
-                  <div class="selected-item-desc">{{ api.description }}</div>
-                }
-              </div>
-              <button
-                class="selected-item-remove"
-                nz-button
-                nz-tooltip
-                nzDanger
-                nzTooltipTitle="移除"
-                nzType="text"
-                (click)="removeSelected(api.id!)"
-              >
-                <i nz-icon nzType="close"></i>
-              </button>
-            </div>
+<nz-spin [nzSpinning]="loading()">
+  <div class="picker-tree-scroll">
+    @if (treeNodes().length === 0 && !loading()) {
+      <p class="picker-summary">暂无匹配 API</p>
+    } @else {
+      <nz-tree
+        nzCheckable
+        [nzCheckedKeys]="checkedKeys()"
+        [nzData]="treeNodes()"
+        [nzExpandedKeys]="expandedKeys()"
+        [nzTreeTemplate]="treeTpl"
+        (nzCheckedKeysChange)="onCheckedKeysChange($event)"
+        (nzExpandedKeysChange)="expandedKeys.set($event)"
+      />
+      <ng-template #treeTpl let-node let-origin="origin">
+        <span class="tree-node-title">
+          @if (isGroupOrigin(origin)) {
+            <span class="tree-node-path" nz-tooltip [nzTooltipTitle]="origin.groupPrefix">{{ origin.segmentLabel }}</span>
+            <span class="tree-node-desc">({{ groupSummary(origin) }})</span>
+          } @else if (origin.api) {
+            <nz-tag class="tree-node-tag" [nzColor]="methodTagColor(origin.api.method)">{{ origin.api.method }}</nz-tag>
+            <span class="tree-node-path" nz-tooltip [nzTooltipTitle]="origin.api.path">{{ origin.api.path }}</span>
+            @if (origin.api.description) {
+              <span class="tree-node-desc">{{ origin.api.description }}</span>
+            }
+            @if (isApiLinked(origin)) {
+              <nz-tag class="tree-node-tag tree-node-extra" nzColor="blue">已关联</nz-tag>
+            }
           }
-        </div>
-      }
-    </div>
+        </span>
+      </ng-template>
+    }
   </div>
-</div>
+</nz-spin>

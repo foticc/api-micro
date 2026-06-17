@@ -1,13 +1,12 @@
-import { AfterViewInit, Component, ChangeDetectionStrategy, TemplateRef, inject, DestroyRef, viewChild, signal } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy, TemplateRef, inject, DestroyRef, viewChild, signal, computed, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs/operators';
 
 import { ActionCode } from '@app/config/actionCode';
 import { TestUser } from '@app/pages/system/test/models/test-account.models';
 import { TestAccountModalService } from '@app/pages/system/test/account/services/test-account-modal.service';
 import { TestAccountService } from '@app/pages/system/test/account/services/test-account.service';
-import { OptionsInterface, SearchCommonVO } from '@core/services/types';
+import { OptionsInterface } from '@core/services/types';
 import { AntTableConfig, AntTableComponent, SortFile } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -62,13 +61,11 @@ export class TestAccountComponent implements AfterViewInit {
   readonly operationTpl = viewChild.required<TemplateRef<NzSafeAny>>('operationTpl');
   readonly availableTpl = viewChild.required<TemplateRef<NzSafeAny>>('availableTpl');
   searchParam: Partial<SearchParam> = {};
-  tableConfig = signal<AntTableConfig>({ headers: [], total: 0, showCheckbox: true, loading: false, pageSize: 10, pageIndex: 1 });
   readonly pageHeaderInfo: Partial<PageHeaderType> = {
     title: '账号管理（测试）',
     breadcrumb: ['首页', '系统管理', 'RBAC 试验', '账号管理'],
     desc: '试验环境账号管理，数据与正式账号模块隔离。'
   };
-  dataList = signal<TestUser[]>([]);
   checkedCashArray: TestUser[] = [];
   ActionCode = ActionCode;
   isCollapse = true;
@@ -80,8 +77,42 @@ export class TestAccountComponent implements AfterViewInit {
   private modalService = inject(TestAccountModalService);
   private message = inject(NzMessageService);
 
+  private requestPageSize = signal(10);
+  private requestPageIndex = signal(1);
+  private searchFilters = signal<Partial<SearchParam>>({});
   /** 服务端排序：userName,asc / lastLoginTime,desc */
-  private sortParam?: string;
+  private sortParam = signal<string | undefined>(undefined);
+
+  accountResource = this.dataService.getAccountResource(() => ({
+    pageSize: this.requestPageSize(),
+    pageIndex: this.requestPageIndex(),
+    filters: this.searchFilters() as NzSafeAny,
+    sort: this.sortParam()
+  }));
+
+  dataList = computed(() => {
+    if (this.accountResource.hasValue()) {
+      return [...this.accountResource.value().list];
+    }
+    return [] as TestUser[];
+  });
+
+  tableConfig = signal<AntTableConfig>({ headers: [], total: 0, showCheckbox: true, loading: false, pageSize: 10, pageIndex: 1 });
+
+  private syncTableConfig = effect(() => {
+    const isLoading = this.accountResource.isLoading();
+    const hasValue = this.accountResource.hasValue();
+    this.tableConfig.update(c => ({
+      ...c,
+      loading: isLoading,
+      ...(hasValue
+        ? {
+            total: this.accountResource.value().total!,
+            pageIndex: this.accountResource.value().pageIndex!
+          }
+        : {})
+    }));
+  });
 
   selectedChecked(e: TestUser[]): void {
     this.checkedCashArray = [...e];
@@ -89,71 +120,40 @@ export class TestAccountComponent implements AfterViewInit {
 
   resetForm(): void {
     this.searchParam = {};
-    this.sortParam = undefined;
+    this.sortParam.set(undefined);
+    this.searchFilters.set({});
+    this.requestPageIndex.set(1);
     this.tableConfig.update(c => ({
       ...c,
-      pageIndex: 1,
       headers: c.headers.map(h => ({ ...h, sortDir: undefined }))
     }));
-    this.getDataList({ pageIndex: 1 });
   }
 
   changeSort(e: SortFile): void {
-    this.sortParam = e.sortDir ? `${e.fileName},${e.sortDir}` : undefined;
-    this.tableConfig.update(c => ({ ...c, pageIndex: 1 }));
-    this.getDataList({ pageIndex: 1 });
+    this.sortParam.set(e.sortDir ? `${e.fileName},${e.sortDir}` : undefined);
+    this.requestPageIndex.set(1);
   }
 
-  getDataList(e?: { pageIndex: number }): void {
-    this.tableLoading(true);
-    const params: SearchCommonVO<NzSafeAny> = {
-      pageSize: this.tableConfig().pageSize!,
-      pageIndex: e?.pageIndex || this.tableConfig().pageIndex!,
-      filters: this.searchParam,
-      sort: this.sortParam
-    };
-    this.dataService
-      .getAccount(params)
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(data => {
-        const { list, total, pageIndex } = data;
-        this.dataList.set([...list]);
-        this.tableConfig.update(c => ({ ...c, total: total!, pageIndex: pageIndex! }));
-        this.tableLoading(false);
-        this.checkedCashArray = [...this.checkedCashArray];
-      });
-  }
-
-  tableLoading(isLoading: boolean): void {
-    this.tableConfig.update(config => ({ ...config, loading: isLoading }));
+  getDataList(pageIndex: number): void {
+    this.searchFilters.set({ ...this.searchParam });
+    this.requestPageIndex.set(pageIndex);
   }
 
   add(): void {
     this.modalService
       .show({ nzTitle: '新增' })
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(res => {
         if (!res || res.status === ModalBtnStatus.Cancel) {
           return;
         }
-        this.tableLoading(true);
         this.addEditData(res.modalValue, 'addAccount');
       });
   }
 
   reloadTable(): void {
+    this.accountResource.reload();
     this.message.info('刷新成功');
-    this.getDataList();
   }
 
   edit(id: number): void {
@@ -163,18 +163,12 @@ export class TestAccountComponent implements AfterViewInit {
       .subscribe(res => {
         this.modalService
           .show({ nzTitle: '编辑' }, res)
-          .pipe(
-            finalize(() => {
-              this.tableLoading(false);
-            }),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(({ modalValue, status }) => {
             if (status === ModalBtnStatus.Cancel) {
               return;
             }
             modalValue.id = id;
-            this.tableLoading(true);
             this.addEditData(modalValue, 'editAccount');
           });
       });
@@ -182,14 +176,9 @@ export class TestAccountComponent implements AfterViewInit {
 
   addEditData(param: TestUser, methodName: 'editAccount' | 'addAccount'): void {
     this.dataService[methodName](param)
-      .pipe(
-        finalize(() => {
-          this.tableLoading(false);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.getDataList();
+        this.accountResource.reload();
       });
   }
 
@@ -203,20 +192,15 @@ export class TestAccountComponent implements AfterViewInit {
       nzTitle: '确定要删除吗？',
       nzContent: '删除后不可恢复',
       nzOnOk: () => {
-        this.tableLoading(true);
         this.dataService
           .delAccount(tempArrays)
-          .pipe(
-            finalize(() => {
-              this.tableLoading(false);
-            }),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
             if (this.dataList().length === 1) {
-              this.tableConfig.update(c => ({ ...c, pageIndex: c.pageIndex! - 1 }));
+              this.requestPageIndex.update(p => Math.max(1, p - 1));
+            } else {
+              this.accountResource.reload();
             }
-            this.getDataList();
             this.checkedCashArray = [];
           });
       }
@@ -228,20 +212,14 @@ export class TestAccountComponent implements AfterViewInit {
       nzTitle: '确定要删除吗？',
       nzContent: '删除后不可恢复',
       nzOnOk: () => {
-        this.tableLoading(true);
         this.dataService
           .delAccount([id])
-          .pipe(
-            finalize(() => {
-              this.tableLoading(false);
-            }),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
             if (this.dataList().length === 1 && this.tableConfig().pageIndex !== 1) {
-              this.tableConfig.update(c => ({ ...c, pageIndex: c.pageIndex! - 1 }));
+              this.requestPageIndex.update(p => Math.max(1, p - 1));
             } else {
-              this.getDataList();
+              this.accountResource.reload();
             }
           });
       }
@@ -249,8 +227,8 @@ export class TestAccountComponent implements AfterViewInit {
   }
 
   changePageSize(e: number): void {
-    this.tableConfig.update(config => ({ ...config, pageSize: e, pageIndex: 1 }));
-    this.getDataList({ pageIndex: 1 });
+    this.requestPageSize.set(e);
+    this.requestPageIndex.set(1);
   }
 
   toggleCollapse(): void {

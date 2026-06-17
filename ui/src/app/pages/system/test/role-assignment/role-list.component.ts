@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, signal, computed, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
@@ -8,7 +8,7 @@ import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-hea
 import { ModalBtnStatus } from '@widget/base-modal';
 import { TestRoleModalService } from '@app/pages/system/test/role-assignment/test-role-modal/test-role-modal.service';
 import { normalizePermissionMenus } from '../shared/permission-menu-tree.util';
-import { PermissionApi, PermissionMenu, RbacPermissionPageItem, RbacRolePageItem, RbacRolePayload } from '../models/rbac.models';
+import { PermissionApi, PermissionMenu, PermissionListFilters, RbacPermissionPageItem, RbacRolePageItem, RbacRolePayload, RoleListFilters } from '../models/rbac.models';
 
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -51,7 +51,7 @@ type ViewMode = 'list' | 'assign';
   templateUrl: './role-list.component.html',
   styleUrl: './role-list.component.less'
 })
-export class RoleListComponent implements OnInit {
+export class RoleListComponent {
   private message = inject(NzMessageService);
   private modalSrv = inject(NzModalService);
   private roleModalService = inject(TestRoleModalService);
@@ -62,22 +62,82 @@ export class RoleListComponent implements OnInit {
   viewMode = signal<ViewMode>('list');
   listKeyword = '';
   assignKeyword = '';
-  onlySelected = false;
+  onlySelected = signal(false);
   listLoading = signal(false);
   assignLoading = signal(false);
   previewLoading = signal(false);
   saving = signal(false);
 
-  rolePageList = signal<RbacRolePageItem[]>([]);
-  roleTotal = signal(0);
+  private roleListFilters = signal<RoleListFilters>({});
   rolePageIndex = signal(1);
   rolePageSize = signal(10);
+  roleTotal = signal(0);
+
+  rolesResource = this.rbacTestService.getRolesPageResource(() => {
+    const keyword = this.roleListFilters().keyword?.trim();
+    return {
+      pageIndex: this.rolePageIndex(),
+      pageSize: this.rolePageSize(),
+      filters: keyword ? { keyword } : {}
+    };
+  });
+
+  rolePageList = computed(() => {
+    if (this.rolesResource.hasValue()) {
+      return this.rolesResource.value().list;
+    }
+    return [] as RbacRolePageItem[];
+  });
+
+  private syncRoleListState = effect(() => {
+    this.listLoading.set(this.rolesResource.isLoading());
+    if (this.rolesResource.hasValue()) {
+      this.roleTotal.set(this.rolesResource.value().total);
+      this.refreshRoleCheckedStatus();
+      this.cdr.markForCheck();
+    }
+  });
 
   private selectedRoleIds = new Set<number>();
   allRoleChecked = false;
   roleIndeterminate = false;
 
-  permissionList = signal<RbacPermissionPageItem[]>([]);
+  private assignPermissionFilters = signal<PermissionListFilters>({});
+
+  assignPermissionsResource = this.rbacTestService.getPermissionsPageResource(() => {
+    if (this.viewMode() !== 'assign') {
+      return { pageIndex: 1, pageSize: 0, filters: {} };
+    }
+    const keyword = this.assignPermissionFilters().keyword?.trim();
+    return {
+      pageIndex: 1,
+      pageSize: 9999,
+      filters: keyword ? { keyword } : {}
+    };
+  });
+
+  permissionList = computed(() => {
+    if (this.viewMode() !== 'assign' || !this.assignPermissionsResource.hasValue()) {
+      return [] as RbacPermissionPageItem[];
+    }
+    let list = this.assignPermissionsResource.value().list;
+    if (this.onlySelected()) {
+      list = list.filter(p => this.selectedPermissionIds.has(p.id));
+    }
+    return list;
+  });
+
+  private syncAssignPermissionState = effect(() => {
+    if (this.viewMode() !== 'assign') {
+      return;
+    }
+    this.assignLoading.set(this.assignPermissionsResource.isLoading());
+    if (this.assignPermissionsResource.hasValue()) {
+      this.refreshCheckedStatus();
+      this.syncPreviewAfterListChange();
+      this.cdr.markForCheck();
+    }
+  });
 
   /** 勾选绑定到角色的资源组 */
   private selectedPermissionIds = new Set<number>();
@@ -103,8 +163,8 @@ export class RoleListComponent implements OnInit {
     desc: ''
   });
 
-  ngOnInit(): void {
-    this.loadRolePage();
+  reloadRoleList(): void {
+    this.rolesResource.reload();
   }
 
   selectedPermissionCount(): number {
@@ -117,31 +177,6 @@ export class RoleListComponent implements OnInit {
 
   readonly previewTableScroll = { y: '320px' };
 
-  loadRolePage(pageIndex = this.rolePageIndex()): void {
-    this.listLoading.set(true);
-    const keyword = this.listKeyword.trim();
-    this.rbacTestService
-      .listRolesPage({
-        pageIndex,
-        pageSize: this.rolePageSize(),
-        filters: keyword ? { keyword } : {}
-      })
-      .pipe(
-        finalize(() => {
-          this.listLoading.set(false);
-          this.cdr.markForCheck();
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(data => {
-        this.rolePageList.set(data.list);
-        this.roleTotal.set(data.total);
-        this.rolePageIndex.set(data.pageIndex);
-        this.rolePageSize.set(data.pageSize);
-        this.refreshRoleCheckedStatus();
-      });
-  }
-
   addRole(): void {
     this.roleModalService
       .show({ nzTitle: '新增角色' })
@@ -150,17 +185,13 @@ export class RoleListComponent implements OnInit {
         if (!res || res.status === ModalBtnStatus.Cancel) {
           return;
         }
-        this.listLoading.set(true);
         this.rbacTestService
           .createRole(res.modalValue as RbacRolePayload)
-          .pipe(
-            finalize(() => {
-              this.listLoading.set(false);
-              this.cdr.markForCheck();
-            }),
-            takeUntilDestroyed(this.destroyRef)
-          )
-          .subscribe(() => this.loadRolePage(1));
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe(() => {
+            this.rolePageIndex.set(1);
+            this.rolesResource.reload();
+          });
       });
   }
 
@@ -180,17 +211,10 @@ export class RoleListComponent implements OnInit {
             if (status === ModalBtnStatus.Cancel) {
               return;
             }
-            this.listLoading.set(true);
             this.rbacTestService
               .updateRole(row.id, modalValue as RbacRolePayload)
-              .pipe(
-                finalize(() => {
-                  this.listLoading.set(false);
-                  this.cdr.markForCheck();
-                }),
-                takeUntilDestroyed(this.destroyRef)
-              )
-              .subscribe(() => this.loadRolePage(this.rolePageIndex()));
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe(() => this.rolesResource.reload());
           });
       });
   }
@@ -250,22 +274,15 @@ export class RoleListComponent implements OnInit {
       nzTitle: '确定要删除吗？',
       nzContent: '删除后不可恢复',
       nzOnOk: () => {
-        this.listLoading.set(true);
         this.rbacTestService
           .deleteRole(ids)
-          .pipe(
-            finalize(() => {
-              this.listLoading.set(false);
-              this.cdr.markForCheck();
-            }),
-            takeUntilDestroyed(this.destroyRef)
-          )
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
             ids.forEach(id => this.selectedRoleIds.delete(id));
             if (this.rolePageList().length === ids.length && this.rolePageIndex() > 1) {
-              this.loadRolePage(this.rolePageIndex() - 1);
+              this.rolePageIndex.update(p => Math.max(1, p - 1));
             } else {
-              this.loadRolePage(this.rolePageIndex());
+              this.rolesResource.reload();
             }
           });
       }
@@ -273,21 +290,24 @@ export class RoleListComponent implements OnInit {
   }
 
   searchRoles(): void {
-    this.loadRolePage(1);
+    const keyword = this.listKeyword.trim();
+    this.roleListFilters.set(keyword ? { keyword } : {});
+    this.rolePageIndex.set(1);
   }
 
   resetRoleSearch(): void {
     this.listKeyword = '';
-    this.loadRolePage(1);
+    this.roleListFilters.set({});
+    this.rolePageIndex.set(1);
   }
 
   onRolePageIndexChange(index: number): void {
-    this.loadRolePage(index);
+    this.rolePageIndex.set(index);
   }
 
   onRolePageSizeChange(size: number): void {
     this.rolePageSize.set(size);
-    this.loadRolePage(1);
+    this.rolePageIndex.set(1);
   }
 
   openAssign(row: RbacRolePageItem): void {
@@ -314,60 +334,34 @@ export class RoleListComponent implements OnInit {
           desc: `当前角色：${this.assignRoleName}${this.assignRoleDesc ? ' — ' + this.assignRoleDesc : ''}`
         });
         this.assignKeyword = '';
-        this.onlySelected = false;
+        this.onlySelected.set(false);
+        this.assignPermissionFilters.set({});
         this.selectedPermissionIds = new Set(role.permissionIds);
         this.clearPreview();
         this.viewMode.set('assign');
-        this.loadPermissionList();
       });
   }
 
   backToList(): void {
     this.viewMode.set('list');
     this.clearPreview();
-    this.loadRolePage(this.rolePageIndex());
-  }
-
-  loadPermissionList(): void {
-    this.assignLoading.set(true);
-    const keyword = this.assignKeyword.trim();
-    this.rbacTestService
-      .listPermissionsPage({
-        pageIndex: 1,
-        pageSize: 9999,
-        filters: keyword ? { keyword } : {}
-      })
-      .pipe(
-        finalize(() => {
-          this.assignLoading.set(false);
-          this.cdr.markForCheck();
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(data => {
-        let list = data.list;
-        if (this.onlySelected) {
-          list = list.filter(p => this.selectedPermissionIds.has(p.id));
-        }
-        this.permissionList.set(list);
-        this.refreshCheckedStatus();
-        this.syncPreviewAfterListChange();
-      });
+    this.rolesResource.reload();
   }
 
   searchPermissions(): void {
-    this.loadPermissionList();
+    const keyword = this.assignKeyword.trim();
+    this.assignPermissionFilters.set(keyword ? { keyword } : {});
   }
 
   resetPermissionSearch(): void {
     this.assignKeyword = '';
-    this.onlySelected = false;
-    this.loadPermissionList();
+    this.onlySelected.set(false);
+    this.assignPermissionFilters.set({});
   }
 
   onOnlySelectedChange(checked: boolean): void {
-    this.onlySelected = checked;
-    this.loadPermissionList();
+    this.onlySelected.set(checked);
+    this.cdr.markForCheck();
   }
 
   isPermissionChecked(row: RbacPermissionPageItem): boolean {

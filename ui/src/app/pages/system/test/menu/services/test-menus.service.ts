@@ -1,4 +1,5 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
+import { HttpResourceRef } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { TestMenuListObj } from '@app/pages/system/test/models/test-menu.models';
@@ -7,14 +8,12 @@ import { BaseHttpService } from '@services/base-http.service';
 
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class TestMenusService {
   private http = inject(BaseHttpService);
 
-  getMenuList(param: SearchCommonVO<NzSafeAny>): Observable<Menu[]> {
-    return this.http.post('/rbac/menu/list', param);
+  getMenuListResource(param: () => SearchCommonVO<NzSafeAny>): HttpResourceRef<Menu[]> {
+    return this.http.postResource<Menu[]>('/rbac/menu/list', param);
   }
 
   addMenus(param: TestMenuListObj): Observable<void> {

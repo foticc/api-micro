@@ -33,7 +33,7 @@
           <i nz-icon nzType="plus"></i>
           新增资源组
         </button>
-        <button class="m-l-8" nz-button (click)="loadPage()">
+        <button class="m-l-8" nz-button (click)="reloadPage()">
           <i nz-icon nzType="reload"></i>
           刷新
         </button>
@@ -149,63 +149,63 @@
       <div class="resource-row" nz-row [nzGutter]="24">
         <div nz-col [nzLg]="10" [nzXs]="24">
           <nz-card class="resource-card" nzTitle="关联菜单">
-            <p class="section-hint">可选。从菜单库选择添加，列表仅展示不可编辑；维护请前往「菜单管理」。</p>
+            <p class="section-hint">可选。点击「管理关联菜单」在弹窗中增删；下方树形列表为快捷预览与单行移除。</p>
             <div class="api-toolbar">
               <span class="muted">共 {{ menuCount() }} 项</span>
-              <button type="button" nz-button nzType="dashed" (click)="addMenu()">
-                <i nz-icon nzType="plus"></i>
-                从菜单库选择
+              <button type="button" nz-button nzType="dashed" (click)="manageMenus()">
+                <i nz-icon nzType="setting"></i>
+                管理关联菜单
               </button>
             </div>
 
             <nz-spin [nzSpinning]="menuFlatLoading()">
-              @if (linkedMenus().length > 0) {
-                <nz-table
-                  class="api-table menu-table"
-                  nzSize="middle"
-                  [nzData]="linkedMenus()"
-                  [nzFrontPagination]="false"
-                  [nzScroll]="menuTableScroll()"
-                  [nzShowPagination]="false"
-                >
-                  <thead>
-                    <tr>
-                      <th>名称</th>
-                      <th nzWidth="80px">类型</th>
-                      <th>权限码</th>
-                      <th nzWidth="64px"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (menu of linkedMenus(); track menu.id) {
-                      <tr>
-                        <td nzEllipsis>{{ menu.name }}</td>
-                        <td>
-                          <nz-tag [nzColor]="menu.type === 'button' ? 'purple' : 'blue'">
-                            {{ menu.type === 'button' ? '按钮' : '菜单' }}
-                          </nz-tag>
-                        </td>
-                        <td nzEllipsis>{{ menu.code }}</td>
-                        <td>
-                          <button
-                            type="button"
-                            nz-button
-                            nz-tooltip
-                            nzDanger
-                            nzTooltipTitle="移除"
-                            nzType="text"
-                            (click)="removeMenu(menu.id)"
-                          >
-                            <i nz-icon nzType="delete"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </nz-table>
+              @if (linkedMenuTreeNodes().length > 0) {
+                <div class="menu-tree-scroll">
+                  <nz-tree
+                    nzShowIcon
+                    [nzData]="linkedMenuTreeNodes()"
+                    [nzExpandedKeys]="linkedMenuExpandedKeys()"
+                    [nzTreeTemplate]="linkedMenuTreeTpl"
+                    (nzExpandedKeysChange)="linkedMenuExpandedKeys.set($event)"
+                  />
+                  <ng-template #linkedMenuTreeTpl let-node let-origin="origin">
+                    <span class="linked-menu-node">
+                      @if (origin.icon) {
+                        <span class="ant-tree-iconEle ant-tree-icon__customize">
+                          <nz-icon nzTheme="outline" [nzType]="origin.icon" />
+                        </span>
+                      } @else if (origin.iconfont) {
+                        <span class="ant-tree-iconEle ant-tree-icon__customize">
+                          <nz-icon [nzIconfont]="origin.iconfont" />
+                        </span>
+                      } @else if (!origin.isLeaf) {
+                        <span class="ant-tree-iconEle ant-tree-icon__customize">
+                          <nz-icon nzTheme="outline" nzType="folder" />
+                        </span>
+                      }
+                      <span class="linked-menu-name">{{ node.title }}</span>
+                      <nz-tag class="linked-menu-tag" [nzColor]="menuTypeTagColor(origin.menu?.menuType)">
+                        {{ menuTypeLabel(origin.menu?.menuType) }}
+                      </nz-tag>
+                      <span class="linked-menu-code" nz-tooltip [nzTooltipTitle]="origin.menu?.code">{{ origin.menu?.code }}</span>
+                      <button
+                        type="button"
+                        class="linked-menu-remove"
+                        nz-button
+                        nz-tooltip
+                        nzDanger
+                        nzTooltipTitle="移除"
+                        nzType="text"
+                        (click)="removeMenu(origin.menu.id); $event.stopPropagation()"
+                      >
+                        <i nz-icon nzType="delete"></i>
+                      </button>
+                    </span>
+                  </ng-template>
+                </div>
               } @else {
                 <nz-empty nzNotFoundContent="尚未关联菜单" nzNotFoundImage="simple">
-                  <button type="button" nz-button nzType="primary" (click)="addMenu()">从菜单库选择</button>
+                  <button type="button" nz-button nzType="primary" (click)="manageMenus()">管理关联菜单</button>
                 </nz-empty>
               }
             </nz-spin>
@@ -214,12 +214,12 @@
 
         <div nz-col [nzLg]="14" [nzXs]="24">
           <nz-card class="resource-card" nzTitle="后端 API">
-            <p class="section-hint">可选。从 API 资源库选择添加，列表仅展示不可编辑；修改请前往「API 资源管理」。</p>
+            <p class="section-hint">可选。点击「管理关联 API」在弹窗中增删；下方列表为快捷预览与单行移除。</p>
             <div class="api-toolbar">
               <span class="muted">共 {{ apiCount() }} 条</span>
-              <button type="button" nz-button nzType="dashed" (click)="addApi()">
-                <i nz-icon nzType="plus"></i>
-                从资源库添加
+              <button type="button" nz-button nzType="dashed" (click)="manageApis()">
+                <i nz-icon nzType="setting"></i>
+                管理关联 API
               </button>
             </div>
 
@@ -253,7 +253,7 @@
               </nz-table>
             } @else {
               <nz-empty nzNotFoundContent="尚未添加 API" nzNotFoundImage="simple">
-                <button type="button" nz-button nzType="primary" (click)="addApi()">从资源库选择 API</button>
+                <button type="button" nz-button nzType="primary" (click)="manageApis()">管理关联 API</button>
               </nz-empty>
             }
           </nz-card>

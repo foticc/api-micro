@@ -17,12 +17,6 @@ import { errorHandlerInterceptor } from './error-handler.interceptor';
  * ← 响应方向
  *   4 → 3 → 2 → 1（与请求方向相反，依次处理响应）
  */
-export const httpInterceptors: HttpInterceptorFn[] = [
-  authInterceptor,
-  loadingInterceptor,
-  businessResponseInterceptor,
-  errorHandlerInterceptor
-];
-export { httpInterceptorService } from '@core/services/interceptors/http-interceptor';
+export const httpInterceptors: HttpInterceptorFn[] = [authInterceptor, loadingInterceptor, businessResponseInterceptor, errorHandlerInterceptor];
 export { LoginExpiredService } from '@core/services/interceptors/login-expired.service';
 export { getHttpErrorMessage } from '@core/services/interceptors/http-error.util';

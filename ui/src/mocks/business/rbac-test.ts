@@ -356,6 +356,12 @@ export const rbacTest = [
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: null });
   }),
 
+  http.post('/site/api/rbac/roles/list', async ({ request }) => {
+    const body = ((await request.json().catch(() => ({}))) ?? {}) as { filters?: { keyword?: string } };
+    const list = filterRoles(body.filters?.keyword);
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: list });
+  }),
+
   http.get('/site/api/rbac/roles', () => {
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: roles });
   }),
