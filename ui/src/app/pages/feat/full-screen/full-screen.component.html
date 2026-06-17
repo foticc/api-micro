@@ -25,14 +25,14 @@
     <div class="status-row">
       <span class="status-label">当前状态</span>
       @if (isFullscreenFlag()) {
-        <nz-tag nzColor="error">
-          <span nz-icon nzTheme="outline" nzType="fullscreen-exit"></span>
-          未全屏
-        </nz-tag>
-      } @else {
         <nz-tag nzColor="success">
           <span nz-icon nzTheme="outline" nzType="fullscreen"></span>
           全屏中
+        </nz-tag>
+      } @else {
+        <nz-tag nzColor="error">
+          <span nz-icon nzTheme="outline" nzType="fullscreen-exit"></span>
+          未全屏
         </nz-tag>
       }
     </div>

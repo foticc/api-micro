@@ -1,9 +1,7 @@
-import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { timer } from 'rxjs';
+import { Component, inject } from '@angular/core';
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
-import screenfull from 'screenfull';
+import { FullscreenService } from '@core/services/common/fullscreen.service';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -17,46 +15,28 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 
   imports: [PageHeaderComponent, NzCardModule, NzButtonModule, NzTagModule, NzIconModule]
 })
-export class FullScreenComponent implements OnInit {
+export class FullScreenComponent {
   pageHeaderInfo: Partial<PageHeaderType> = {
     title: '全屏示例',
     breadcrumb: ['首页', '功能', '全屏示例']
   };
 
-  isFullscreenFlag = signal(true);
-  destroyRef = inject(DestroyRef);
+  private readonly fullscreenService = inject(FullscreenService);
+  readonly isFullscreenFlag = this.fullscreenService.isFullscreen;
 
   toggle(): void {
-    if (screenfull.isEnabled) {
-      screenfull.toggle();
-    }
+    this.fullscreenService.toggle();
   }
 
   exitFull(): void {
-    if (screenfull.isEnabled) {
-      screenfull.exit();
-    }
+    this.fullscreenService.exit();
   }
 
   intoDomFull(dom: HTMLDivElement): void {
-    if (screenfull.isEnabled) {
-      screenfull.request(dom);
-    }
+    this.fullscreenService.request(dom);
   }
 
   intoFull(): void {
-    if (screenfull.isEnabled) {
-      screenfull.request();
-    }
-  }
-
-  ngOnInit(): void {
-    screenfull.onchange(() => {
-      // Use RxJS timer instead of setTimeout
-      timer(10).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-        this.isFullscreenFlag.update(v => !v);
-        // Signal automatically triggers change detection
-      });
-    });
+    this.fullscreenService.request();
   }
 }

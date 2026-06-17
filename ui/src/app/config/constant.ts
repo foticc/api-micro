@@ -12,8 +12,9 @@ export const StyleThemeModelKey = 'StyleThemeModelKey';
 export const IsFirstLogin = 'IsFirstLogin';
 // 锁屏key
 export const LockedKey = 'LockedKey';
-// 加盐
-export const salt = 'EIpWsyfiy@R@X#qn17!StJNdZK1fFF8iV6ffN!goZkqt#JxO';
+// 前端锁屏状态混淆用的salt（注意：这不是安全机制，仅用于防止普通用户意外修改SessionStorage）
+// 请勿与后端JWT Secret使用相同的值
+export const salt = 'K7mP2xQw9#vLn4@Yz8Tc!Fb6Rj3Sg5Hd1Ua0Xe$Nq';
 
 // 登录超时code码，弹出登录对话框
 export const loginTimeOutCode = 1012;
