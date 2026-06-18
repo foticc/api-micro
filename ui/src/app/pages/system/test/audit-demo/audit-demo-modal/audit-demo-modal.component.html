@@ -1,0 +1,20 @@
+<form nz-form [formGroup]="addEditForm" nzLayout="vertical">
+  <div nz-row [nzGutter]="16">
+    <div nz-col [nzSpan]="24">
+      <nz-form-item>
+        <nz-form-label nzRequired>标题</nz-form-label>
+        <nz-form-control nzErrorTip="请输入标题">
+          <input nz-input formControlName="title" placeholder="演示数据标题" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="24">
+      <nz-form-item>
+        <nz-form-label>内容</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input formControlName="content" rows="4" placeholder="演示数据内容"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</form>

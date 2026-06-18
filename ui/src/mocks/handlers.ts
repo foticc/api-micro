@@ -5,6 +5,7 @@ import { role } from './business/role';
 import { menu } from './business/menu';
 import { permission } from './business/permission';
 import { dict } from './business/dict';
+import { auditDemo } from './business/audit-demo';
 import { apiResource } from './business/api-resource';
 import { rbacTest } from './business/rbac-test';
 import { rbacTestMenu } from './business/rbac-test-menu';
@@ -23,6 +24,7 @@ export const handlers = [
   ...permission,
   ...dict,
   ...apiResource,
+  ...auditDemo,
   ...example,
   ...rbacTest,
   ...rbacTestMenu,

@@ -33,6 +33,12 @@ export default [
     loadComponent: () => import('./api/api-list.component').then(m => m.ApiListComponent)
   },
   {
+    path: 'audit-demo',
+    title: '审计演示（测试）',
+    data: { key: 'rbac-test-audit-demo' },
+    loadComponent: () => import('./audit-demo/audit-demo-list.component').then(m => m.AuditDemoListComponent)
+  },
+  {
     path: 'oauth2-client',
     title: 'OAuth2 客户端',
     data: { key: 'rbac-test-oauth2-client' },

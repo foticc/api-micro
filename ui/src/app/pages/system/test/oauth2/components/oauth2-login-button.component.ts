@@ -13,18 +13,8 @@ import { resolveOAuthErrorMessage } from '../utils/oauth-error.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NzButtonModule, NzIconModule, NzTooltipModule],
   template: `
-    <button
-      type="button"
-      nz-button
-      nz-tooltip
-      nzShape="circle"
-      nzSize="large"
-      nzTooltipTitle="OAuth2 登录"
-      nzType="default"
-      [disabled]="!enabled() || loading()"
-      (click)="onOAuthLogin($event)"
-    >
-      <i nz-icon nzType="safety-certificate"></i>
+    <button type="button" nz-button nz-tooltip nzShape="circle" nzSize="large" nzTooltipTitle="OAuth2 登录" nzType="default" [disabled]="!enabled() || loading()" (click)="onOAuthLogin($event)">
+      <i nz-icon nzTheme="fill" nzType="safety-certificate"></i>
     </button>
   `
 })
@@ -45,11 +35,9 @@ export class OAuth2LoginButtonComponent {
     }
 
     this.loading.set(true);
-    void this.testOAuth2
-      .startLogin()
-      .catch(err => {
-        this.message.error(resolveOAuthErrorMessage(err, 'OAuth2 登录启动失败'));
-        this.loading.set(false);
-      });
+    void this.testOAuth2.startLogin().catch(err => {
+      this.message.error(resolveOAuthErrorMessage(err, 'OAuth2 登录启动失败'));
+      this.loading.set(false);
+    });
   }
 }

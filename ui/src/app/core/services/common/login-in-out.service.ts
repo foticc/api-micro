@@ -83,9 +83,7 @@ export class LoginInOutService {
    */
   clearSessionAndRedirect(): Promise<void> {
     this.clearSessionCash();
-    return this.router
-      .navigate(['/login/login-form'])
-      .then(() => this.clearTabCash());
+    return this.router.navigate(['/login/login-form']).then(() => this.clearTabCash());
   }
 
   /** 用户主动登出：通知后端后清理本地会话 */
