@@ -1,0 +1,26 @@
+<form nz-form nzLayout="vertical" [formGroup]="addEditForm">
+  <nz-form-item>
+    <nz-form-label nzRequired>所属模块</nz-form-label>
+    <nz-form-control nzErrorTip="必填">
+      <input formControlName="module" nz-input placeholder="例如 sys、all" />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label nzRequired>权限编码</nz-form-label>
+    <nz-form-control nzErrorTip="必填，全局唯一">
+      <input formControlName="code" nz-input placeholder="例如 sys:user:create" />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label nzRequired>权限名称</nz-form-label>
+    <nz-form-control nzErrorTip="必填">
+      <input formControlName="name" nz-input placeholder="例如 创建用户" />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label>描述</nz-form-label>
+    <nz-form-control>
+      <textarea formControlName="description" nz-input placeholder="简要说明该权限的业务用途" rows="3"></textarea>
+    </nz-form-control>
+  </nz-form-item>
+</form>

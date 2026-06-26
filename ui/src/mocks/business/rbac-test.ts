@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw';
 
 import type {
   PermissionApi,
+  PermissionBindIdsPayload,
   RbacPermission,
   RbacPermissionPageItem,
   RbacPermissionPayload,
@@ -260,28 +261,97 @@ function toPageItem(p: RbacPermission): RbacPermissionPageItem {
     name: p.name,
     module: resolveModule(p),
     menuCount: p.menus?.length ?? p.menuIds?.length ?? 0,
-    apiCount: p.apis?.length ?? 0
+    apiCount: p.apis?.length ?? p.apiIds?.length ?? 0
   };
 }
 
-function permissionFromPayload(id: number, body: RbacPermissionPayload): RbacPermission {
-  const { apiIds, ...rest } = body;
-  const prev = permissions.find(p => p.id === id);
-  const prevApiById = new Map(
-    (prev?.apis ?? [])
-      .filter((a): a is PermissionApi & { id: number } => a.id != null)
-      .map(a => [a.id, a])
-  );
+function permissionDetail(p: RbacPermission): RbacPermission {
+  const apiIds = (p.apis ?? [])
+    .map(a => a.id)
+    .filter((id): id is number => id != null);
+  const menuIds = p.menuIds ?? p.menus?.map(m => Number(m.id)).filter(id => !Number.isNaN(id)) ?? [];
+  return {
+    ...p,
+    module: p.module ?? resolveModule(p),
+    menuIds,
+    apiIds
+  };
+}
 
+function permissionBaseFromPayload(id: number, body: RbacPermissionPayload, prev?: RbacPermission): RbacPermission {
   return {
     id,
-    ...rest,
-    module: rest.module,
-    apis: (apiIds ?? []).map(apiId => {
-      const cached = prevApiById.get(apiId);
-      return cached ?? { id: apiId, method: '', path: '', description: '' };
-    })
+    code: body.code,
+    name: body.name,
+    module: body.module,
+    description: body.description,
+    menuIds: prev?.menuIds ?? [],
+    menus: prev?.menus ?? [],
+    apis: prev?.apis ?? [],
+    apiIds: prev?.apiIds
   };
+}
+
+const API_CATALOG: PermissionApi[] = [
+  { id: 1, method: 'GET', path: '/api/users', description: '获取用户列表' },
+  { id: 2, method: 'GET', path: '/api/users/:id', description: '获取用户详情' },
+  { id: 3, method: 'POST', path: '/api/users', description: '创建用户' },
+  { id: 4, method: 'PUT', path: '/api/users/:id', description: '更新用户信息' },
+  { id: 5, method: 'DELETE', path: '/api/users/:id', description: '删除用户' },
+  { id: 6, method: 'GET', path: '/api/roles', description: '获取角色列表' },
+  { id: 7, method: 'GET', path: '/api/roles/:id', description: '获取角色详情' },
+  { id: 8, method: 'POST', path: '/api/roles', description: '创建角色' },
+  { id: 9, method: 'PUT', path: '/api/roles/:id', description: '更新角色' },
+  { id: 10, method: 'DELETE', path: '/api/roles/:id', description: '删除角色' },
+  { id: 11, method: 'GET', path: '/api/menus', description: '获取菜单列表' },
+  { id: 12, method: 'GET', path: '/api/menus/tree', description: '获取菜单树形结构' },
+  { id: 13, method: 'POST', path: '/api/menus', description: '创建菜单' },
+  { id: 14, method: 'PUT', path: '/api/menus/:id', description: '更新菜单' },
+  { id: 15, method: 'DELETE', path: '/api/menus/:id', description: '删除菜单' },
+  { id: 16, method: 'GET', path: '/api/orders', description: '获取订单列表' },
+  { id: 17, method: 'GET', path: '/api/orders/:id', description: '获取订单详情' },
+  { id: 18, method: 'POST', path: '/api/orders', description: '创建订单' },
+  { id: 19, method: 'PUT', path: '/api/orders/:id', description: '更新订单' },
+  { id: 20, method: 'GET', path: '/api/products', description: '获取商品列表' },
+  { id: 21, method: 'GET', path: '/api/products/:id', description: '获取商品详情' },
+  { id: 22, method: 'POST', path: '/api/products', description: '创建商品' },
+  { id: 23, method: 'PUT', path: '/api/products/:id', description: '更新商品' },
+  { id: 24, method: 'DELETE', path: '/api/products/:id', description: '删除商品' },
+  { id: 25, method: 'GET', path: '/api/reports/sales', description: '销售报表' },
+  { id: 26, method: 'GET', path: '/api/reports/users', description: '用户报表' },
+  { id: 27, method: 'GET', path: '/api/logs/operation', description: '操作日志' },
+  { id: 28, method: 'GET', path: '/api/logs/access', description: '访问日志' }
+];
+
+function resolveApisByIds(ids: number[], prevApis: PermissionApi[] = []): PermissionApi[] {
+  const prevById = new Map(prevApis.filter(a => a.id != null).map(a => [a.id!, a]));
+  const prevByPath = new Map(prevApis.map(a => [`${a.method}:${a.path}`, a]));
+  const catalogById = new Map(API_CATALOG.filter(a => a.id != null).map(a => [a.id!, a]));
+
+  return ids.map(apiId => {
+    if (catalogById.has(apiId)) {
+      return catalogById.get(apiId)!;
+    }
+    if (prevById.has(apiId)) {
+      return prevById.get(apiId)!;
+    }
+    const fallback = [...prevByPath.values()][apiId % Math.max(prevByPath.size, 1)];
+    if (fallback) {
+      return { ...fallback, id: apiId };
+    }
+    return { id: apiId, method: 'GET', path: `/api/unknown/${apiId}`, description: '' };
+  });
+}
+
+function resolveMenusByIds(ids: number[], prevMenus: RbacPermission['menus'] = []): RbacPermission['menus'] {
+  const prevById = new Map((prevMenus ?? []).map(m => [Number(m.id), m]));
+  return ids.map(id => {
+    const prev = prevById.get(id);
+    if (prev) {
+      return prev;
+    }
+    return { id, code: `menu:${id}`, menuName: `菜单 #${id}`, menuType: 'C' };
+  });
 }
 
 export const rbacTest = [
@@ -316,7 +386,7 @@ export const rbacTest = [
     return HttpResponse.json({
       code: 200,
       msg: 'SUCCESS',
-      data: { ...item, module: item.module ?? resolveModule(item) }
+      data: permissionDetail(item)
     });
   }),
 
@@ -325,9 +395,9 @@ export const rbacTest = [
     if (permissions.some(p => p.code === body.code)) {
       return HttpResponse.json({ code: 400, msg: '权限编码已存在', data: null }, { status: 200 });
     }
-    const item = permissionFromPayload(nextPermId++, body);
+    const item = permissionBaseFromPayload(nextPermId++, body);
     permissions.push(item);
-    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: item });
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: permissionDetail(item) });
   }),
 
   http.put('/site/api/rbac/permissions/:id', async ({ request, params }) => {
@@ -340,8 +410,59 @@ export const rbacTest = [
     if (permissions.some(p => p.code === body.code && p.id !== id)) {
       return HttpResponse.json({ code: 400, msg: '权限编码已存在', data: null }, { status: 200 });
     }
-    permissions[idx] = permissionFromPayload(id, body);
-    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: permissions[idx] });
+    permissions[idx] = permissionBaseFromPayload(id, body, permissions[idx]);
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: permissionDetail(permissions[idx]) });
+  }),
+
+  http.get('/site/api/rbac/permissions/:id/menus', ({ params }) => {
+    const id = Number(params['id']);
+    const item = permissions.find(p => p.id === id);
+    if (!item) {
+      return HttpResponse.json({ code: 404, msg: '权限不存在', data: null }, { status: 404 });
+    }
+    const ids =
+      item.menuIds ?? item.menus?.map(m => Number(m.id)).filter(menuId => !Number.isNaN(menuId)) ?? [];
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: { ids } });
+  }),
+
+  http.get('/site/api/rbac/permissions/:id/apis', ({ params }) => {
+    const id = Number(params['id']);
+    const item = permissions.find(p => p.id === id);
+    if (!item) {
+      return HttpResponse.json({ code: 404, msg: '权限不存在', data: null }, { status: 404 });
+    }
+    const ids =
+      item.apiIds ??
+      item.apis?.map(a => a.id).filter((apiId): apiId is number => apiId != null) ??
+      [];
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: { ids } });
+  }),
+
+  http.put('/site/api/rbac/permissions/:id/apis', async ({ request, params }) => {
+    const id = Number(params['id']);
+    const { ids } = (await request.json()) as PermissionBindIdsPayload;
+    const idx = permissions.findIndex(p => p.id === id);
+    if (idx === -1) {
+      return HttpResponse.json({ code: 404, msg: '权限不存在', data: null });
+    }
+    const prev = permissions[idx];
+    const apis = resolveApisByIds(ids ?? [], prev.apis ?? []);
+    permissions[idx] = { ...prev, apis, apiIds: ids ?? [] };
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: permissionDetail(permissions[idx]) });
+  }),
+
+  http.put('/site/api/rbac/permissions/:id/menus', async ({ request, params }) => {
+    const id = Number(params['id']);
+    const { ids } = (await request.json()) as PermissionBindIdsPayload;
+    const idx = permissions.findIndex(p => p.id === id);
+    if (idx === -1) {
+      return HttpResponse.json({ code: 404, msg: '权限不存在', data: null });
+    }
+    const prev = permissions[idx];
+    const menuIds = ids ?? [];
+    const menus = resolveMenusByIds(menuIds, prev.menus);
+    permissions[idx] = { ...prev, menuIds, menus };
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: permissionDetail(permissions[idx]) });
   }),
 
   http.post('/site/api/rbac/permissions/del', async ({ request }) => {

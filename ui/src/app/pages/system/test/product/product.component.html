@@ -1,0 +1,75 @@
+<app-page-header [pageHeaderInfo]="pageHeaderInfo" />
+
+<div class="normal-table-wrap">
+  <nz-card class="m-b-10" nzHoverable [nzBodyStyle]="{ 'padding-bottom': 0 }">
+    <form nz-form>
+      <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24 }">
+        @if (!isCollapse) {
+          <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+            <nz-form-item>
+              <nz-form-label>是否启用</nz-form-label>
+              <nz-form-control>
+                <nz-select name="enabled" nzAllowClear nzPlaceHolder="全部" [(ngModel)]="searchParam.enabled">
+                  @for (item of enabledOptions; track item) {
+                    <nz-option [nzLabel]="item.label" [nzValue]="item.value" />
+                  }
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        }
+        <div class="text-right p-0 m-b-10" nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+          <button nz-button nzType="primary" (click)="getDataList(1)">
+            <i nz-icon nzType="search"></i>
+            搜索
+          </button>
+          <button class="m-l-15" nz-button (click)="resetForm()">
+            <i nz-icon nzType="close-circle"></i>
+            重置
+          </button>
+          <a class="collapse operate-text m-l-15" (click)="toggleCollapse()">
+            @if (isCollapse) {
+              <span>展开</span>
+            } @else {
+              <span>收起</span>
+            }
+            <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
+          </a>
+        </div>
+      </div>
+    </form>
+  </nz-card>
+
+  <app-card-table-wrap [btnTpl]="tableBtns" [tableTitle]="'Product（测试）列表'" (reload)="reloadTable()">
+    <app-ant-table
+      [checkedCashArrayFromComment]="checkedCashArray"
+      [tableConfig]="tableConfig()"
+      [tableData]="dataList()"
+      (changePageIndex)="getDataList($event)"
+      (changePageSize)="changePageSize($event)"
+      (selectedChange)="selectedChecked($event)"
+    />
+    <ng-template #enabledTpl let-enabled="enabled">
+      @if (enabled) {
+        <nz-tag nzColor="success">是</nz-tag>
+      } @else {
+        <nz-tag nzColor="default">否</nz-tag>
+      }
+    </ng-template>
+    <ng-template #operationTpl let-id="id">
+      <span class="operate-text" (click)="edit(id)">编辑</span>
+      <span class="operate-text" (click)="del(id)">删除</span>
+    </ng-template>
+  </app-card-table-wrap>
+</div>
+
+<ng-template #tableBtns>
+  <button class="m-r-8" nz-button nzType="primary" (click)="add()">
+    <i nz-icon nzType="plus"></i>
+    新建
+  </button>
+  <button nz-button nzDanger nzType="default" (click)="allDel()">
+    <i nz-icon nzType="delete"></i>
+    批量删除
+  </button>
+</ng-template>

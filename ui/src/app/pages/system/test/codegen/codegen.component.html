@@ -1,0 +1,200 @@
+<app-page-header [pageHeaderInfo]="pageHeader" />
+
+<div class="normal-table-wrap codegen-page">
+  <nz-card class="m-b-10" nzTitle="模块配置" [nzExtra]="configExtra">
+    <form nz-form nzLayout="vertical">
+      <div nz-row [nzGutter]="16">
+        <div nz-col [nzSpan]="24">
+          <nz-form-item>
+            <nz-form-label nzRequired>生成目标</nz-form-label>
+            <nz-form-control>
+              <nz-radio-group name="target" [ngModel]="target()" (ngModelChange)="onTargetChange($event)">
+                @for (t of targetOptions(); track t) {
+                  <label nz-radio [nzValue]="t">{{ targetLabel(t) }}</label>
+                }
+              </nz-radio-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzLg]="6" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+          <nz-form-item>
+            <nz-form-label nzRequired>moduleName</nz-form-label>
+            <nz-form-control nzExtra="PascalCase，如 Product">
+              <input name="moduleName" nz-input placeholder="Product" [(ngModel)]="moduleName" (ngModelChange)="onModuleNameChange()" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzLg]="6" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+          <nz-form-item>
+            <nz-form-label>apiPath</nz-form-label>
+            <nz-form-control nzExtra="HTTP 接口前缀">
+              <input name="apiPath" nz-input placeholder="/demo/generated/product" [(ngModel)]="apiPath" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        @if (isBackend()) {
+          <div nz-col [nzLg]="6" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+            <nz-form-item>
+              <nz-form-label>tableName</nz-form-label>
+              <nz-form-control nzExtra="默认 demo_{module_snake}">
+                <input name="tableName" nz-input placeholder="demo_product" [(ngModel)]="tableName" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzLg]="6" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+            <nz-form-item>
+              <nz-form-label>packageName</nz-form-label>
+              <nz-form-control>
+                <input name="packageName" nz-input placeholder="com.foticc.upms.demo.generated.product" [(ngModel)]="packageName" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        }
+        @if (isFrontend()) {
+          <div nz-col [nzLg]="6" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+            <nz-form-item>
+              <nz-form-label>moduleTitle</nz-form-label>
+              <nz-form-control nzExtra="页面标题">
+                <input name="moduleTitle" nz-input placeholder="产品管理（测试）" [(ngModel)]="moduleTitle" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzLg]="12" [nzMd]="24" [nzSm]="24" [nzXs]="24">
+            <nz-form-item>
+              <nz-form-label>frontendBasePath</nz-form-label>
+              <nz-form-control nzExtra="Angular 模块输出目录">
+                <input name="frontendBasePath" nz-input placeholder="src/app/pages/system/test/product" [(ngModel)]="frontendBasePath" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        }
+        <div nz-col [nzSpan]="24">
+          <nz-form-item>
+            <nz-form-label>enableAudit</nz-form-label>
+            <nz-form-control [nzExtra]="isBackend() ? 'Entity/DTO 审计字段' : '列表与 models 审计字段'">
+              <nz-switch name="enableAudit" nzCheckedChildren="开启" nzUnCheckedChildren="关闭" [(ngModel)]="enableAudit" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+  </nz-card>
+
+  <ng-template #configExtra>
+    <button nz-button nzType="default" (click)="loadExample()">载入示例</button>
+  </ng-template>
+
+  <nz-card class="m-b-10" nzTitle="业务字段" [nzExtra]="fieldExtra">
+    <nz-table #fieldTable nzBordered nzSize="small" [nzData]="fields()" [nzFrontPagination]="false" [nzShowPagination]="false">
+      <thead>
+        <tr>
+          <th nzWidth="120px">name</th>
+          <th nzWidth="140px">javaType</th>
+          @if (isBackend()) {
+            <th nzWidth="120px">columnName</th>
+          }
+          <th nzWidth="70px">nullable</th>
+          <th nzWidth="70px">required</th>
+          <th nzWidth="90px">searchable</th>
+          <th>comment</th>
+          <th nzWidth="60px">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (field of fieldTable.data; track $index) {
+          <tr>
+            <td>
+              <input nz-input placeholder="title" [name]="'fieldName' + $index" [(ngModel)]="field.name" />
+            </td>
+            <td>
+              <nz-select nzPlaceHolder="类型" [name]="'fieldType' + $index" [(ngModel)]="field.javaType" (ngModelChange)="onJavaTypeChange(field)">
+                @for (t of javaTypeOptions(); track t) {
+                  <nz-option [nzLabel]="t" [nzValue]="t" />
+                }
+              </nz-select>
+            </td>
+            @if (isBackend()) {
+              <td>
+                <input nz-input placeholder="可选" [name]="'fieldCol' + $index" [(ngModel)]="field.columnName" />
+              </td>
+            }
+            <td class="text-center">
+              <label nz-checkbox [name]="'fieldNull' + $index" [(ngModel)]="field.nullable"></label>
+            </td>
+            <td class="text-center">
+              <label nz-checkbox [name]="'fieldReq' + $index" [(ngModel)]="field.required"></label>
+            </td>
+            <td class="text-center">
+              <label
+                nz-checkbox
+                [disabled]="field.javaType !== 'String'"
+                [name]="'fieldSearch' + $index"
+                [nz-tooltip]="field.javaType !== 'String' ? '仅 String 支持 searchable' : null"
+                [(ngModel)]="field.searchable"
+              ></label>
+            </td>
+            <td>
+              <input nz-input placeholder="注释" [name]="'fieldComment' + $index" [(ngModel)]="field.comment" />
+            </td>
+            <td>
+              <span class="operate-text" (click)="removeField($index)">删除</span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </nz-table>
+  </nz-card>
+
+  <ng-template #fieldExtra>
+    <button nz-button nzType="dashed" (click)="addField()">
+      <i nz-icon nzType="plus"></i>
+      添加字段
+    </button>
+  </ng-template>
+
+  <div class="m-b-10 text-right">
+    <button nz-button nzType="primary" [nzLoading]="previewLoading()" (click)="preview()">
+      <i nz-icon nzType="code"></i>
+      预览{{ isFrontend() ? '前端' : '后端' }}代码
+    </button>
+  </div>
+
+  @if (previewResult(); as result) {
+    <nz-card class="preview-card" nzTitle="生成结果预览">
+      <div class="preview-meta m-b-12">
+        <nz-tag [nzColor]="result.target === 'frontend' ? 'blue' : 'green'">{{ targetLabel(result.target) }}</nz-tag>
+        <nz-tag>{{ result.moduleName }}</nz-tag>
+        <span class="text-secondary m-l-8">{{ result.outputPath }}</span>
+        <span class="text-secondary m-l-8">{{ result.apiPath }}</span>
+        <span class="text-secondary m-l-8">共 {{ result.files.length }} 个文件</span>
+        <button class="m-l-15" nz-button nzSize="small" (click)="copyAllFiles()">
+          <i nz-icon nzType="copy"></i>
+          复制全部
+        </button>
+      </div>
+      @if (result.target === 'frontend' && result.files.some(f => f.relativePath.endsWith('routing.entry.ts'))) {
+        <div class="routing-hint m-b-12">
+          请将 <code>routing.entry.ts</code> 片段手动合并到 <code>test-routing.ts</code>。
+        </div>
+      }
+      <nz-tabs [(nzSelectedIndex)]="activeFileTab">
+        @for (file of result.files; track file.relativePath) {
+          <nz-tab [nzTitle]="fileTabTitle(file.relativePath)">
+            <div class="file-path-bar">
+              <code>{{ file.relativePath }}</code>
+              <button nz-button nzSize="small" nzType="link" (click)="copyContent(file.content)">
+                <i nz-icon nzType="copy"></i>
+                复制
+              </button>
+            </div>
+            <pre class="code-block"><code>{{ file.content }}</code></pre>
+          </nz-tab>
+        }
+      </nz-tabs>
+    </nz-card>
+  } @else {
+    <nz-card>
+      <nz-empty [nzNotFoundContent]="'配置模块与字段后，点击预览可查看 ' + expectedFileCount() + ' 个生成文件'" />
+    </nz-card>
+  }
+</div>

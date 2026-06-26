@@ -39,6 +39,18 @@ export default [
     loadComponent: () => import('./audit-demo/audit-demo-list.component').then(m => m.AuditDemoListComponent)
   },
   {
+    path: 'codegen',
+    title: '代码生成（测试）',
+    data: { key: 'rbac-test-codegen' },
+    loadComponent: () => import('./codegen/codegen.component').then(m => m.CodegenComponent)
+  },
+  {
+    path: 'product',
+    title: 'Product（测试）',
+    data: { key: 'rbac-test-product' },
+    loadComponent: () => import('./product/product.component').then(m => m.ProductComponent)
+  },
+  {
     path: 'oauth2-client',
     title: 'OAuth2 客户端',
     data: { key: 'rbac-test-oauth2-client' },

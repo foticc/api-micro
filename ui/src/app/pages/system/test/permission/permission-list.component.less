@@ -1,132 +1,98 @@
-.normal-table-wrap {
-  margin-top: 0;
-}
+.permission-list-wrap {
+  .count-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    padding: 3px 8px 3px 10px;
+    border: 1px dashed rgba(22, 119, 255, 0.45);
+    border-radius: 6px;
+    background: #f0f5ff;
+    color: #1677ff;
+    font-size: 12px;
+    line-height: 20px;
+    cursor: pointer;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
 
-.permission-form-wrap {
-  padding-bottom: 72px;
-}
+    &__text {
+      white-space: nowrap;
+    }
 
-.form-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
+    &__icon {
+      flex-shrink: 0;
+      font-size: 12px;
+      opacity: 0.72;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
 
-.form-toolbar-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+    &:hover {
+      border-style: solid;
+      border-color: #1677ff;
+      background: #e6f4ff;
+      box-shadow: 0 1px 4px rgba(22, 119, 255, 0.12);
 
-  .muted {
-    color: rgba(0, 0, 0, 0.45);
-    font-size: 13px;
+      .count-badge__icon {
+        opacity: 1;
+        transform: rotate(30deg);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgba(22, 119, 255, 0.45);
+      outline-offset: 2px;
+    }
+
+    &--menu {
+      border-color: rgba(22, 119, 255, 0.45);
+      background: #f0f5ff;
+      color: #1677ff;
+
+      &.count-badge--empty {
+        border-color: rgba(0, 0, 0, 0.18);
+        background: #fafafa;
+        color: rgba(0, 0, 0, 0.65);
+
+        &:hover {
+          border-color: #1677ff;
+          background: #f0f5ff;
+          color: #1677ff;
+        }
+      }
+    }
+
+    &--api {
+      border-color: rgba(82, 196, 26, 0.45);
+      background: #f6ffed;
+      color: #389e0d;
+
+      &:hover {
+        border-color: #52c41a;
+        background: #eefbdc;
+        box-shadow: 0 1px 4px rgba(82, 196, 26, 0.12);
+      }
+
+      &:focus-visible {
+        outline-color: rgba(82, 196, 26, 0.45);
+      }
+
+      &.count-badge--empty {
+        border-color: rgba(250, 173, 20, 0.55);
+        background: #fffbe6;
+        color: #d48806;
+
+        &:hover {
+          border-color: #faad14;
+          background: #fff1b8;
+          box-shadow: 0 1px 4px rgba(250, 173, 20, 0.16);
+        }
+
+        &:focus-visible {
+          outline-color: rgba(250, 173, 20, 0.45);
+        }
+      }
+    }
   }
-}
-
-.edit-target {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: rgba(0, 0, 0, 0.65);
-  font-size: 14px;
-}
-
-.edit-target-name {
-  color: rgba(0, 0, 0, 0.88);
-  font-weight: 600;
-}
-
-.section-hint {
-  color: rgba(0, 0, 0, 0.45);
-  font-size: 13px;
-  margin: -8px 0 16px;
-}
-
-.resource-row {
-  align-items: stretch;
-}
-
-.resource-card {
-  height: 100%;
-}
-
-.api-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-
-.api-table {
-  ::ng-deep .ant-table-cell {
-    vertical-align: middle;
-  }
-
-  ::ng-deep .ant-table-body {
-    overflow-y: auto !important;
-  }
-}
-
-.menu-tree-scroll {
-  height: 520px;
-  overflow: auto;
-  border: 1px solid #f0f0f0;
-  border-radius: 4px;
-  padding: 8px 12px;
-}
-
-.linked-menu-node {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  max-width: calc(100% - 24px);
-  vertical-align: middle;
-}
-
-.linked-menu-name {
-  flex-shrink: 0;
-  max-width: 140px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.linked-menu-tag {
-  flex-shrink: 0;
-}
-
-.linked-menu-code {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: rgba(0, 0, 0, 0.45);
-  font-size: 12px;
-}
-
-.linked-menu-remove {
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-.form-footer-bar {
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 24px;
-  padding: 12px 24px;
-  background: #fff;
-  border-top: 1px solid #f0f0f0;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
 }

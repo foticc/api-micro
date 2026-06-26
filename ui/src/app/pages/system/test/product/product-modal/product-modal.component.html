@@ -1,0 +1,28 @@
+<form nz-form nzLayout="vertical" [formGroup]="addEditForm">
+  <div nz-row [nzGutter]="16">
+    <div nz-col [nzSpan]="24">
+      <nz-form-item>
+        <nz-form-label nzRequired>标题</nz-form-label>
+        <nz-form-control nzErrorTip="请输入标题">
+          <input formControlName="title" nz-input placeholder="标题" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="24">
+      <nz-form-item>
+        <nz-form-label nzRequired>价格</nz-form-label>
+        <nz-form-control nzErrorTip="请输入价格">
+          <input type="number" formControlName="price" nz-input placeholder="价格" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="24">
+      <nz-form-item>
+        <nz-form-label nzRequired>是否启用</nz-form-label>
+        <nz-form-control nzErrorTip="请输入是否启用">
+          <nz-switch formControlName="enabled" nzCheckedChildren="是" nzUnCheckedChildren="否" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</form>

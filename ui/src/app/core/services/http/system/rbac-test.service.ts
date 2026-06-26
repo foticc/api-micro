@@ -3,6 +3,8 @@ import { HttpResourceRef } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import {
+  PermissionBindIdsPayload,
+  PermissionBindIdsResponse,
   PermissionListFilters,
   PermissionListQuery,
   RbacPermission,
@@ -42,6 +44,24 @@ export class RbacTestService {
 
   deletePermission(id: number): Observable<void> {
     return this.http.post('/rbac/permissions/del', { ids: [id] }, { needSuccessInfo: true });
+  }
+
+  bindPermissionApis(id: number, ids: number[]): Observable<RbacPermission> {
+    const body: PermissionBindIdsPayload = { ids };
+    return this.http.put(`/rbac/permissions/${id}/apis`, body, { needSuccessInfo: true });
+  }
+
+  bindPermissionMenus(id: number, ids: number[]): Observable<RbacPermission> {
+    const body: PermissionBindIdsPayload = { ids };
+    return this.http.put(`/rbac/permissions/${id}/menus`, body, { needSuccessInfo: true });
+  }
+
+  getPermissionMenuIds(id: number): Observable<PermissionBindIdsResponse> {
+    return this.http.get<PermissionBindIdsResponse>(`/rbac/permissions/${id}/menus`);
+  }
+
+  getPermissionApiIds(id: number): Observable<PermissionBindIdsResponse> {
+    return this.http.get<PermissionBindIdsResponse>(`/rbac/permissions/${id}/apis`);
   }
 
   listRoles(): Observable<RbacRole[]> {

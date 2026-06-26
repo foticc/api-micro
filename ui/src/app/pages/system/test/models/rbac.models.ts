@@ -18,6 +18,7 @@ export interface RbacPermission {
   name: string;
   module: string;
   menuIds?: number[];
+  apiIds?: number[];
   menus?: Array<Partial<PermissionMenu> & Record<string, unknown>>;
   apis?: PermissionApi[];
   description?: string;
@@ -33,14 +34,20 @@ export interface RbacPermissionPageItem {
   apiCount: number;
 }
 
+/** 创建/更新权限主表（不含 menu / api 绑定） */
 export interface RbacPermissionPayload {
   code: string;
   name: string;
   module: string;
-  menuIds?: number[];
-  apiIds?: number[];
   description?: string;
 }
+
+/** PUT /permissions/{id}/apis | /menus 全量覆盖绑定；GET 同路径响应结构一致 */
+export interface PermissionBindIdsPayload {
+  ids: number[];
+}
+
+export type PermissionBindIdsResponse = PermissionBindIdsPayload;
 
 export interface RbacRole {
   id: number;
