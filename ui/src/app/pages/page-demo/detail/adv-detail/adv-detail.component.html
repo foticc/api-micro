@@ -4,7 +4,7 @@
   <nz-radio-group>
     <label nz-radio-button>操作一</label>
     <label nz-radio-button>操作二</label>
-    <label nz-dropdown nz-radio-button [nzDropdownMenu]="menu" nzPlacement="bottomRight">
+    <label nz-dropdown nz-radio-button nzPlacement="bottomRight" [nzDropdownMenu]="menu">
       <i nz-icon nzTheme="outline" nzType="ellipsis"></i>
     </label>
     <nz-dropdown-menu #menu="nzDropdownMenu">

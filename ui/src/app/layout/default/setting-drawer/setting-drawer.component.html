@@ -46,7 +46,7 @@
       <div class="block-checkbox">
         @for (mode of modes; track $index) {
           <div class="item" nz-tooltip [nzTooltipTitle]="mode.title | translate" (click)="changeMode(mode)">
-              <img [alt]="mode.title | translate" [src]="mode.image" />
+            <img [alt]="mode.title | translate" [src]="mode.image" />
             @if (mode.isChecked) {
               <div class="select-icon">
                 <i nz-icon nzTheme="outline" nzType="check"></i>
