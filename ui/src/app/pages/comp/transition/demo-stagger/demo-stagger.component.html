@@ -41,7 +41,7 @@
             <div class="stagger-list-item" [style.animation-delay]="$index * 60 + 'ms'" [style.border-left-color]="item.color">
               <span class="item-dot" [style.background]="item.color"></span>
               <span class="item-label">{{ item.label }}</span>
-              <span class="item-badge" [style.color]="item.color" [style.background]="item.color + '1a'">完成</span>
+              <span class="item-badge" [style.background]="item.color + '1a'" [style.color]="item.color">完成</span>
             </div>
           }
         </div>

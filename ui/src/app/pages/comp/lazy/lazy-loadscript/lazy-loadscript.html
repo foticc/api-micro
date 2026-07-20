@@ -16,9 +16,8 @@
   </nz-card>
 
   <div nz-row [nzGutter]="[24, 24]">
-
     <!-- Demo 1: loadScript -->
-    <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="8">
+    <div nz-col [nzMd]="12" [nzXl]="8" [nzXs]="24">
       <nz-card nzTitle="loadScript()" [nzExtra]="scriptTagTpl">
         <ng-template #scriptTagTpl>
           <nz-tag [nzColor]="scriptStatus() === 'done' ? 'success' : scriptStatus() === 'cached' ? 'blue' : scriptStatus() === 'loading' ? 'processing' : 'default'">
@@ -57,7 +56,7 @@ if (result.status === 'ok') &#123;
     </div>
 
     <!-- Demo 2: loadStyle -->
-    <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="8">
+    <div nz-col [nzMd]="12" [nzXl]="8" [nzXs]="24">
       <nz-card nzTitle="loadStyle()" [nzExtra]="styleTagTpl">
         <ng-template #styleTagTpl>
           <nz-tag [nzColor]="styleStatus() === 'done' ? 'success' : styleStatus() === 'loading' ? 'processing' : 'default'">
@@ -80,14 +79,14 @@ const result = await lazyService.loadStyle(url);
 // CSS 加载后立即生效，无需额外操作
 // 在模板中使用 font-family: 'Pacifico' 即可</code></pre>
 
-        <button nz-button nzBlock nzType="primary" [nzLoading]="styleStatus() === 'loading'" [disabled]="styleStatus() === 'done'" (click)="loadStyle()">
+        <button nz-button nzBlock nzType="primary" [disabled]="styleStatus() === 'done'" [nzLoading]="styleStatus() === 'loading'" (click)="loadStyle()">
           {{ styleStatus() === 'idle' ? '加载 Pacifico 字体' : styleStatus() === 'loading' ? '加载中' : '字体已应用' }}
         </button>
       </nz-card>
     </div>
 
     <!-- Demo 3: load 批量 -->
-    <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="8">
+    <div nz-col [nzMd]="12" [nzXl]="8" [nzXs]="24">
       <nz-card nzTitle="load() 批量加载" [nzExtra]="batchTagTpl">
         <ng-template #batchTagTpl>
           <nz-tag [nzColor]="batchStatus() === 'done' ? 'success' : batchStatus() === 'loading' ? 'processing' : 'default'">
@@ -106,7 +105,7 @@ const result = await lazyService.loadStyle(url);
                 <div class="result-item">
                   <span class="result-icon">{{ item.status === 'ok' ? '✅' : item.status === 'loading' ? '🔄' : '❌' }}</span>
                   <span class="result-path">{{ item.path }}</span>
-                  <nz-tag [nzColor]="item.status === 'ok' ? 'success' : item.status === 'loading' ? 'blue' : 'error'" class="sp-11">
+                  <nz-tag class="sp-11" [nzColor]="item.status === 'ok' ? 'success' : item.status === 'loading' ? 'blue' : 'error'">
                     {{ item.status }}
                   </nz-tag>
                 </div>
@@ -134,6 +133,5 @@ const results = await lazyService.load(resources);
         </button>
       </nz-card>
     </div>
-
   </div>
 </div>

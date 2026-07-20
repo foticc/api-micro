@@ -12,7 +12,7 @@
     <nz-form-label nzFor="a" nzRequired [nzSm]="6" [nzXs]="24">收款账户</nz-form-label>
     <nz-form-control nzErrorTip="请输入收款账户" [nzSm]="14" [nzXs]="24">
       <nz-input-wrapper>
-        <nz-select nzInputAddonBefore class="phone-select" formControlName="payWay" style="width: 90px">
+        <nz-select class="phone-select" formControlName="payWay" nzInputAddonBefore style="width: 90px">
           <nz-option nzLabel="支付宝" nzValue="zhifubao"></nz-option>
           <nz-option nzLabel="银行卡" nzValue="bankcard"></nz-option>
         </nz-select>
