@@ -1,18 +1,7 @@
 import { registerLocaleData } from '@angular/common';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import zh from '@angular/common/locales/zh';
-import {
-  ApplicationConfig,
-  importProvidersFrom,
-  provideZonelessChangeDetection,
-  inject,
-  provideAppInitializer,
-  EnvironmentProviders,
-  provideBrowserGlobalErrorListeners
-} from '@angular/core';
-
-import { TranslateModule } from '@ngx-translate/core';
-import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { ApplicationConfig, importProvidersFrom, provideZonelessChangeDetection, inject, provideAppInitializer, EnvironmentProviders, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { provideRouter, RouteReuseStrategy, TitleStrategy, withComponentInputBinding, withHashLocation, withInMemoryScrolling, withPreloading, withViewTransitions } from '@angular/router';
 
@@ -27,15 +16,18 @@ import { SelectivePreloadingStrategyService } from '@core/services/common/select
 import { SubLockedStatusService } from '@core/services/common/sub-locked-status.service';
 import { SubWindowWithService } from '@core/services/common/sub-window-with.service';
 import { ThemeSkinService } from '@core/services/common/theme-skin.service';
+import { ViewTransitionService } from '@core/services/common/view-transition.service';
 import { httpInterceptors } from '@core/services/interceptors';
 import { StartupService } from '@core/startup/startup.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { getDeepReuseStrategyKeyFn } from '@utils/tools';
 
+import { provideNzDateFnsAdapter } from 'ng-zorro-antd/core/time';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NZ_I18N, zh_CN } from 'ng-zorro-antd/i18n';
 import { NZ_ICONS } from 'ng-zorro-antd/icon';
 import { NzModalModule } from 'ng-zorro-antd/modal';
-import { ViewTransitionService } from '@core/services/common/view-transition.service';
 
 const icons = [MenuFoldOutline, MenuUnfoldOutline, DashboardOutline, FormOutline];
 
@@ -104,6 +96,7 @@ const APPINIT_PROVIDES: EnvironmentProviders[] = [
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideNzDateFnsAdapter(),
     // 在无 Zone.js (Zoneless) 的新模式下，Angular 不再依赖 Zone.js 来感知异步操作和错误。这就导致了原生异步任务（如 setTimeout 或 Promise）中未处理的错误会“逃逸”出 Angular 的管理范围。
     provideBrowserGlobalErrorListeners(), // 在浏览器环境中，设置全局的错误监听器，并自动将捕获到的未处理错误和 Promise 拒绝 (rejection) 转发给 Angular 的 ErrorHandler 进行统一处理。
     { provide: RouteReuseStrategy, useClass: SimpleReuseStrategy }, // 路由复用
@@ -140,12 +133,7 @@ export const appConfig: ApplicationConfig = {
       withHashLocation(), // 使用哈希路由
       withComponentInputBinding() // 开启路由参数绑定到组件的输入属性,ng16新增特性
     ),
-    importProvidersFrom(
-      NzDrawerModule,
-      NzModalModule,
-      FormsModule,
-      TranslateModule.forRoot()
-    ),
+    importProvidersFrom(NzDrawerModule, NzModalModule, FormsModule, TranslateModule.forRoot()),
     provideTranslateHttpLoader({ prefix: './i18n/', suffix: '.json' }),
     ...APPINIT_PROVIDES, // 项目启动之前，需要调用的一系列方法
     provideHttpClient(withInterceptors(httpInterceptors)),
