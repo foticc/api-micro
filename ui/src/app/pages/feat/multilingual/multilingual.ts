@@ -1,6 +1,6 @@
 import { Component,  inject, computed } from '@angular/core';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService, Lang } from '@core/services/store/common-store/language.service';
 import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/ant-table.component';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -38,7 +38,7 @@ interface TranslationKey {
   templateUrl: './multilingual.html',
   styleUrl: './multilingual.less',
 
-  imports: [TranslateModule, PageHeaderComponent, AntTableComponent, NzCardModule, NzTagModule, NzDividerModule, NzBadgeModule, NzIconModule, NzGridModule, NzStatisticModule, NzTimelineModule, NzAlertModule]
+  imports: [TranslatePipe, PageHeaderComponent, AntTableComponent, NzCardModule, NzTagModule, NzDividerModule, NzBadgeModule, NzIconModule, NzGridModule, NzStatisticModule, NzTimelineModule, NzAlertModule]
 })
 export class Multilingual {
   private langService = inject(LanguageService);

@@ -4,7 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 
 import { fnCheckForm } from '@utils/tools';
 
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -18,7 +18,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.less',
 
-  imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzButtonModule, NzInputModule, NzSelectModule, NzWaveModule, RouterLink, TranslateModule]
+  imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzButtonModule, NzInputModule, NzSelectModule, NzWaveModule, RouterLink, TranslatePipe]
 })
 export class RegisterFormComponent implements OnInit {
   validateForm!: FormGroup;

@@ -2,7 +2,7 @@ import { Component,  computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { Lang, LanguageService } from '@core/services/store/common-store/language.service';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -14,7 +14,7 @@ import { NzTypographyComponent } from 'ng-zorro-antd/typography';
   templateUrl: './login.component.html',
   styleUrl: './login.component.less',
 
-  imports: [NzIconModule, NzButtonModule, NzDropdownModule, NzMenuModule, TranslateModule, RouterOutlet, NzTypographyComponent]
+  imports: [NzIconModule, NzButtonModule, NzDropdownModule, NzMenuModule, TranslatePipe, RouterOutlet, NzTypographyComponent]
 })
 export class LoginComponent {
   private languageService = inject(LanguageService);

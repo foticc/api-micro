@@ -23,7 +23,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { ModalOptions } from 'ng-zorro-antd/modal';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { HomeNoticeComponent } from '../home-notice/home-notice.component';
 
@@ -32,7 +32,7 @@ import { HomeNoticeComponent } from '../home-notice/home-notice.component';
   templateUrl: './layout-head-right-menu.component.html',
   styleUrl: './layout-head-right-menu.component.less',
 
-  imports: [NgTemplateOutlet, NzTooltipModule, NzIconModule, NzButtonModule, ToggleFullscreenDirective, NzDropdownModule, NzBadgeModule, NzMenuModule, HomeNoticeComponent, ScreenLessHiddenDirective, TranslateModule]
+  imports: [NgTemplateOutlet, NzTooltipModule, NzIconModule, NzButtonModule, ToggleFullscreenDirective, NzDropdownModule, NzBadgeModule, NzMenuModule, HomeNoticeComponent, ScreenLessHiddenDirective, TranslatePipe]
 })
 export class LayoutHeadRightMenuComponent {
   user!: UserPsd;

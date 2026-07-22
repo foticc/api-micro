@@ -18,12 +18,12 @@ import { NzNoAnimationDirective } from 'ng-zorro-antd/core/animation';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-nav-bar',
   templateUrl: './nav-bar.component.html',
-  imports: [NzMenuModule, NzNoAnimationDirective, NgTemplateOutlet, NzButtonModule, NzIconModule, RouterLink, AuthDirective, TranslateModule]
+  imports: [NzMenuModule, NzNoAnimationDirective, NgTemplateOutlet, NzButtonModule, NzIconModule, RouterLink, AuthDirective, TranslatePipe]
 })
 export class NavBarComponent implements OnInit {
   readonly isMixinHead = input(false, { transform: booleanAttribute }); // 是混合模式顶部导航

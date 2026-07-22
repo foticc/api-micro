@@ -13,7 +13,7 @@ import { LockScreenStoreService } from '@store/common-store/lock-screen-store.se
 import { fnCheckForm, fnEncrypt } from '@utils/tools';
 import { getDay } from 'date-fns';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -28,7 +28,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
   templateUrl: './lock-screen.component.html',
   styleUrl: './lock-screen.component.less',
 
-  imports: [NzIconModule, NzButtonModule, NzGridModule, NzAvatarModule, FormsModule, NzFormModule, ReactiveFormsModule, NzInputModule, AsyncPipe, DatePipe, TranslateModule]
+  imports: [NzIconModule, NzButtonModule, NzGridModule, NzAvatarModule, FormsModule, NzFormModule, ReactiveFormsModule, NzInputModule, AsyncPipe, DatePipe, TranslatePipe]
 })
 export class LockScreenComponent implements OnInit {
   public showUnlock = false;

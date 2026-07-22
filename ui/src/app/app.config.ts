@@ -19,7 +19,7 @@ import { ThemeSkinService } from '@core/services/common/theme-skin.service';
 import { ViewTransitionService } from '@core/services/common/view-transition.service';
 import { httpInterceptors } from '@core/services/interceptors';
 import { StartupService } from '@core/startup/startup.service';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { getDeepReuseStrategyKeyFn } from '@utils/tools';
 
@@ -133,7 +133,10 @@ export const appConfig: ApplicationConfig = {
       withHashLocation(), // 使用哈希路由
       withComponentInputBinding() // 开启路由参数绑定到组件的输入属性,ng16新增特性
     ),
-    importProvidersFrom(NzDrawerModule, NzModalModule, FormsModule, TranslateModule.forRoot()),
+    importProvidersFrom(NzDrawerModule, NzModalModule, FormsModule),
+    provideTranslateService({
+      fallbackLang: 'zh_CN'  // 当翻译键缺失时的回退语言
+    }),
     provideTranslateHttpLoader({ prefix: './i18n/', suffix: '.json' }),
     ...APPINIT_PROVIDES, // 项目启动之前，需要调用的一系列方法
     provideHttpClient(withInterceptors(httpInterceptors)),
