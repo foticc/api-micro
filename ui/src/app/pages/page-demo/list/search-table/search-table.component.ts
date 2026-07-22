@@ -1,5 +1,5 @@
-import { Component, OnInit,  TemplateRef, inject, signal, viewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, TemplateRef, inject, signal, viewChild } from '@angular/core';
+import { form, FormField } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 
 import { AntTableConfig, SortFile, AntTableComponent } from '@shared/components/ant-table/ant-table.component';
@@ -18,10 +18,9 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 interface SearchParam {
-  ruleName: number;
+  ruleName: string;
   desc: string;
 }
 
@@ -33,7 +32,7 @@ interface SearchParam {
     PageHeaderComponent,
     NzCardModule,
     WaterMarkComponent,
-    FormsModule,
+    FormField,
     NzFormModule,
     NzGridModule,
     NzInputModule,
@@ -47,7 +46,11 @@ interface SearchParam {
   ]
 })
 export class SearchTableComponent implements OnInit {
-  searchParam: Partial<SearchParam> = {};
+  searchModel = signal<SearchParam>({
+    ruleName: '',
+    desc: ''
+  });
+  searchForm = form(this.searchModel);
   readonly highLightTpl = viewChild.required<TemplateRef<NzSafeAny>>('highLightTpl');
   readonly operationTpl = viewChild.required<TemplateRef<NzSafeAny>>('operationTpl');
   isCollapse = true;
@@ -162,29 +165,14 @@ export class SearchTableComponent implements OnInit {
       this.checkedCashArray = [...this.checkedCashArray];
       this.tableLoading(false);
     });
-
-    /*-----实际业务请求http接口如下------*/
-    // this.tableConfig.loading = true;
-    // const params: SearchCommonVO<NzSafeAny> = {
-    //   pageSize: this.tableConfig.pageSize!,
-    //   pageIndex: e?.pageIndex || this.tableConfig.pageIndex!,
-    //   filters: this.searchParam
-    // };
-    // this.dataService.getFireSysList(params).pipe(finalize(() => {
-    //   this.tableLoading(false);
-    // })).subscribe((data => {
-    //   const {list, total, pageIndex} = data;
-    //   this.dataList = [...list];
-    //   this.tableConfig.total = total!;
-    //   this.tableConfig.pageIndex = pageIndex!;
-    //   this.tableLoading(false);
-    //   this.checkedCashArray = [...this.checkedCashArray];
-    // }));
   }
 
   /*重置*/
   resetForm(): void {
-    this.searchParam = {};
+    this.searchModel.set({
+      ruleName: '',
+      desc: ''
+    });
     this.getDataList(1);
   }
 
@@ -199,35 +187,10 @@ export class SearchTableComponent implements OnInit {
     this.router.navigate(['default/page-demo/list/search-table/search-table-detail', name, 123]);
   }
 
-  add(): void {
-    // this.modalService.show({nzTitle: '新增'}).subscribe((res) => {
-    //   if (!res || res.status === ModalBtnStatus.Cancel) {
-    //     return;
-    //   }
-    //   this.tableLoading(true);
-    //   this.addEditData(res.modalValue, 'addFireSys');
-    // }, error => this.tableLoading(false));
-  }
+  add(): void {}
 
   // 修改
-  edit(id: number): void {
-    // this.dataService.getFireSysDetail(id).subscribe(res => {
-    //   this.modalService.show({nzTitle: '编辑'}, res).subscribe(({modalValue, status}) => {
-    //     if (status === ModalBtnStatus.Cancel) {
-    //       return;
-    //     }
-    //     modalValue.id = id;
-    //     this.tableLoading(true);
-    //     this.addEditData(modalValue, 'editFireSys');
-    //   }, error => this.tableLoading(false));
-    // });
-  }
-
-  // addEditData(param: FireSysObj, methodName: 'editFireSys' | 'addFireSys'): void {
-  //   this.dataService[methodName](param).subscribe(() => {
-  //     this.getDataList();
-  //   });
-  // }
+  edit(id: number): void {}
 
   del(id: number): void {
     this.modalSrv.confirm({
@@ -235,15 +198,6 @@ export class SearchTableComponent implements OnInit {
       nzContent: '删除后不可恢复',
       nzOnOk: () => {
         this.tableLoading(true);
-        /*注释的是模拟接口调用*/
-        // this.dataService.delFireSys([id]).subscribe(() => {
-        //   if (this.dataList.length === 1) {
-        //     this.tableConfig.pageIndex--;
-        //   }
-        //   this.getDataList();
-        //   this.checkedCashArray.splice(this.checkedCashArray.findIndex(item => item.id === id), 1);
-        // }, error => this.tableLoading(false));
-
         setTimeout(() => {
           this.message.info(`id数组(支持分页保存):${JSON.stringify(id)}`);
           this.getDataList(1);
@@ -268,14 +222,7 @@ export class SearchTableComponent implements OnInit {
             tempArrays.push(item.id);
           });
           this.tableLoading(true);
-          // 注释的是模拟接口的调用
-          // this.dataService.delFireSys(tempArrays).subscribe(() => {
-          //   if (this.dataList.length === 1) {
-          //     this.tableConfig.pageIndex--;
-          //   }
-          //   this.getDataList();
-          //   this.checkedCashArray = [];
-          // }, error => this.tableLoading(false));
+
           setTimeout(() => {
             this.message.info(`id数组(支持分页保存):${JSON.stringify(tempArrays)}`);
             this.getDataList(1);

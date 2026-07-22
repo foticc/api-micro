@@ -1,5 +1,5 @@
-import { Component, OnInit,  TemplateRef, inject, signal, viewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, TemplateRef, inject, signal, viewChild } from '@angular/core';
+import { form, FormField } from '@angular/forms/signals';
 
 import { AntTableConfig, SortFile } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
@@ -19,10 +19,9 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 interface SearchParam {
-  ruleName: number;
+  ruleName: string;
   desc: string;
 }
 
@@ -34,7 +33,7 @@ interface SearchParam {
     PageHeaderComponent,
     NzCardModule,
     WaterMarkComponent,
-    FormsModule,
+    FormField,
     NzFormModule,
     NzGridModule,
     NzInputModule,
@@ -47,9 +46,13 @@ interface SearchParam {
   ]
 })
 export class TreeListComponent implements OnInit {
+  searchModel = signal<SearchParam>({
+    ruleName: '',
+    desc: ''
+  });
+  searchForm = form(this.searchModel);
   readonly highLightTpl = viewChild.required<TemplateRef<NzSafeAny>>('highLightTpl');
   readonly operationTpl = viewChild.required<TemplateRef<NzSafeAny>>('operationTpl');
-  searchParam: Partial<SearchParam> = {};
 
   isCollapse = true;
   tableConfig = signal<AntTableConfig>({ headers: [], total: 0, showCheckbox: false, loading: false, pageSize: 10, pageIndex: 1 });
@@ -214,24 +217,6 @@ export class TreeListComponent implements OnInit {
       // this.checkedCashArray = [...this.checkedCashArray];
       this.tableLoading(false);
     });
-
-    /*-----实际业务请求http接口如下------*/
-    // this.tableConfig.loading = true;
-    // const params: SearchCommonVO<NzSafeAny> = {
-    //   pageSize: this.tableConfig.pageSize!,
-    //   pageIndex: e?.pageIndex || this.tableConfig.pageIndex!,
-    //   filters: this.searchParam
-    // };
-    // this.dataService.getFireSysList(params).pipe(finalize(() => {
-    //   this.tableLoading(false);
-    // })).subscribe((data => {
-    //   const {list, total, pageIndex} = data;
-    //   this.dataList = [...list];
-    //   this.tableConfig.total = total!;
-    //   this.tableConfig.pageIndex = pageIndex!;
-    //   this.tableLoading(false);
-    //   this.checkedCashArray = [...this.checkedCashArray];
-    // }));
   }
 
   /*展开*/
@@ -248,19 +233,14 @@ export class TreeListComponent implements OnInit {
 
   /*重置*/
   resetForm(): void {
-    this.searchParam = {};
+    this.searchModel.set({
+      ruleName: '',
+      desc: ''
+    });
     this.getDataList(1);
   }
 
-  add(): void {
-    // this.modalService.show({nzTitle: '新增'}).subscribe((res) => {
-    //   if (!res || res.status === ModalBtnStatus.Cancel) {
-    //     return;
-    //   }
-    //   this.tableLoading(true);
-    //   this.addEditData(res.modalValue, 'addFireSys');
-    // }, error => this.tableLoading(false));
-  }
+  add(): void {}
 
   del(id: number): void {
     this.modalSrv.confirm({
@@ -275,14 +255,6 @@ export class TreeListComponent implements OnInit {
           1
         );
         this.tableLoading(false);
-        /*注释的是模拟接口调用*/
-        // this.dataService.delFireSys([id]).subscribe(() => {
-        //   if (this.dataList.length === 1) {
-        //     this.tableConfig.pageIndex--;
-        //   }
-        //   this.getDataList();
-        //   this.checkedCashArray.splice(this.checkedCashArray.findIndex(item => item.id === id), 1);
-        // }, error => this.tableLoading(false));
       }
     });
   }
@@ -319,24 +291,7 @@ export class TreeListComponent implements OnInit {
   }
 
   // 修改
-  edit(id: number): void {
-    // this.dataService.getFireSysDetail(id).subscribe(res => {
-    //   this.modalService.show({nzTitle: '编辑'}, res).subscribe(({modalValue, status}) => {
-    //     if (status === ModalBtnStatus.Cancel) {
-    //       return;
-    //     }
-    //     modalValue.id = id;
-    //     this.tableLoading(true);
-    //     this.addEditData(modalValue, 'editFireSys');
-    //   }, error => this.tableLoading(false));
-    // });
-  }
-
-  // addEditData(param: FireSysObj, methodName: 'editFireSys' | 'addFireSys'): void {
-  //   this.dataService[methodName](param).subscribe(() => {
-  //     this.getDataList();
-  //   });
-  // }
+  edit(id: number): void {}
 
   changeSort(e: SortFile): void {
     this.message.info(`排序字段：${e.fileName},排序为:${e.sortDir}`);
