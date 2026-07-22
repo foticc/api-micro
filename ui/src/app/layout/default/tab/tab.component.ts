@@ -7,7 +7,7 @@ import { SplitNavStoreService } from '@store/common-store/split-nav-store.servic
 import { ThemeService } from '@store/common-store/theme.service';
 import { fnStopMouseEvent } from '@utils/tools';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -20,7 +20,7 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
   selector: 'app-tab',
   templateUrl: './tab.component.html',
   styleUrl: './tab.component.less',
-  imports: [NzCardModule, NzTabsModule, NzDropdownModule, NzMenuModule, NzButtonModule, MouseHoverShowDirective, NzIconModule, TranslateModule]
+  imports: [NzCardModule, NzTabsModule, NzDropdownModule, NzMenuModule, NzButtonModule, MouseHoverShowDirective, NzIconModule, TranslatePipe]
 })
 export class TabComponent {
   private tabService = inject(TabService);

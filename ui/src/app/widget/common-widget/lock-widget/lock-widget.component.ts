@@ -9,7 +9,7 @@ import { LockScreenFlag, LockScreenStoreService } from '@store/common-store/lock
 import { fnCheckForm, fnEncrypt } from '@utils/tools';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -26,7 +26,7 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
   templateUrl: './lock-widget.component.html',
   styleUrl: './lock-widget.component.less',
 
-  imports: [NzAvatarModule, FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzButtonModule, NzInputModule, NzIconModule, NzWaveModule, TranslateModule]
+  imports: [NzAvatarModule, FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzButtonModule, NzInputModule, NzIconModule, NzWaveModule, TranslatePipe]
 })
 export class LockWidgetComponent extends BasicConfirmModalComponent {
   private fb = inject(NonNullableFormBuilder);

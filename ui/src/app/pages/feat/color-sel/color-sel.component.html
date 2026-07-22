@@ -6,113 +6,127 @@
     颜色选择器
   </div>
   <nz-card [nzBordered]="false">
-    <p class="pg-card-desc m-b-24">基于 <code class="inline-code">ngx-color-picker</code> 封装，支持多种模式与输出格式。点击色块或文字即可唤起选色面板。</p>
+    <p class="pg-card-desc m-b-24">
+      基于 <code class="inline-code">ng-zorro-antd NzColorPickerModule</code> 实现，支持多种格式与尺寸配置。
+    </p>
 
     <div nz-row [nzGutter]="[24, 24]">
+      <!-- 基本用法 -->
       <div nz-col [nzLg]="8" [nzMd]="12" [nzXs]="24">
         <div class="demo-item">
-          <span class="demo-label">默认模式</span>
+          <span class="demo-label">基本用法</span>
           <div class="demo-row">
-            <span class="color-swatch" [style.background]="color"></span>
-            <input class="color-input" [colorPicker]="color" [style.background]="color" (colorPickerChange)="color = $event" />
+            <nz-color-picker [(ngModel)]="color" />
+            <span class="color-value">{{ color() }}</span>
           </div>
         </div>
       </div>
 
+      <!-- HEX 格式 -->
       <div nz-col [nzLg]="8" [nzMd]="12" [nzXs]="24">
         <div class="demo-item">
-          <span class="demo-label">灰度模式</span>
+          <span class="demo-label">HEX 格式</span>
           <div class="demo-row">
-            <span class="color-swatch" [style.background]="color"></span>
-            <input class="color-input" [cpColorMode]="'grayscale'" [style.background]="color" [(colorPicker)]="color" />
+            <nz-color-picker nzFormat="hex" [(ngModel)]="hexColor" />
+            <span class="color-value">{{ hexColor() }}</span>
           </div>
         </div>
       </div>
 
+      <!-- RGB 格式 -->
       <div nz-col [nzLg]="8" [nzMd]="12" [nzXs]="24">
         <div class="demo-item">
-          <span class="demo-label">输入框显示色值</span>
+          <span class="demo-label">RGB 格式</span>
           <div class="demo-row">
-            <span class="color-swatch" [style.background]="color"></span>
-            <input class="color-input" [style.background]="color" [value]="color" [(colorPicker)]="color" />
+            <nz-color-picker nzFormat="rgb" [(ngModel)]="rgbColor" />
+            <span class="color-value">{{ rgbColor() }}</span>
           </div>
         </div>
       </div>
 
+      <!-- HSB 格式 -->
       <div nz-col [nzLg]="8" [nzMd]="12" [nzXs]="24">
         <div class="demo-item">
-          <span class="demo-label">输出格式 RGBA</span>
+          <span class="demo-label">HSB 格式</span>
           <div class="demo-row">
-            <span class="color-swatch" [style.background]="color"></span>
-            <input class="color-input" [cpOutputFormat]="'rgba'" [style.background]="color" [value]="color" [(colorPicker)]="color" />
+            <nz-color-picker nzFormat="hsb" [(ngModel)]="hsbColor" />
+            <span class="color-value">{{ hsbColor() }}</span>
           </div>
         </div>
       </div>
 
+      <!-- 大尺寸 -->
       <div nz-col [nzLg]="8" [nzMd]="12" [nzXs]="24">
         <div class="demo-item">
-          <span class="demo-label">弹出位置 top-right</span>
+          <span class="demo-label">大尺寸</span>
           <div class="demo-row">
-            <span class="color-swatch" [style.background]="color"></span>
-            <input class="color-input" [cpPosition]="'top-right'" [style.background]="color" [value]="color" [(colorPicker)]="color" />
+            <nz-color-picker nzSize="large" [(ngModel)]="largeColor" />
+            <span class="color-value">{{ largeColor() }}</span>
           </div>
         </div>
       </div>
 
+      <!-- 默认尺寸 -->
       <div nz-col [nzLg]="8" [nzMd]="12" [nzXs]="24">
         <div class="demo-item">
-          <span class="demo-label">文字触发 + 偏移量</span>
+          <span class="demo-label">默认尺寸</span>
           <div class="demo-row">
-            <span class="color-trigger-text" [cpPosition]="'bottom'" [cpPositionOffset]="'50%'" [cpPositionRelativeToArrow]="true" [style.color]="color" [(colorPicker)]="color">Change me!</span>
+            <nz-color-picker [(ngModel)]="defaultColor" />
+            <span class="color-value">{{ defaultColor() }}</span>
           </div>
         </div>
       </div>
 
+      <!-- 小尺寸 -->
       <div nz-col [nzLg]="8" [nzMd]="12" [nzXs]="24">
         <div class="demo-item">
-          <span class="demo-label">显示取消按钮</span>
+          <span class="demo-label">小尺寸</span>
           <div class="demo-row">
-            <span class="color-swatch" [style.background]="color"></span>
-            <input class="color-input" [cpCancelButton]="true" [style.background]="color" [value]="color" [(colorPicker)]="color" />
+            <nz-color-picker nzSize="small" [(ngModel)]="smallColor" />
+            <span class="color-value">{{ smallColor() }}</span>
           </div>
         </div>
       </div>
 
+      <!-- 禁用透明度 -->
       <div nz-col [nzLg]="8" [nzMd]="12" [nzXs]="24">
         <div class="demo-item">
-          <span class="demo-label">显示确认按钮</span>
+          <span class="demo-label">禁用透明度</span>
           <div class="demo-row">
-            <span class="color-swatch" [style.background]="color"></span>
-            <input
-              class="color-input"
-              [cpOKButton]="true"
-              [cpOKButtonClass]="'btn btn-primary btn-xs'"
-              [cpSaveClickOutside]="false"
-              [style.background]="color"
-              [value]="color"
-              [(colorPicker)]="color"
-            />
+            <nz-color-picker [nzDisabledAlpha]="true" [(ngModel)]="noAlphaColor" />
+            <span class="color-value">{{ noAlphaColor() }}</span>
           </div>
         </div>
       </div>
 
+      <!-- 显示文本 -->
       <div nz-col [nzLg]="8" [nzMd]="12" [nzXs]="24">
         <div class="demo-item">
-          <span class="demo-label">吸管工具</span>
+          <span class="demo-label">显示颜色文本</span>
           <div class="demo-row">
-            <span class="color-swatch" [style.background]="color"></span>
-            <input
-              class="color-input"
-              [cpEyeDropper]="true"
-              [cpOKButtonClass]="'btn btn-primary btn-xs'"
-              [cpSaveClickOutside]="false"
-              [style.background]="color"
-              [value]="color"
-              [(colorPicker)]="color"
-            />
+            <nz-color-picker [nzShowText]="true" [(ngModel)]="textColor" />
           </div>
         </div>
       </div>
+
+      <!-- Hover 触发 -->
+      <div nz-col [nzLg]="8" [nzMd]="12" [nzXs]="24">
+        <div class="demo-item">
+          <span class="demo-label">Hover 触发</span>
+          <div class="demo-row">
+            <nz-color-picker nzTrigger="hover" [(ngModel)]="color" />
+            <span class="color-value">{{ color() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 说明 -->
+    <div class="m-t-24">
+      <p class="pg-card-desc">
+        <strong>注意：</strong>ng-zorro-antd 的颜色选择器是原生组件，相比 ngx-color-picker 功能更精简。
+        不支持灰度模式、吸管工具、自定义按钮样式等高级功能。如需这些功能，可以考虑其他第三方库或自定义实现。
+      </p>
     </div>
   </nz-card>
 </div>

@@ -10,7 +10,7 @@ import { Menu } from '@core/services/types';
 import { MenuStoreService } from '@store/common-store/menu-store.service';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
 
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
@@ -36,7 +36,7 @@ const passiveEventListenerOptions = normalizePassiveListenerOptions({ passive: t
   templateUrl: './search-route.component.html',
   styleUrl: './search-route.component.less',
 
-  imports: [NzButtonModule, NzInputModule, FormsModule, NzIconModule, NzEmptyModule, NzGridModule, NzDividerModule, TranslateModule],
+  imports: [NzButtonModule, NzInputModule, FormsModule, NzIconModule, NzEmptyModule, NzGridModule, NzDividerModule, TranslatePipe],
   host: {
     '(window:keyup.enter)': 'onEnterUp()',
     '(window:keyup.arrowUp)': 'onArrowUp()',

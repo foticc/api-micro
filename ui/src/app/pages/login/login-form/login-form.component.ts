@@ -10,7 +10,7 @@ import { OAuth2LoginButtonComponent } from '@app/pages/system/test/oauth2/compon
 import { SpinService } from '@store/common-store/spin.service';
 import { fnCheckForm } from '@utils/tools';
 
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
@@ -26,6 +26,8 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.less',
   imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzTabsModule, NzGridModule, NzButtonModule, NzInputModule, NzWaveModule, NzCheckboxModule, NzIconModule, RouterLink, TranslateModule, OAuth2LoginButtonComponent]
+
+  imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzTabsModule, NzGridModule, NzButtonModule, NzInputModule, NzWaveModule, NzCheckboxModule, NzIconModule, RouterLink, TranslatePipe]
 })
 export class LoginFormComponent implements OnInit {
   validateForm!: FormGroup;

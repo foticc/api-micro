@@ -11,7 +11,7 @@ import { WindowService } from '@core/services/common/window.service';
 import { SettingInterface, StyleTheme, StyleThemeInterface, ThemeService } from '@store/common-store/theme.service';
 import { fnFormatToHump } from '@utils/tools';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzConfigService } from 'ng-zorro-antd/core/config';
@@ -51,7 +51,7 @@ type SettingKey = Exclude<keyof SettingInterface, ExcludedKeys>;
   selector: 'app-setting-drawer',
   templateUrl: './setting-drawer.component.html',
   styleUrl: './setting-drawer.component.less',
-  imports: [CdkDrag, NzIconModule, NzButtonModule, NzDrawerModule, NzTooltipModule, NzDividerModule, NzListModule, NzSwitchModule, FormsModule, TranslateModule]
+  imports: [CdkDrag, NzIconModule, NzButtonModule, NzDrawerModule, NzTooltipModule, NzDividerModule, NzListModule, NzSwitchModule, FormsModule, TranslatePipe]
 })
 export class SettingDrawerComponent implements OnInit {
   private themesService = inject(ThemeService);

@@ -29,7 +29,6 @@ export default tseslint.config(
     languageOptions: {
       parserOptions: {
         projectService: true, // 启用项目服务（通常用于增强类型信息）
-        project: ['tsconfig.json'], // 指定要使用的 tsconfig 文件
         tsconfigRootDir: import.meta.dirname // 指定 tsconfig 文件所在的根目录
       }
     },
