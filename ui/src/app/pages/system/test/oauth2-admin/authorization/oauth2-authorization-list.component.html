@@ -8,7 +8,7 @@
           <nz-form-item>
             <nz-form-label>Client ID</nz-form-label>
             <nz-form-control>
-              <input nz-input name="registeredClientId" [(ngModel)]="searchParam.registeredClientId" (keyup.enter)="getDataList(1)" />
+              <input name="registeredClientId" nz-input [(ngModel)]="searchParam.registeredClientId" (keyup.enter)="getDataList(1)" />
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -16,7 +16,7 @@
           <nz-form-item>
             <nz-form-label>用户名</nz-form-label>
             <nz-form-control>
-              <input nz-input name="principalName" placeholder="模糊匹配" [(ngModel)]="searchParam.principalName" (keyup.enter)="getDataList(1)" />
+              <input name="principalName" nz-input placeholder="模糊匹配" [(ngModel)]="searchParam.principalName" (keyup.enter)="getDataList(1)" />
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -24,7 +24,7 @@
           <nz-form-item>
             <nz-form-label>Grant Type</nz-form-label>
             <nz-form-control>
-              <input nz-input name="authorizationGrantType" [(ngModel)]="searchParam.authorizationGrantType" (keyup.enter)="getDataList(1)" />
+              <input name="authorizationGrantType" nz-input [(ngModel)]="searchParam.authorizationGrantType" (keyup.enter)="getDataList(1)" />
             </nz-form-control>
           </nz-form-item>
         </div>

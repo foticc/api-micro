@@ -1,9 +1,10 @@
-import {  Component, model, output, signal } from '@angular/core';
+import { Component, model, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 
 @Component({
   selector: 'app-child-counter',
@@ -20,17 +21,34 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
     <div class="switch-row m-t-10">
       <span>model() 双向绑定：</span>
       <nz-switch [(ngModel)]="checked" />
-      <nz-tag [nzColor]="checked() ? 'success' : 'default'" class="m-l-8">
+      <nz-tag class="m-l-8" [nzColor]="checked() ? 'success' : 'default'">
         {{ checked() ? '开启' : '关闭' }}
       </nz-tag>
     </div>
   `,
-  styles: [`
-    .counter-wrap { text-align: center; }
-    .count-display { font-size: 36px; font-weight: 700; color: #1890ff; margin-bottom: 8px; }
-    .btn-row { display: flex; gap: 8px; justify-content: center; }
-    .switch-row { display: flex; align-items: center; gap: 8px; }
-  `]
+  styles: [
+    `
+      .counter-wrap {
+        text-align: center;
+      }
+      .count-display {
+        font-size: 36px;
+        font-weight: 700;
+        color: #1890ff;
+        margin-bottom: 8px;
+      }
+      .btn-row {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+      }
+      .switch-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    `
+  ]
 })
 export class ChildCounterComponent {
   readonly count = signal(0);

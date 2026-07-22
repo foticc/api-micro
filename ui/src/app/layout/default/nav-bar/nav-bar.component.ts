@@ -1,11 +1,12 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, OnInit,  inject, DestroyRef, booleanAttribute, input, computed, signal, effect, untracked } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, booleanAttribute, input, computed, signal, effect, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map, mergeMap, tap } from 'rxjs/operators';
 
 import { TabService } from '@core/services/common/tab.service';
 import { Menu } from '@core/services/types';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthDirective } from '@shared/directives/auth.directive';
 import { MenuStoreService } from '@store/common-store/menu-store.service';
 import { SplitNavStoreService } from '@store/common-store/split-nav-store.service';
@@ -17,8 +18,6 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzNoAnimationDirective } from 'ng-zorro-antd/core/animation';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
-
-import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-nav-bar',
@@ -268,9 +267,7 @@ export class NavBarComponent implements OnInit {
     return menus.map(menu => ({
       ...menu,
       open: false,
-      children: menu.children && menu.children.length > 0
-        ? this.closeMenuOpen(menu.children)
-        : menu.children
+      children: menu.children && menu.children.length > 0 ? this.closeMenuOpen(menu.children) : menu.children
     }));
   }
 

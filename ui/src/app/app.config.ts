@@ -1,5 +1,5 @@
 import { registerLocaleData } from '@angular/common';
-import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors } from '@angular/common/http';
 import zh from '@angular/common/locales/zh';
 import { ApplicationConfig, importProvidersFrom, provideZonelessChangeDetection, inject, provideAppInitializer, EnvironmentProviders, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -7,6 +7,7 @@ import { provideRouter, RouteReuseStrategy, TitleStrategy, withComponentInputBin
 
 import { DashboardOutline, FormOutline, MenuFoldOutline, MenuUnfoldOutline } from '@ant-design/icons-angular/icons';
 import { appRoutes } from '@app/app.routes';
+import { provideTestOAuth2 } from '@app/pages/system/test/oauth2/providers/provide-test-oauth2';
 import { CustomPageTitleResolverService } from '@core/services/common/custom-page-title-resolver.service';
 import { InitLangService } from '@core/services/common/init-lang.service';
 import { InitThemeService } from '@core/services/common/init-theme.service';
@@ -29,8 +30,6 @@ import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NZ_I18N, zh_CN } from 'ng-zorro-antd/i18n';
 import { NZ_ICONS } from 'ng-zorro-antd/icon';
 import { NzModalModule } from 'ng-zorro-antd/modal';
-import { ViewTransitionService } from '@core/services/common/view-transition.service';
-import { provideTestOAuth2 } from '@app/pages/system/test/oauth2/providers/provide-test-oauth2';
 
 const icons = [MenuFoldOutline, MenuUnfoldOutline, DashboardOutline, FormOutline];
 
@@ -138,7 +137,7 @@ export const appConfig: ApplicationConfig = {
     ),
     importProvidersFrom(NzDrawerModule, NzModalModule, FormsModule),
     provideTranslateService({
-      fallbackLang: 'zh_CN'  // 当翻译键缺失时的回退语言
+      fallbackLang: 'zh_CN' // 当翻译键缺失时的回退语言
     }),
     provideTranslateHttpLoader({ prefix: './i18n/', suffix: '.json' }),
     ...APPINIT_PROVIDES, // 项目启动之前，需要调用的一系列方法

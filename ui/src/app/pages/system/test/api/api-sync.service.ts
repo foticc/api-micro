@@ -12,9 +12,7 @@ export class ApiSyncService {
 
   /** POST /rbac/api/sync — 后端完成对比与导入，返回同步数量 */
   runSync(): Observable<ApiSyncRunResult> {
-    return this.http
-      .post<ApiSyncResponseData>('/rbac/api/sync', {})
-      .pipe(map(data => ({ created: this.parseSyncCount(data) })));
+    return this.http.post<ApiSyncResponseData>('/rbac/api/sync', {}).pipe(map(data => ({ created: this.parseSyncCount(data) })));
   }
 
   private parseSyncCount(data: ApiSyncResponseData): number {

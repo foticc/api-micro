@@ -12,10 +12,6 @@ export class OAuth2ClientModalService {
   private modalWrapService = inject(ModalWrapService);
 
   show(modalOptions: ModalOptions = {}, modalData?: RegisteredClientDTO): Observable<ModalResponse> {
-    return this.modalWrapService.show<OAuth2ClientModalComponent, RegisteredClientDTO>(
-      OAuth2ClientModalComponent as Type<OAuth2ClientModalComponent>,
-      modalOptions,
-      modalData
-    );
+    return this.modalWrapService.show<OAuth2ClientModalComponent, RegisteredClientDTO>(OAuth2ClientModalComponent as Type<OAuth2ClientModalComponent>, modalOptions, modalData);
   }
 }

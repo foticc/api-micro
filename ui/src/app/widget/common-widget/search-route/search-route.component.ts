@@ -1,5 +1,5 @@
 import { normalizePassiveListenerOptions } from '@angular/cdk/platform';
-import { Component,  ElementRef, AfterViewInit, inject, DestroyRef, viewChild, signal, effect } from '@angular/core';
+import { Component, ElementRef, AfterViewInit, inject, DestroyRef, viewChild, signal, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,10 +7,9 @@ import { fromEvent, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 
 import { Menu } from '@core/services/types';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MenuStoreService } from '@store/common-store/menu-store.service';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
-
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
@@ -100,7 +99,9 @@ export class SearchRouteComponent extends BasicConfirmModalComponent implements 
   }
 
   resultClick(resultItem: ResultItem): void {
-    this.router.navigate([resultItem.routePath]).then(() => {this.modalRef.destroy();})
+    this.router.navigate([resultItem.routePath]).then(() => {
+      this.modalRef.destroy();
+    });
   }
 
   getResultItem(menu: Menu, fatherTitle = ''): ResultItem[] {

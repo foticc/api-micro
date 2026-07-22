@@ -150,8 +150,8 @@ export const permission = [
 
   // 更新角色权限
   http.post('/site/api/permission/assign-role-menu', async ({ request }) => {
-    const body = await request.json() as { roleId: number; permCodes: string[] };
+    const body = (await request.json()) as { roleId: number; permCodes: string[] };
     rolePermissions[body.roleId] = body.permCodes;
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: null });
-  }),
+  })
 ];

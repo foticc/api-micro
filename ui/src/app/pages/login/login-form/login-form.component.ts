@@ -4,13 +4,13 @@ import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } 
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 
+import { OAuth2LoginButtonComponent } from '@app/pages/system/test/oauth2/components/oauth2-login-button.component';
 import { LoginInOutService } from '@core/services/common/login-in-out.service';
 import { LoginService } from '@core/services/http/login/login.service';
-import { OAuth2LoginButtonComponent } from '@app/pages/system/test/oauth2/components/oauth2-login-button.component';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SpinService } from '@store/common-store/spin.service';
 import { fnCheckForm } from '@utils/tools';
 
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
@@ -25,7 +25,21 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.less',
-  imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzTabsModule, NzGridModule, NzButtonModule, NzInputModule, NzWaveModule, NzCheckboxModule, NzIconModule, RouterLink, TranslatePipe]
+  imports: [
+    FormsModule,
+    NzFormModule,
+    ReactiveFormsModule,
+    NzTabsModule,
+    NzGridModule,
+    NzButtonModule,
+    NzInputModule,
+    NzWaveModule,
+    NzCheckboxModule,
+    NzIconModule,
+    RouterLink,
+    TranslatePipe,
+    OAuth2LoginButtonComponent
+  ]
 })
 export class LoginFormComponent implements OnInit {
   validateForm!: FormGroup;

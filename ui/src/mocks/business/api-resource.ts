@@ -47,9 +47,7 @@ function pageSlice<T>(list: T[], pageIndex: number, pageSize: number) {
 }
 
 function duplicate(row: Omit<ApiResourceRow, 'id'>, excludeId?: number): boolean {
-  return resources.some(
-    r => r.method === row.method && r.path === row.path && r.id !== excludeId
-  );
+  return resources.some(r => r.method === row.method && r.path === row.path && r.id !== excludeId);
 }
 
 export const apiResource = [
@@ -63,11 +61,7 @@ export const apiResource = [
     let list = [...resources];
     const kw = filters?.keyword?.trim().toLowerCase();
     if (kw) {
-      list = list.filter(
-        r =>
-          r.path.toLowerCase().includes(kw) ||
-          (r.description?.toLowerCase().includes(kw) ?? false)
-      );
+      list = list.filter(r => r.path.toLowerCase().includes(kw) || (r.description?.toLowerCase().includes(kw) ?? false));
     }
     if (filters?.method) {
       list = list.filter(r => r.method === filters.method);

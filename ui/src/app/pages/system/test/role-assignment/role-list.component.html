@@ -134,14 +134,7 @@
       </div>
 
       <nz-spin [nzSpinning]="assignLoading()">
-        <nz-table
-          class="api-table permission-pick-table"
-          nzSize="middle"
-          [nzData]="permissionList()"
-          [nzFrontPagination]="false"
-          [nzScroll]="permissionListScroll()"
-          [nzShowPagination]="false"
-        >
+        <nz-table class="api-table permission-pick-table" nzSize="middle" [nzData]="permissionList()" [nzFrontPagination]="false" [nzScroll]="permissionListScroll()" [nzShowPagination]="false">
           <thead>
             <tr>
               <th nzWidth="48px" [nzChecked]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="onAllPermissionChecked($event)"></th>
@@ -182,14 +175,7 @@
                     <div class="assign-toolbar">
                       <span class="muted">共 {{ previewMenus().length }} 项</span>
                     </div>
-                    <nz-table
-                      class="api-table menu-table"
-                      nzSize="middle"
-                      [nzData]="previewMenus()"
-                      [nzFrontPagination]="false"
-                      [nzScroll]="previewTableScroll"
-                      [nzShowPagination]="false"
-                    >
+                    <nz-table class="api-table menu-table" nzSize="middle" [nzData]="previewMenus()" [nzFrontPagination]="false" [nzScroll]="previewTableScroll" [nzShowPagination]="false">
                       <thead>
                         <tr>
                           <th>名称</th>
@@ -234,14 +220,7 @@
                     <div class="assign-toolbar">
                       <span class="muted">共 {{ previewApis().length }} 条</span>
                     </div>
-                    <nz-table
-                      class="api-table"
-                      nzSize="middle"
-                      [nzData]="previewApis()"
-                      [nzFrontPagination]="false"
-                      [nzScroll]="previewTableScroll"
-                      [nzShowPagination]="false"
-                    >
+                    <nz-table class="api-table" nzSize="middle" [nzData]="previewApis()" [nzFrontPagination]="false" [nzScroll]="previewTableScroll" [nzShowPagination]="false">
                       <thead>
                         <tr>
                           <th nzWidth="110px">方法</th>

@@ -1,9 +1,10 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component,  inject, computed } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { LoginInOutService } from '@core/services/common/login-in-out.service';
 import { WindowService } from '@core/services/common/window.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AccountService, UserPsd } from '@services/system/account.service';
 import { ScreenLessHiddenDirective } from '@shared/directives/screen-less-hidden.directive';
 import { ToggleFullscreenDirective } from '@shared/directives/toggle-fullscreen.directive';
@@ -23,8 +24,6 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { ModalOptions } from 'ng-zorro-antd/modal';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-
 import { HomeNoticeComponent } from '../home-notice/home-notice.component';
 
 @Component({
@@ -32,7 +31,19 @@ import { HomeNoticeComponent } from '../home-notice/home-notice.component';
   templateUrl: './layout-head-right-menu.component.html',
   styleUrl: './layout-head-right-menu.component.less',
 
-  imports: [NgTemplateOutlet, NzTooltipModule, NzIconModule, NzButtonModule, ToggleFullscreenDirective, NzDropdownModule, NzBadgeModule, NzMenuModule, HomeNoticeComponent, ScreenLessHiddenDirective, TranslatePipe]
+  imports: [
+    NgTemplateOutlet,
+    NzTooltipModule,
+    NzIconModule,
+    NzButtonModule,
+    ToggleFullscreenDirective,
+    NzDropdownModule,
+    NzBadgeModule,
+    NzMenuModule,
+    HomeNoticeComponent,
+    ScreenLessHiddenDirective,
+    TranslatePipe
+  ]
 })
 export class LayoutHeadRightMenuComponent {
   user!: UserPsd;

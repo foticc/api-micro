@@ -11,12 +11,7 @@
       <div nz-col [nzSpan]="6">
         <nz-form-item class="m-b-0">
           <nz-form-control>
-            <nz-select
-              name="addedFilter"
-              nzPlaceHolder="关联状态"
-              [(ngModel)]="addedFilter"
-              (ngModelChange)="onAddedFilterChange()"
-            >
+            <nz-select name="addedFilter" nzPlaceHolder="关联状态" [(ngModel)]="addedFilter" (ngModelChange)="onAddedFilterChange()">
               @for (opt of addedFilterOptions; track opt.value) {
                 <nz-option [nzLabel]="opt.label" [nzValue]="opt.value"></nz-option>
               }
@@ -46,9 +41,7 @@
 <div class="picker-tree-toolbar">
   <button nz-button nzSize="small" (click)="expandAll()">全部展开</button>
   <button class="m-l-8" nz-button nzSize="small" (click)="collapseAll()">全部收起</button>
-  <button class="m-l-8" nz-button nzSize="small" (click)="clearSelection()" [disabled]="selectedCount() === 0">
-    清空已关联
-  </button>
+  <button class="m-l-8" nz-button nzSize="small" [disabled]="selectedCount() === 0" (click)="clearSelection()"> 清空已关联 </button>
 </div>
 
 <nz-spin [nzSpinning]="loading()">

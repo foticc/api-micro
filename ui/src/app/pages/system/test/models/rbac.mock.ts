@@ -24,7 +24,7 @@ export const mockMenus = [
   { id: 207, code: 'btn:role:delete', name: '删除角色', type: 'button' as const },
   { id: 208, code: 'btn:order:add', name: '新增订单', type: 'button' as const },
   { id: 209, code: 'btn:order:edit', name: '编辑订单', type: 'button' as const },
-  { id: 210, code: 'btn:order:export', name: '导出订单', type: 'button' as const },
+  { id: 210, code: 'btn:order:export', name: '导出订单', type: 'button' as const }
 ];
 
 const mockPermissionsRaw = [
@@ -64,12 +64,8 @@ const mockPermissionsRaw = [
     code: 'sys:user:export',
     name: '用户导出',
     menuIds: [204],
-    menus: [
-      { id: 204, code: 'btn:user:export', name: '导出用户', type: 'button' }
-    ],
-    apis: [
-      { method: 'GET', path: '/api/users/export', description: '导出用户数据' }
-    ],
+    menus: [{ id: 204, code: 'btn:user:export', name: '导出用户', type: 'button' }],
+    apis: [{ method: 'GET', path: '/api/users/export', description: '导出用户数据' }],
     description: '导出用户数据权限'
   },
   {
@@ -98,9 +94,7 @@ const mockPermissionsRaw = [
     code: 'sys:menu:manage',
     name: '菜单管理',
     menuIds: [103],
-    menus: [
-      { id: 103, code: 'sys:menu', name: '菜单管理', type: 'menu' }
-    ],
+    menus: [{ id: 103, code: 'sys:menu', name: '菜单管理', type: 'menu' }],
     apis: [
       { method: 'GET', path: '/api/menus', description: '获取菜单列表' },
       { method: 'GET', path: '/api/menus/tree', description: '获取菜单树形结构' },
@@ -115,9 +109,7 @@ const mockPermissionsRaw = [
     code: 'biz:order:view',
     name: '订单查看',
     menuIds: [104],
-    menus: [
-      { id: 104, code: 'biz:order', name: '订单管理', type: 'menu' }
-    ],
+    menus: [{ id: 104, code: 'biz:order', name: '订单管理', type: 'menu' }],
     apis: [
       { method: 'GET', path: '/api/orders', description: '获取订单列表' },
       { method: 'GET', path: '/api/orders/:id', description: '获取订单详情' }
@@ -145,12 +137,8 @@ const mockPermissionsRaw = [
     code: 'biz:order:export',
     name: '订单导出',
     menuIds: [210],
-    menus: [
-      { id: 210, code: 'btn:order:export', name: '导出订单', type: 'button' }
-    ],
-    apis: [
-      { method: 'GET', path: '/api/orders/export', description: '导出订单数据' }
-    ],
+    menus: [{ id: 210, code: 'btn:order:export', name: '导出订单', type: 'button' }],
+    apis: [{ method: 'GET', path: '/api/orders/export', description: '导出订单数据' }],
     description: '导出订单数据权限'
   },
   {
@@ -158,9 +146,7 @@ const mockPermissionsRaw = [
     code: 'biz:product:manage',
     name: '商品管理',
     menuIds: [105],
-    menus: [
-      { id: 105, code: 'biz:product', name: '商品管理', type: 'menu' }
-    ],
+    menus: [{ id: 105, code: 'biz:product', name: '商品管理', type: 'menu' }],
     apis: [
       { method: 'GET', path: '/api/products', description: '获取商品列表' },
       { method: 'GET', path: '/api/products/:id', description: '获取商品详情' },
@@ -176,9 +162,7 @@ const mockPermissionsRaw = [
     code: 'ana:report:view',
     name: '报表查看',
     menuIds: [106],
-    menus: [
-      { id: 106, code: 'ana:report', name: '数据分析', type: 'menu' }
-    ],
+    menus: [{ id: 106, code: 'ana:report', name: '数据分析', type: 'menu' }],
     apis: [
       { method: 'GET', path: '/api/reports/sales', description: '销售报表' },
       { method: 'GET', path: '/api/reports/users', description: '用户报表' },

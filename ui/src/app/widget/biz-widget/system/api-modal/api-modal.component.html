@@ -1,4 +1,4 @@
-<form nz-form [formGroup]="addEditForm" nzLayout="vertical">
+<form nz-form nzLayout="vertical" [formGroup]="addEditForm">
   <div nz-row [nzGutter]="16">
     <div nz-col [nzSpan]="8">
       <nz-form-item>
@@ -6,7 +6,7 @@
         <nz-form-control>
           <nz-select formControlName="method">
             @for (opt of methodOptions; track opt.value) {
-              <nz-option [nzValue]="opt.value" [nzLabel]="opt.label" />
+              <nz-option [nzLabel]="opt.label" [nzValue]="opt.value" />
             }
           </nz-select>
         </nz-form-control>
@@ -16,7 +16,7 @@
       <nz-form-item>
         <nz-form-label nzRequired>API路径</nz-form-label>
         <nz-form-control nzErrorTip="必填，如 /api/users">
-          <input nz-input formControlName="path" placeholder="/api/users" />
+          <input formControlName="path" nz-input placeholder="/api/users" />
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -24,7 +24,7 @@
       <nz-form-item>
         <nz-form-label>描述</nz-form-label>
         <nz-form-control>
-          <textarea nz-input formControlName="description" rows="3" placeholder="简要描述该API的用途"></textarea>
+          <textarea formControlName="description" nz-input placeholder="简要描述该API的用途" rows="3"></textarea>
         </nz-form-control>
       </nz-form-item>
     </div>

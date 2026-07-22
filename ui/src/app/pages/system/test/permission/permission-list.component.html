@@ -70,24 +70,17 @@
             <td>{{ row.code }}</td>
             <td>{{ row.module }}</td>
             <td>
-              <button
-                type="button"
-                class="count-badge count-badge--menu"
-                [class.count-badge--empty]="row.menuCount === 0"
-                nz-tooltip
-                nzTooltipTitle="点击配置关联菜单"
-                (click)="bindMenus(row)"
-              >
+              <button class="count-badge count-badge--menu" type="button" nz-tooltip nzTooltipTitle="点击配置关联菜单" [class.count-badge--empty]="row.menuCount === 0" (click)="bindMenus(row)">
                 <span class="count-badge__text">{{ row.menuCount }} 个菜单</span>
                 <i class="count-badge__icon" nz-icon nzType="setting"></i>
               </button>
             </td>
             <td>
               <button
-                type="button"
                 class="count-badge count-badge--api"
-                [class.count-badge--empty]="row.apiCount === 0"
+                type="button"
                 nz-tooltip
+                [class.count-badge--empty]="row.apiCount === 0"
                 [nzTooltipTitle]="row.apiCount === 0 ? '未关联接口，鉴权不生效；点击配置' : '点击配置关联接口'"
                 (click)="bindApis(row)"
               >

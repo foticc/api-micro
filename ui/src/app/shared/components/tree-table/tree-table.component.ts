@@ -1,12 +1,12 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component,  OnChanges, SimpleChanges, input, InputSignal, output, computed, linkedSignal, signal } from '@angular/core';
+import { Component, OnChanges, SimpleChanges, input, InputSignal, output, computed, linkedSignal, signal } from '@angular/core';
 
 import { AntTableConfig, SortFile, TableHeader } from '@shared/components/ant-table/ant-table.component';
 import { fnGetFlattenTreeDataByMap, fnTreeDataToMap } from '@utils/treeTableTools';
 
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzResizeEvent, NzResizableModule } from 'ng-zorro-antd/resizable';
-import { NzTableQueryParams, NzTableSize, NzTableModule } from 'ng-zorro-antd/table';
+import { NzTableSize, NzTableModule } from 'ng-zorro-antd/table';
 
 import { MapPipe } from '../../pipes/map.pipe';
 import { TableFiledPipe } from '../../pipes/table-filed.pipe';

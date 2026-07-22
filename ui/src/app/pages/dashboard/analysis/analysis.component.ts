@@ -1,4 +1,4 @@
-import { afterNextRender,  Component } from '@angular/core';
+import { afterNextRender, Component } from '@angular/core';
 
 import { Chart } from '@antv/g2';
 import { Pie, RingProgress, TinyColumn, TinyArea, Progress } from '@antv/g2plot';

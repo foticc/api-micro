@@ -1,19 +1,20 @@
-import {  Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Subject, interval } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 
 const FRUIT_LIST = ['苹果', '香蕉', '橙子', '葡萄', '草莓', '芒果', '西瓜', '蓝莓'];
 
@@ -73,4 +74,3 @@ export class ChangeToObservable {
     this.subLog.set([]);
   }
 }
-

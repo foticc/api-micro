@@ -114,7 +114,14 @@ export function linesToSet(text?: string): string[] {
   if (!text?.trim()) {
     return [];
   }
-  return [...new Set(text.split(/[\n,]/).map(s => s.trim()).filter(Boolean))];
+  return [
+    ...new Set(
+      text
+        .split(/[\n,]/)
+        .map(s => s.trim())
+        .filter(Boolean)
+    )
+  ];
 }
 
 export function setToLines(values?: string[]): string {

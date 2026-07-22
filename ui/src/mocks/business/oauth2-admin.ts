@@ -1,10 +1,5 @@
+import type { AuthorizationDTO, ConsentDTO, RegisteredClientDTO } from '@app/pages/system/test/models/oauth2-admin.models';
 import { http, HttpResponse } from 'msw';
-
-import type {
-  AuthorizationDTO,
-  ConsentDTO,
-  RegisteredClientDTO
-} from '@app/pages/system/test/models/oauth2-admin.models';
 
 let clients: RegisteredClientDTO[] = [
   {
@@ -108,9 +103,7 @@ export const oauth2Admin = [
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: pageResult(consents, body.pageIndex ?? 1, body.pageSize ?? 10) });
   }),
   http.get('/site/api/manage/oauth2/consent/:clientId/:principalName', ({ params }) => {
-    const item = consents.find(
-      c => c.registeredClientId === params['clientId'] && c.principalName === params['principalName']
-    );
+    const item = consents.find(c => c.registeredClientId === params['clientId'] && c.principalName === params['principalName']);
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: item ?? null });
   }),
   http.post('/site/api/manage/oauth2/consent/create', async ({ request }) => {
@@ -120,9 +113,7 @@ export const oauth2Admin = [
   }),
   http.put('/site/api/manage/oauth2/consent/:clientId/:principalName', async ({ params, request }) => {
     const body = (await request.json()) as ConsentDTO;
-    const idx = consents.findIndex(
-      c => c.registeredClientId === params['clientId'] && c.principalName === params['principalName']
-    );
+    const idx = consents.findIndex(c => c.registeredClientId === params['clientId'] && c.principalName === params['principalName']);
     if (idx >= 0) {
       consents[idx] = body;
     }
@@ -130,9 +121,7 @@ export const oauth2Admin = [
   }),
   http.post('/site/api/manage/oauth2/consent/del', async ({ request }) => {
     const { items } = (await request.json()) as { items: ConsentDTO[] };
-    consents = consents.filter(
-      c => !items.some(i => i.registeredClientId === c.registeredClientId && i.principalName === c.principalName)
-    );
+    consents = consents.filter(c => !items.some(i => i.registeredClientId === c.registeredClientId && i.principalName === c.principalName));
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: null });
   })
 ];

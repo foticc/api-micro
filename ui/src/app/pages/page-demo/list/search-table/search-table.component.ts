@@ -1,4 +1,4 @@
-import { Component, OnInit,  TemplateRef, inject, signal, viewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -18,7 +18,6 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 interface SearchParam {
   ruleName: number;

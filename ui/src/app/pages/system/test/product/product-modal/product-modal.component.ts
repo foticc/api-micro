@@ -42,7 +42,7 @@ export class ProductModalComponent extends BasicConfirmModalComponent implements
     this.addEditForm = this.fb.group({
       title: [null, [Validators.required]],
       price: [null, [Validators.required]],
-      enabled: [true, [Validators.required]],
+      enabled: [true, [Validators.required]]
     });
   }
 

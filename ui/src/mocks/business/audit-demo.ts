@@ -63,9 +63,7 @@ export const auditDemo = [
     let list = [...rows];
     const kw = filters?.keyword?.trim().toLowerCase();
     if (kw) {
-      list = list.filter(
-        r => r.title.toLowerCase().includes(kw) || (r.content?.toLowerCase().includes(kw) ?? false)
-      );
+      list = list.filter(r => r.title.toLowerCase().includes(kw) || (r.content?.toLowerCase().includes(kw) ?? false));
     }
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: pageSlice(list, pageIndex, pageSize) });
   }),

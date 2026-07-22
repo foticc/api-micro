@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { afterNextRender,  Component, computed, inject, TemplateRef, viewChild } from '@angular/core';
+import { afterNextRender, Component, computed, inject, TemplateRef, viewChild } from '@angular/core';
 
 import { Radar } from '@antv/g2plot';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -78,32 +78,32 @@ export class WorkbenchComponent {
 
   private initRadar(): void {
     const radarPlot = new Radar('randar', {
-        data: this.radarData,
-        xField: 'item',
-        yField: 'score',
-        seriesField: 'user',
-        meta: {
-          score: {
-            alias: '分数',
-            min: 0,
-            max: 80
-          }
-        },
-        xAxis: {
-          line: null,
-          tickLine: null,
-          grid: {
-            line: {
-              style: {
-                lineDash: null
-              }
+      data: this.radarData,
+      xField: 'item',
+      yField: 'score',
+      seriesField: 'user',
+      meta: {
+        score: {
+          alias: '分数',
+          min: 0,
+          max: 80
+        }
+      },
+      xAxis: {
+        line: null,
+        tickLine: null,
+        grid: {
+          line: {
+            style: {
+              lineDash: null
             }
           }
-        },
-        // 开启辅助点
-        point: {
-          size: 2
         }
+      },
+      // 开启辅助点
+      point: {
+        size: 2
+      }
     });
     radarPlot.render();
   }

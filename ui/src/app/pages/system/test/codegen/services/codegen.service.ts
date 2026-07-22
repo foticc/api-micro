@@ -1,9 +1,10 @@
-import { inject, Service } from '@angular/core';
 import { HttpResourceRef } from '@angular/common/http';
+import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { CodeGenRequest, CodeGenResult, CodeGenTypesResponse } from '../models/codegen.models';
 import { BaseHttpService } from '@services/base-http.service';
+
+import { CodeGenRequest, CodeGenResult, CodeGenTypesResponse } from '../models/codegen.models';
 
 @Service()
 export class CodeGenService {

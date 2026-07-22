@@ -3,16 +3,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 
+import { PermissionModalService } from '@app/pages/system/test/permission/permission-modal/permission-modal.service';
+import { ApiPickerModalService } from '@app/pages/system/test/shared/api-picker-modal/api-picker-modal.service';
+import { MenuPickerModalService } from '@app/pages/system/test/shared/menu-picker-modal/menu-picker-modal.service';
+import { Menu } from '@core/services/types';
 import { ApiResourceDTO } from '@services/system/api-resource.service';
 import { RbacTestService } from '@services/system/rbac-test.service';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 import { ModalBtnStatus } from '@widget/base-modal';
-import { ApiPickerModalService } from '@app/pages/system/test/shared/api-picker-modal/api-picker-modal.service';
-import { MenuPickerModalService } from '@app/pages/system/test/shared/menu-picker-modal/menu-picker-modal.service';
-import { PermissionModalService } from '@app/pages/system/test/permission/permission-modal/permission-modal.service';
-import { RbacPermissionPageItem, RbacPermissionPayload, PermissionListFilters } from '../models/rbac.models';
-
-import { Menu } from '@core/services/types';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -26,23 +24,12 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
+import { RbacPermissionPageItem, RbacPermissionPayload, PermissionListFilters } from '../models/rbac.models';
+
 @Component({
   selector: 'app-permission-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    PageHeaderComponent,
-    FormsModule,
-    NzCardModule,
-    NzFormModule,
-    NzGridModule,
-    NzInputModule,
-    NzButtonModule,
-    NzWaveModule,
-    NzIconModule,
-    NzTableModule,
-    NzModalModule,
-    NzTooltipModule
-  ],
+  imports: [PageHeaderComponent, FormsModule, NzCardModule, NzFormModule, NzGridModule, NzInputModule, NzButtonModule, NzWaveModule, NzIconModule, NzTableModule, NzModalModule, NzTooltipModule],
   templateUrl: './permission-list.component.html',
   styleUrl: './permission-list.component.less'
 })

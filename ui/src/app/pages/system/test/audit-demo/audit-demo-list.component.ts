@@ -2,8 +2,8 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 
-import { AuditDemoParam, AuditDemoQueryParam, AuditDemoVO } from '@app/pages/system/test/audit-demo/models/audit-demo.models';
 import { AuditDemoModalService } from '@app/pages/system/test/audit-demo/audit-demo-modal/audit-demo-modal.service';
+import { AuditDemoParam, AuditDemoQueryParam, AuditDemoVO } from '@app/pages/system/test/audit-demo/models/audit-demo.models';
 import { AuditDemoService } from '@app/pages/system/test/audit-demo/services/audit-demo.service';
 import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
@@ -24,19 +24,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 @Component({
   selector: 'app-audit-demo-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    PageHeaderComponent,
-    FormsModule,
-    NzCardModule,
-    NzFormModule,
-    NzGridModule,
-    NzInputModule,
-    NzButtonModule,
-    NzWaveModule,
-    NzIconModule,
-    CardTableWrapComponent,
-    AntTableComponent
-  ],
+  imports: [PageHeaderComponent, FormsModule, NzCardModule, NzFormModule, NzGridModule, NzInputModule, NzButtonModule, NzWaveModule, NzIconModule, CardTableWrapComponent, AntTableComponent],
   templateUrl: './audit-demo-list.component.html'
 })
 export class AuditDemoListComponent implements AfterViewInit {

@@ -1,9 +1,9 @@
 import { Menu } from '@core/services/types';
 import { fnAddTreeDataGradeAndLeaf, fnFlatDataHasParentToTree } from '@utils/treeTableTools';
 
-import { PermissionMenu } from '../models/rbac.models';
-
 import { NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
+
+import { PermissionMenu } from '../models/rbac.models';
 
 /** nz-tree 节点扩展字段（配合 nzTreeTemplate 的 let-origin） */
 export interface MenuPickerTreeNodeOptions extends NzTreeNodeOptions {
@@ -32,11 +32,7 @@ function cloneFlatMenusForTreeBuild(flatMenus: Menu[]): Menu[] {
 }
 
 /** 将扁平菜单转为 nz-tree 勾选节点（菜单选择弹窗） */
-export function buildMenuPickerTreeNodes(
-  flatMenus: Menu[],
-  linkedIds: number[] = [],
-  options?: MenuPickerTreeBuildOptions
-): MenuPickerTreeNodeOptions[] {
+export function buildMenuPickerTreeNodes(flatMenus: Menu[], linkedIds: number[] = [], options?: MenuPickerTreeBuildOptions): MenuPickerTreeNodeOptions[] {
   if (!flatMenus.length) {
     return [];
   }
@@ -55,11 +51,7 @@ export function buildLinkedMenuPreviewTree(flatMenus: Menu[], linkedIds: number[
   return buildMenuPickerTreeNodes(filtered, linkedIds, { manageMode: true });
 }
 
-function mapMenuNodesToPickerTree(
-  nodes: Menu[],
-  linkedSet: Set<number>,
-  manageMode: boolean
-): MenuPickerTreeNodeOptions[] {
+function mapMenuNodesToPickerTree(nodes: Menu[], linkedSet: Set<number>, manageMode: boolean): MenuPickerTreeNodeOptions[] {
   return nodes.map(node => {
     const id = Number(node.id);
     const key = String(id);
@@ -91,11 +83,7 @@ function mapMenuNodesToPickerTree(
 export type MenuPickerAddedFilter = 'all' | 'added' | 'notAdded';
 
 /** 按已添加 / 未添加筛选（保留匹配节点的祖先以维持树形结构） */
-export function filterFlatMenusByAddedStatus(
-  flatMenus: Menu[],
-  existingIds: number[],
-  status: MenuPickerAddedFilter
-): Menu[] {
+export function filterFlatMenusByAddedStatus(flatMenus: Menu[], existingIds: number[], status: MenuPickerAddedFilter): Menu[] {
   if (status === 'all') {
     return [...flatMenus];
   }
@@ -117,7 +105,7 @@ export function filterFlatMenusByAddedStatus(
     let current: Menu | undefined = m;
     while (current) {
       matchedIds.add(Number(current.id));
-      const parentId: number = Number(current.fatherId);
+      const parentId = Number(current.fatherId);
       current = parentId === 0 ? undefined : byId.get(parentId);
     }
   }
@@ -139,7 +127,7 @@ export function filterFlatMenus(flatMenus: Menu[], keyword: string): Menu[] {
       let current: Menu | undefined = m;
       while (current) {
         matchedIds.add(Number(current.id));
-        const parentId: number = Number(current.fatherId);
+        const parentId = Number(current.fatherId);
         current = parentId === 0 ? undefined : byId.get(parentId);
       }
     }
@@ -231,11 +219,7 @@ export function collectDescendantIds(rootIds: number[], flatMenus: Menu[]): numb
  * nzCheckStrictly 下补父子联动：勾选/取消父节点级联子孙，但不误选兄弟节点。
  * @see https://ng.ant.design/components/tree/en#nzcheckstrictly
  */
-export function applyMenuTreeCheckChange(
-  previousExplicitIds: number[],
-  nextExplicitIds: number[],
-  flatMenus: Menu[]
-): number[] {
+export function applyMenuTreeCheckChange(previousExplicitIds: number[], nextExplicitIds: number[], flatMenus: Menu[]): number[] {
   const previous = new Set(previousExplicitIds);
   const next = new Set(nextExplicitIds);
 
@@ -351,8 +335,7 @@ export function resolvePermissionMenus(menuIds: number[], flatMenus: Menu[]): Pe
 /** 将详情接口 menus 规范为展示结构（兼容 menuName / menuType 字段） */
 export function normalizePermissionMenu(item: Partial<PermissionMenu> & Record<string, unknown>): PermissionMenu {
   const menuType = item.type ?? item['menuType'];
-  const type: PermissionMenu['type'] =
-    menuType === 'button' || menuType === 'F' ? 'button' : 'menu';
+  const type: PermissionMenu['type'] = menuType === 'button' || menuType === 'F' ? 'button' : 'menu';
 
   return {
     id: item.id ?? item['id'] ?? '',

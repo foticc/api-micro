@@ -3,9 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 
 import { ActionCode } from '@app/config/actionCode';
-import { TestUser } from '@app/pages/system/test/models/test-account.models';
 import { TestAccountModalService } from '@app/pages/system/test/account/services/test-account-modal.service';
 import { TestAccountService } from '@app/pages/system/test/account/services/test-account.service';
+import { TestUser } from '@app/pages/system/test/models/test-account.models';
 import { OptionsInterface } from '@core/services/types';
 import { AntTableConfig, AntTableComponent, SortFile } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';

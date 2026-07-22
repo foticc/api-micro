@@ -22,11 +22,7 @@ function handleHttpUnauthorized(message: NzMessageService, loginInOutService: Lo
   });
 }
 
-function handleHttpError(
-  error: HttpErrorResponse,
-  message: NzMessageService,
-  loginInOutService: LoginInOutService
-): Observable<never> {
+function handleHttpError(error: HttpErrorResponse, message: NzMessageService, loginInOutService: LoginInOutService): Observable<never> {
   if (error.status === 401) {
     handleHttpUnauthorized(message, loginInOutService);
     const errMsg = getHttpErrorMessage(error);

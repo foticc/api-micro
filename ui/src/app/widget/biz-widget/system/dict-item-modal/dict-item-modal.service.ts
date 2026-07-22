@@ -17,10 +17,6 @@ export class DictItemModalService {
   }
 
   public show(modalOptions: ModalOptions = {}, modalData?: DictItemModalData): Observable<ModalResponse> {
-    return this.modalWrapService.show<DictItemModalComponent, DictItemModalData>(
-      this.getContentComponent(),
-      modalOptions,
-      modalData
-    );
+    return this.modalWrapService.show<DictItemModalComponent, DictItemModalData>(this.getContentComponent(), modalOptions, modalData);
   }
 }

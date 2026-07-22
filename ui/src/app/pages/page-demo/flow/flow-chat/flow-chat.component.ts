@@ -1,4 +1,4 @@
-import { Component,  AfterViewInit, ElementRef, viewChild } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, viewChild } from '@angular/core';
 
 import { Graph } from '@antv/x6';
 import { Dnd } from '@antv/x6-plugin-dnd';

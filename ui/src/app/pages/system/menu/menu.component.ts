@@ -94,7 +94,7 @@ export class MenuComponent implements OnInit {
     }
     const menuList = this.menuResource.value();
     const target = fnFlatDataHasParentToTree(menuList.list, 'fatherId');
-    let list = fnFlattenTreeDataByDataList(target);
+    const list = fnFlattenTreeDataByDataList(target);
     // 因为前段要对后端返回的数据进行处理，所以排序这里交给了前段来做
     const sortFile = this.currentSortFile();
     if (sortFile) {

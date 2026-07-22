@@ -16,10 +16,6 @@ export class PermissionModalService {
   }
 
   show(modalOptions: ModalOptions = {}, modalData?: RbacPermissionPayload): Observable<ModalResponse> {
-    return this.modalWrapService.show<PermissionModalComponent, RbacPermissionPayload>(
-      this.getContentComponent(),
-      modalOptions,
-      modalData
-    );
+    return this.modalWrapService.show<PermissionModalComponent, RbacPermissionPayload>(this.getContentComponent(), modalOptions, modalData);
   }
 }

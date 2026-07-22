@@ -12,10 +12,6 @@ export class OAuth2ConsentModalService {
   private modalWrapService = inject(ModalWrapService);
 
   show(modalOptions: ModalOptions = {}, modalData?: ConsentDTO): Observable<ModalResponse> {
-    return this.modalWrapService.show<OAuth2ConsentModalComponent, ConsentDTO>(
-      OAuth2ConsentModalComponent as Type<OAuth2ConsentModalComponent>,
-      modalOptions,
-      modalData
-    );
+    return this.modalWrapService.show<OAuth2ConsentModalComponent, ConsentDTO>(OAuth2ConsentModalComponent as Type<OAuth2ConsentModalComponent>, modalOptions, modalData);
   }
 }

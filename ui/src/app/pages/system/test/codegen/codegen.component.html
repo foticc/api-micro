@@ -173,9 +173,7 @@
         </button>
       </div>
       @if (result.target === 'frontend' && result.files.some(f => f.relativePath.endsWith('routing.entry.ts'))) {
-        <div class="routing-hint m-b-12">
-          请将 <code>routing.entry.ts</code> 片段手动合并到 <code>test-routing.ts</code>。
-        </div>
+        <div class="routing-hint m-b-12"> 请将 <code>routing.entry.ts</code> 片段手动合并到 <code>test-routing.ts</code>。 </div>
       }
       <nz-tabs [(nzSelectedIndex)]="activeFileTab">
         @for (file of result.files; track file.relativePath) {

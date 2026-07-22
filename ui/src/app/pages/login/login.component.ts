@@ -1,8 +1,9 @@
-import { Component,  computed, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { Lang, LanguageService } from '@core/services/store/common-store/language.service';
 import { TranslatePipe } from '@ngx-translate/core';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';

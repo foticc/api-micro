@@ -4,13 +4,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item class="m-b-0">
           <nz-form-control>
-            <input
-              name="keyword"
-              nz-input
-              placeholder="搜索路径、描述或方法"
-              [(ngModel)]="searchParam.keyword"
-              (keyup.enter)="search()"
-            />
+            <input name="keyword" nz-input placeholder="搜索路径、描述或方法" [(ngModel)]="searchParam.keyword" (keyup.enter)="search()" />
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -28,12 +22,7 @@
       <div nz-col [nzSpan]="5">
         <nz-form-item class="m-b-0">
           <nz-form-control>
-            <nz-select
-              name="addedFilter"
-              nzPlaceHolder="关联状态"
-              [(ngModel)]="addedFilter"
-              (ngModelChange)="onAddedFilterChange()"
-            >
+            <nz-select name="addedFilter" nzPlaceHolder="关联状态" [(ngModel)]="addedFilter" (ngModelChange)="onAddedFilterChange()">
               @for (opt of addedFilterOptions; track opt.value) {
                 <nz-option [nzLabel]="opt.label" [nzValue]="opt.value" />
               }
@@ -64,9 +53,7 @@
   <button nz-button nzSize="small" (click)="expandAll()">全部展开</button>
   <button class="m-l-8" nz-button nzSize="small" (click)="collapseAll()">全部收起</button>
   <button class="m-l-8" nz-button nzSize="small" (click)="selectAllFiltered()">选中当前筛选结果</button>
-  <button class="m-l-8" nz-button nzSize="small" (click)="clearSelection()" [disabled]="selectedCount() === 0">
-    清空已关联
-  </button>
+  <button class="m-l-8" nz-button nzSize="small" [disabled]="selectedCount() === 0" (click)="clearSelection()"> 清空已关联 </button>
 </div>
 
 <nz-spin [nzSpinning]="loading()">

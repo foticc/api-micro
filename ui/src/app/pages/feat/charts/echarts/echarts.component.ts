@@ -1,5 +1,5 @@
 import { ComponentPortal, ComponentType, Portal, PortalModule } from '@angular/cdk/portal';
-import { Component, OnInit, AfterViewInit, TemplateRef, inject, viewChild, signal} from '@angular/core';
+import { Component, OnInit, AfterViewInit, TemplateRef, viewChild, signal } from '@angular/core';
 
 import { AdvancedComponent } from '@app/pages/feat/charts/echarts/advanced/advanced.component';
 import { SeriesComponent } from '@app/pages/feat/charts/echarts/series/series.component';

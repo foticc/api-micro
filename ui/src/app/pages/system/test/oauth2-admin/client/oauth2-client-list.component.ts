@@ -1,13 +1,9 @@
+import { DatePipe } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, signal, computed, effect, TemplateRef, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import {
-  RegisteredClientDTO,
-  RegisteredClientQueryFilter,
-  setToLines
-} from '@app/pages/system/test/models/oauth2-admin.models';
+import { RegisteredClientDTO, RegisteredClientQueryFilter, setToLines } from '@app/pages/system/test/models/oauth2-admin.models';
 import { OAuth2ClientModalService } from '@app/pages/system/test/oauth2-admin/client/oauth2-client-modal/oauth2-client-modal.service';
 import { OAuth2ClientService } from '@app/pages/system/test/oauth2-admin/services/oauth2-client.service';
 import { AntTableComponent, AntTableConfig } from '@shared/components/ant-table/ant-table.component';

@@ -1,5 +1,5 @@
 import { DecimalPipe, PercentPipe } from '@angular/common';
-import { afterNextRender,  Component, inject } from '@angular/core';
+import { afterNextRender, Component, inject } from '@angular/core';
 
 import { Gauge, Liquid, RingProgress, TinyArea, WordCloud } from '@antv/g2plot';
 import { LazyService } from '@core/services/common/lazy.service';

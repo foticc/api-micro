@@ -1,5 +1,5 @@
-import { inject, Service } from '@angular/core';
 import { HttpResourceRef } from '@angular/common/http';
+import { inject, Service } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
 import { AuthorizationDTO, AuthorizationQueryFilter } from '@app/pages/system/test/models/oauth2-admin.models';

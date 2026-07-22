@@ -66,7 +66,7 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
     if (shouldDetach && route.data['needKeepScroll'] !== 'no') {
       const key = fnGetReuseStrategyKeyFn(route);
       if (key) {
-        const innerScrollContainer: Record<string, [number, number]>[] = [];
+        const innerScrollContainer: Array<Record<string, [number, number]>> = [];
         const scrollContain: string[] = route.data['scrollContain'] ?? [];
         scrollContain.forEach(item => {
           const el = this.doc.querySelector(item);

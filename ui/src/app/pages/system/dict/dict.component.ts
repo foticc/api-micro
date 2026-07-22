@@ -53,20 +53,7 @@ interface DictSearchParam {
       }
     `
   ],
-  imports: [
-    PageHeaderComponent,
-    NzGridModule,
-    FormsModule,
-    NzFormModule,
-    NzInputModule,
-    NzButtonModule,
-    NzWaveModule,
-    NzIconModule,
-    NzCardModule,
-    NzTableModule,
-    AuthDirective,
-    NzEmptyModule
-  ]
+  imports: [PageHeaderComponent, NzGridModule, FormsModule, NzFormModule, NzInputModule, NzButtonModule, NzWaveModule, NzIconModule, NzCardModule, NzTableModule, AuthDirective, NzEmptyModule]
 })
 export class DictComponent {
   ActionCode = ActionCode;
@@ -202,9 +189,7 @@ export class DictComponent {
         this.dictDataList.set([...list]);
         this.dictTableConfig.update(c => ({ ...c, total: total!, pageIndex: pageIndex! }));
 
-        const prunedItems = new Map(
-          [...this.itemItemsByDictId().entries()].filter(([k]) => idSet.has(k))
-        );
+        const prunedItems = new Map([...this.itemItemsByDictId().entries()].filter(([k]) => idSet.has(k)));
         this.itemItemsByDictId.set(prunedItems);
 
         this.expandedDictIds.update(s => new Set([...s].filter(id => idSet.has(id))));
@@ -220,13 +205,19 @@ export class DictComponent {
   addDict(): void {
     this.dictModalService
       .show({ nzTitle: '新增字典类型' })
-      .pipe(finalize(() => this.dictTableLoading(false)), takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        finalize(() => this.dictTableLoading(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe(res => {
         if (!res || res.status === ModalBtnStatus.Cancel) return;
         this.dictTableLoading(true);
         this.dictService
           .addDict(res.modalValue as DictDTO)
-          .pipe(finalize(() => this.dictTableLoading(false)), takeUntilDestroyed(this.destroyRef))
+          .pipe(
+            finalize(() => this.dictTableLoading(false)),
+            takeUntilDestroyed(this.destroyRef)
+          )
           .subscribe(() => this.getDictList({ pageIndex: 1 }));
       });
   }
@@ -238,14 +229,20 @@ export class DictComponent {
       .subscribe(detail => {
         this.dictModalService
           .show({ nzTitle: '编辑字典类型' }, detail)
-          .pipe(finalize(() => this.dictTableLoading(false)), takeUntilDestroyed(this.destroyRef))
+          .pipe(
+            finalize(() => this.dictTableLoading(false)),
+            takeUntilDestroyed(this.destroyRef)
+          )
           .subscribe(({ modalValue, status }) => {
             if (status === ModalBtnStatus.Cancel) return;
             const param = { ...(modalValue as DictDTO), id };
             this.dictTableLoading(true);
             this.dictService
               .editDict(param)
-              .pipe(finalize(() => this.dictTableLoading(false)), takeUntilDestroyed(this.destroyRef))
+              .pipe(
+                finalize(() => this.dictTableLoading(false)),
+                takeUntilDestroyed(this.destroyRef)
+              )
               .subscribe(() => {
                 this.invalidateItemsCache(id);
                 this.getDictList();
@@ -262,7 +259,10 @@ export class DictComponent {
         this.dictTableLoading(true);
         this.dictService
           .delDict([id])
-          .pipe(finalize(() => this.dictTableLoading(false)), takeUntilDestroyed(this.destroyRef))
+          .pipe(
+            finalize(() => this.dictTableLoading(false)),
+            takeUntilDestroyed(this.destroyRef)
+          )
           .subscribe(() => {
             this.removeItemsCache(id);
             this.expandedDictIds.update(s => {

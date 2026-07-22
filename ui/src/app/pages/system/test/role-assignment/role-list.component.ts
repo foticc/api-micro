@@ -3,18 +3,16 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 
+import { TestRoleModalService } from '@app/pages/system/test/role-assignment/test-role-modal/test-role-modal.service';
 import { RbacTestService } from '@services/system/rbac-test.service';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 import { ModalBtnStatus } from '@widget/base-modal';
-import { TestRoleModalService } from '@app/pages/system/test/role-assignment/test-role-modal/test-role-modal.service';
-import { normalizePermissionMenus } from '../shared/permission-menu-tree.util';
-import { PermissionApi, PermissionMenu, PermissionListFilters, RbacPermissionPageItem, RbacRolePageItem, RbacRolePayload, RoleListFilters } from '../models/rbac.models';
 
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
@@ -25,6 +23,9 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+
+import { PermissionApi, PermissionMenu, PermissionListFilters, RbacPermissionPageItem, RbacRolePageItem, RbacRolePayload, RoleListFilters } from '../models/rbac.models';
+import { normalizePermissionMenus } from '../shared/permission-menu-tree.util';
 
 type ViewMode = 'list' | 'assign';
 
@@ -331,7 +332,7 @@ export class RoleListComponent {
         this.assignRoleDesc = role.roleDesc ?? '';
         this.assignPageHeader.set({
           title: '分配权限资源组',
-          desc: `当前角色：${this.assignRoleName}${this.assignRoleDesc ? ' — ' + this.assignRoleDesc : ''}`
+          desc: `当前角色：${this.assignRoleName}${this.assignRoleDesc ? ` — ${this.assignRoleDesc}` : ''}`
         });
         this.assignKeyword = '';
         this.onlySelected.set(false);

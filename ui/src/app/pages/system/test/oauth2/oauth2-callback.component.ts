@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 
 import { SpinService } from '@store/common-store/spin.service';
 
-import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 import { TestOAuth2Service } from './services/test-oauth2.service';
 import { resolveOAuthErrorMessage } from './utils/oauth-error.util';

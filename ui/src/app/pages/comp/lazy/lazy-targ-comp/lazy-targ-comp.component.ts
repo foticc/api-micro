@@ -1,4 +1,4 @@
-import { Component,  SimpleChanges, OnChanges, inject, DestroyRef, input, computed, output } from '@angular/core';
+import { Component, SimpleChanges, OnChanges, inject, DestroyRef, input, computed, output } from '@angular/core';
 
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';

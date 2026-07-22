@@ -1,5 +1,3 @@
-import { http, HttpResponse } from 'msw';
-
 import type {
   PermissionApi,
   PermissionBindIdsPayload,
@@ -10,6 +8,7 @@ import type {
   RbacRolePageItem,
   RbacRolePayload
 } from '@app/pages/system/test/models/rbac.models';
+import { http, HttpResponse } from 'msw';
 
 let nextPermId = 100;
 let nextRoleId = 10;
@@ -73,9 +72,7 @@ const rawPermissions = [
     code: 'sys:user:delete',
     name: '用户删除',
 
-    apis: [
-      { method: 'DELETE', path: '/api/users/:id', description: '删除用户' }
-    ]
+    apis: [{ method: 'DELETE', path: '/api/users/:id', description: '删除用户' }]
   },
   {
     id: 5,
@@ -135,9 +132,7 @@ const rawPermissions = [
     code: 'biz:order:create',
     name: '订单创建',
 
-    apis: [
-      { method: 'POST', path: '/api/orders', description: '创建订单' }
-    ]
+    apis: [{ method: 'POST', path: '/api/orders', description: '创建订单' }]
   },
   {
     id: 11,
@@ -154,9 +149,7 @@ const rawPermissions = [
     code: 'biz:order:export',
     name: '订单导出',
 
-    apis: [
-      { method: 'GET', path: '/api/orders/export', description: '导出订单数据' }
-    ]
+    apis: [{ method: 'GET', path: '/api/orders/export', description: '导出订单数据' }]
   },
   {
     id: 13,
@@ -230,9 +223,7 @@ function filterRoles(keyword?: string): RbacRole[] {
   if (!k) {
     return [...roles];
   }
-  return roles.filter(
-    r => r.roleName.toLowerCase().includes(k) || (r.roleDesc && r.roleDesc.toLowerCase().includes(k))
-  );
+  return roles.filter(r => r.roleName.toLowerCase().includes(k) || (r.roleDesc && r.roleDesc.toLowerCase().includes(k)));
 }
 
 function filterList(keyword?: string): RbacPermission[] {
@@ -266,9 +257,7 @@ function toPageItem(p: RbacPermission): RbacPermissionPageItem {
 }
 
 function permissionDetail(p: RbacPermission): RbacPermission {
-  const apiIds = (p.apis ?? [])
-    .map(a => a.id)
-    .filter((id): id is number => id != null);
+  const apiIds = (p.apis ?? []).map(a => a.id).filter((id): id is number => id != null);
   const menuIds = p.menuIds ?? p.menus?.map(m => Number(m.id)).filter(id => !Number.isNaN(id)) ?? [];
   return {
     ...p,
@@ -420,8 +409,7 @@ export const rbacTest = [
     if (!item) {
       return HttpResponse.json({ code: 404, msg: '权限不存在', data: null }, { status: 404 });
     }
-    const ids =
-      item.menuIds ?? item.menus?.map(m => Number(m.id)).filter(menuId => !Number.isNaN(menuId)) ?? [];
+    const ids = item.menuIds ?? item.menus?.map(m => Number(m.id)).filter(menuId => !Number.isNaN(menuId)) ?? [];
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: { ids } });
   }),
 
@@ -431,10 +419,7 @@ export const rbacTest = [
     if (!item) {
       return HttpResponse.json({ code: 404, msg: '权限不存在', data: null }, { status: 404 });
     }
-    const ids =
-      item.apiIds ??
-      item.apis?.map(a => a.id).filter((apiId): apiId is number => apiId != null) ??
-      [];
+    const ids = item.apiIds ?? item.apis?.map(a => a.id).filter((apiId): apiId is number => apiId != null) ?? [];
     return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: { ids } });
   }),
 

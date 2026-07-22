@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 
 import { ActionCode } from '@app/config/actionCode';
-import { OptionsInterface, SearchCommonVO } from '@core/services/types';
+import { OptionsInterface } from '@core/services/types';
 import { Dept, DeptService } from '@services/system/dept.service';
 import { AntTableConfig, SortFile } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
@@ -88,7 +88,7 @@ export class DeptComponent implements OnInit {
     }
     const deptList = this.deptResource.value();
     const target = fnFlatDataHasParentToTree(deptList.list);
-    let list = fnFlattenTreeDataByDataList(target);
+    const list = fnFlattenTreeDataByDataList(target);
     // 因为前段要对后端返回的数据进行处理，所以排序这里交给了前段来做
     const sortFile = this.currentSortFile();
     if (sortFile) {

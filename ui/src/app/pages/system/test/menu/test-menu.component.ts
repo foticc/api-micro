@@ -4,11 +4,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 
 import { ActionCode } from '@app/config/actionCode';
-import { OptionsInterface } from '@core/services/types';
-import { TestMenuListObj, TestMenuModalData } from '@app/pages/system/test/models/test-menu.models';
-import { buildMenuCodePrefix, buildMenuPathPrefix, isMenuExternalLink, stripMenuPrefix } from '@app/pages/system/test/shared/menu-prefix.util';
 import { TestMenuModalService } from '@app/pages/system/test/menu/services/test-menu-modal.service';
 import { TestMenusService } from '@app/pages/system/test/menu/services/test-menus.service';
+import { TestMenuListObj, TestMenuModalData } from '@app/pages/system/test/models/test-menu.models';
+import { buildMenuCodePrefix, buildMenuPathPrefix, isMenuExternalLink, stripMenuPrefix } from '@app/pages/system/test/shared/menu-prefix.util';
+import { OptionsInterface } from '@core/services/types';
 import { AntTableConfig, SortFile } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -97,7 +97,7 @@ export class TestMenuComponent implements OnInit {
     }
     const menuList = this.menuResource.value();
     const target = fnFlatDataHasParentToTree(menuList, 'fatherId');
-    let list = fnFlattenTreeDataByDataList(target);
+    const list = fnFlattenTreeDataByDataList(target);
     const sortFile = this.currentSortFile();
     if (sortFile) {
       fnSortTreeData(list, sortFile);

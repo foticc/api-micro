@@ -1,5 +1,5 @@
-import { inject, Service } from '@angular/core';
 import { HttpResourceRef } from '@angular/common/http';
+import { inject, Service } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
 import { TestUser, TestUserPsd } from '@app/pages/system/test/models/test-account.models';

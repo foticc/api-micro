@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 
 import { TestMenusService } from '@app/pages/system/test/menu/services/test-menus.service';
-import { Menu } from '@core/services/types';
 import {
   buildMenuPickerTreeNodes,
   collectDescendantIds,
@@ -15,20 +14,20 @@ import {
   MenuPickerTreeNodeOptions,
   reconcileMenuSelectionFromTreeChecked
 } from '@app/pages/system/test/shared/permission-menu-tree.util';
+import { Menu } from '@core/services/types';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzFormatEmitEvent, NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
-
-import { NzFormatEmitEvent, NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
 
 export interface MenuPickerModalData {
   /** 当前已关联的 menu.id，打开弹窗时预勾选 */
@@ -78,7 +77,7 @@ export class MenuPickerModalComponent extends BasicConfirmModalComponent impleme
 
   searchKeyword = '';
   addedFilter: MenuPickerAddedFilter = 'all';
-  readonly addedFilterOptions: { label: string; value: MenuPickerAddedFilter }[] = [
+  readonly addedFilterOptions: Array<{ label: string; value: MenuPickerAddedFilter }> = [
     { label: '全部', value: 'all' },
     { label: '未关联', value: 'notAdded' },
     { label: '已关联', value: 'added' }

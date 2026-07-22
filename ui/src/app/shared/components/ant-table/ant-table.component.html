@@ -3,9 +3,6 @@
 <nz-table
   nzBordered
   nzOuterBordered
-  [nzShowPagination]="tableConfig.showPagination !== false"
-  [nzShowQuickJumper]="tableConfig.showPagination !== false"
-  [nzShowSizeChanger]="tableConfig.showPagination !== false"
   nzTableLayout="fixed"
   [nzData]="_dataList()"
   [nzFrontPagination]="tableConfig.showPagination === false"
@@ -13,6 +10,9 @@
   [nzPageIndex]="tableConfig.pageIndex"
   [nzPageSize]="tableConfig.pageSize"
   [nzScroll]="_scrollConfig"
+  [nzShowPagination]="tableConfig.showPagination !== false"
+  [nzShowQuickJumper]="tableConfig.showPagination !== false"
+  [nzShowSizeChanger]="tableConfig.showPagination !== false"
   [nzShowTotal]="tableConfig.showPagination !== false ? rangeTemplate : null"
   [nzSize]="tableSize"
   [nzTotal]="tableConfig.total"

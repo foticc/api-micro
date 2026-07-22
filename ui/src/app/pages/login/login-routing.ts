@@ -20,8 +20,7 @@ export default [
         path: 'oauth-callback',
         title: 'OAuth2 登录回调',
         data: { key: 'oauth-callback', shouldDetach: 'no' },
-        loadComponent: () =>
-          import('@app/pages/system/test/oauth2/oauth2-callback.component').then(m => m.OAuth2CallbackComponent)
+        loadComponent: () => import('@app/pages/system/test/oauth2/oauth2-callback.component').then(m => m.OAuth2CallbackComponent)
       },
       {
         path: 'register-form',

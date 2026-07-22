@@ -1,9 +1,9 @@
-<form nz-form [formGroup]="form" nzLayout="vertical">
+<form nz-form nzLayout="vertical" [formGroup]="form">
   <nz-alert
-    nzType="info"
     nzShowIcon
-    [nzMessage]="isEdit ? '编辑客户端' : '新建客户端'"
+    nzType="info"
     [nzDescription]="isEdit ? 'Client ID 不可修改；密钥不会在列表中回显，如需更换请在后端单独处理。' : 'Redirect URI 须与 OAuth 授权请求中的 redirect_uri 字节级完全一致。'"
+    [nzMessage]="isEdit ? '编辑客户端' : '新建客户端'"
   />
 
   <div class="form-section">
@@ -14,7 +14,7 @@
           <nz-form-item>
             <nz-form-label nzRequired>Client ID</nz-form-label>
             <nz-form-control nzErrorTip="必填">
-              <input nz-input formControlName="clientId" placeholder="如 public-client" />
+              <input formControlName="clientId" nz-input placeholder="如 public-client" />
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -22,7 +22,7 @@
           <nz-form-item>
             <nz-form-label>客户端名称</nz-form-label>
             <nz-form-control>
-              <input nz-input formControlName="clientName" placeholder="显示名称" />
+              <input formControlName="clientName" nz-input placeholder="显示名称" />
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -31,7 +31,7 @@
             <nz-form-item>
               <nz-form-label nzRequired>Client Secret</nz-form-label>
               <nz-form-control nzErrorTip="新建时必填">
-                <input nz-input type="password" formControlName="clientSecret" placeholder="机密客户端密钥" />
+                <input type="password" formControlName="clientSecret" nz-input placeholder="机密客户端密钥" />
                 <div class="field-tip">公开客户端（认证方式为 none）可填占位值，后端会 encode 存储</div>
               </nz-form-control>
             </nz-form-item>
@@ -73,13 +73,7 @@
           <nz-form-item>
             <nz-form-label>Redirect URIs</nz-form-label>
             <nz-form-control>
-              <nz-select
-                class="uri-tags-select"
-                formControlName="redirectUris"
-                nzMode="tags"
-                [nzTokenSeparators]="uriTokenSeparators"
-                nzPlaceHolder="输入 URI 后回车，或粘贴多条（逗号/换行分隔）"
-              />
+              <nz-select class="uri-tags-select" formControlName="redirectUris" nzMode="tags" nzPlaceHolder="输入 URI 后回车，或粘贴多条（逗号/换行分隔）" [nzTokenSeparators]="uriTokenSeparators" />
               <div class="field-tip">点击标签 × 可删除；须与 IdP 及前端 redirect_uri 完全一致</div>
             </nz-form-control>
           </nz-form-item>
@@ -88,13 +82,7 @@
           <nz-form-item>
             <nz-form-label>Post Logout Redirect URIs</nz-form-label>
             <nz-form-control>
-              <nz-select
-                class="uri-tags-select"
-                formControlName="postLogoutRedirectUris"
-                nzMode="tags"
-                [nzTokenSeparators]="uriTokenSeparators"
-                nzPlaceHolder="输入登出回调 URI 后回车"
-              />
+              <nz-select class="uri-tags-select" formControlName="postLogoutRedirectUris" nzMode="tags" nzPlaceHolder="输入登出回调 URI 后回车" [nzTokenSeparators]="uriTokenSeparators" />
               <div class="field-tip">OAuth 登出成功后浏览器跳转地址</div>
             </nz-form-control>
           </nz-form-item>
@@ -107,8 +95,8 @@
                 class="scope-tags-select uri-tags-select"
                 formControlName="scopes"
                 nzMode="tags"
-                [nzTokenSeparators]="scopeTokenSeparators"
                 nzPlaceHolder="输入 scope 后回车，如 openid、profile、email"
+                [nzTokenSeparators]="scopeTokenSeparators"
               />
               <div class="field-tip">常用：openid、profile、email；支持逗号/空格/换行批量粘贴</div>
             </nz-form-control>

@@ -15,10 +15,6 @@ export class ApiPickerModalService {
   }
 
   public show(modalOptions: ModalOptions = {}, modalData?: ApiPickerModalData): Observable<ModalResponse> {
-    return this.modalWrapService.show<ApiPickerModalComponent, ApiPickerModalData>(
-      this.getContentComponent(),
-      modalOptions,
-      modalData
-    );
+    return this.modalWrapService.show<ApiPickerModalComponent, ApiPickerModalData>(this.getContentComponent(), modalOptions, modalData);
   }
 }

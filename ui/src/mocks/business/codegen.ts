@@ -26,7 +26,10 @@ interface CodeGenRequest {
 }
 
 function toSnake(name: string): string {
-  return name.replace(/([A-Z])/g, '_$1').replace(/^_/, '').toLowerCase();
+  return name
+    .replace(/([A-Z])/g, '_$1')
+    .replace(/^_/, '')
+    .toLowerCase();
 }
 
 function moduleCamel(moduleName: string): string {
@@ -157,12 +160,8 @@ function buildFrontendResult(body: CodeGenRequest) {
   const audit = body.enableAudit !== false;
   const hasKeyword = body.fields.some(f => f.searchable && f.javaType === 'String');
 
-  const voFields = body.fields
-    .map(f => `  ${f.name}${f.nullable !== false ? '?' : ''}: ${javaToTs(f.javaType)};`)
-    .join('\n');
-  const auditFields = audit
-    ? `\n  createdAt?: string;\n  updatedAt?: string;\n  createdBy?: string;\n  lastModifiedBy?: string;`
-    : '';
+  const voFields = body.fields.map(f => `  ${f.name}${f.nullable !== false ? '?' : ''}: ${javaToTs(f.javaType)};`).join('\n');
+  const auditFields = audit ? `\n  createdAt?: string;\n  updatedAt?: string;\n  createdBy?: string;\n  lastModifiedBy?: string;` : '';
   const paramPick = body.fields.map(f => `'${f.name}'`).join(' | ');
 
   const models = `export interface ${module}VO {

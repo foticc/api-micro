@@ -2,12 +2,11 @@ import { Component, inject, computed } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { TabModel, TabService } from '@core/services/common/tab.service';
+import { TranslatePipe } from '@ngx-translate/core';
 import { MouseHoverShowDirective } from '@shared/directives/mouse-hover-show.directive';
 import { SplitNavStoreService } from '@store/common-store/split-nav-store.service';
 import { ThemeService } from '@store/common-store/theme.service';
 import { fnStopMouseEvent } from '@utils/tools';
-
-import { TranslatePipe } from '@ngx-translate/core';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -97,4 +96,3 @@ export class TabComponent {
     this.nzContextMenuService.close();
   }
 }
-

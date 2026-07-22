@@ -6,6 +6,7 @@ import { ApiResourceDTO, ApiResourceSearchParam, ApiResourceService } from '@ser
 import { BasicConfirmModalComponent } from '@widget/base-modal';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzTreeNodeKey, NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -18,16 +19,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 
-import { NzTreeNodeKey, NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
-
-import {
-  ApiPickerAddedFilter,
-  ApiPickerTreeNodeOptions,
-  buildApiPickerTreeNodes,
-  extractApiIdsFromCheckedKeys,
-  filterApis,
-  filterApisByAddedStatus
-} from './api-picker-tree.util';
+import { ApiPickerAddedFilter, ApiPickerTreeNodeOptions, buildApiPickerTreeNodes, extractApiIdsFromCheckedKeys, filterApis, filterApisByAddedStatus } from './api-picker-tree.util';
 
 export interface ApiPickerModalData {
   /** 当前已关联的 API 资源 id，打开弹窗时预勾选 */
@@ -40,19 +32,7 @@ export interface ApiPickerModalData {
   selector: 'app-api-picker-modal',
   templateUrl: './api-picker-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    FormsModule,
-    NzFormModule,
-    NzGridModule,
-    NzInputModule,
-    NzButtonModule,
-    NzIconModule,
-    NzSelectModule,
-    NzTreeModule,
-    NzTagModule,
-    NzSpinModule,
-    NzTooltipModule
-  ],
+  imports: [FormsModule, NzFormModule, NzGridModule, NzInputModule, NzButtonModule, NzIconModule, NzSelectModule, NzTreeModule, NzTagModule, NzSpinModule, NzTooltipModule],
   styles: `
     .picker-search {
       margin-bottom: 12px;
@@ -143,7 +123,7 @@ export class ApiPickerModalComponent extends BasicConfirmModalComponent implemen
     { label: 'DELETE', value: 'DELETE' }
   ];
 
-  readonly addedFilterOptions: { label: string; value: ApiPickerAddedFilter }[] = [
+  readonly addedFilterOptions: Array<{ label: string; value: ApiPickerAddedFilter }> = [
     { label: '全部', value: 'all' },
     { label: '未关联', value: 'notAdded' },
     { label: '已关联', value: 'added' }

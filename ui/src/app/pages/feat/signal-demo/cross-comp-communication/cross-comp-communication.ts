@@ -1,15 +1,16 @@
-import {  Component, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 
 import { ChildCounterComponent } from './child-counter/child-counter.component';
 import { ChildDisplayComponent } from './child-display/child-display.component';
@@ -64,4 +65,3 @@ export class CrossCompCommunication {
     this.$sharedValue.set((e.target as HTMLInputElement).value);
   }
 }
-

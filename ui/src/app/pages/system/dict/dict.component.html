@@ -1,13 +1,13 @@
 <app-page-header [pageHeaderInfo]="pageHeaderInfo" />
 
 <div class="normal-table-wrap">
-  <nz-card nzHoverable [nzBordered]="false" [nzTitle]="'字典管理'" [nzExtra]="dictCardExtra">
+  <nz-card nzHoverable [nzBordered]="false" [nzExtra]="dictCardExtra" [nzTitle]="'字典管理'">
     <ng-template #dictCardExtra>
       <button *appAuth="ActionCode.DictAdd" nz-button nzType="primary" (click)="addDict()">
         <i nz-icon nzType="plus"></i>
         新建类型
       </button>
-      <button class="m-l-8" nz-button (click)="getDictList()" [disabled]="dictTableConfig().loading">
+      <button class="m-l-8" nz-button [disabled]="dictTableConfig().loading" (click)="getDictList()">
         <i nz-icon nzType="reload"></i>
         刷新
       </button>
@@ -15,8 +15,8 @@
 
     <div class="dict-type-search">
       <form nz-form>
-        <div nz-row [nzGutter]="{ xs: 8, sm: 16 }" nzAlign="middle">
-          <div nz-col [nzSpan]="24" [nzMd]="14" [nzLg]="15" [nzXl]="16">
+        <div nz-row nzAlign="middle" [nzGutter]="{ xs: 8, sm: 16 }">
+          <div nz-col [nzLg]="15" [nzMd]="14" [nzSpan]="24" [nzXl]="16">
             <nz-form-item class="m-b-0">
               <nz-form-label>关键字</nz-form-label>
               <nz-form-control>
@@ -24,7 +24,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col [nzSpan]="24" [nzMd]="10" [nzLg]="9" [nzXl]="8" class="text-right p-0">
+          <div class="text-right p-0" nz-col [nzLg]="9" [nzMd]="10" [nzSpan]="24" [nzXl]="8">
             <button nz-button nzType="primary" (click)="getDictList({ pageIndex: 1 })">
               <i nz-icon nzType="search"></i>
               搜索
@@ -46,10 +46,10 @@
       [nzLoading]="dictTableConfig().loading"
       [nzPageIndex]="dictTableConfig().pageIndex!"
       [nzPageSize]="dictTableConfig().pageSize!"
-      [nzTotal]="dictTableConfig().total!"
       [nzShowPagination]="true"
-      [nzShowSizeChanger]="true"
       [nzShowQuickJumper]="true"
+      [nzShowSizeChanger]="true"
+      [nzTotal]="dictTableConfig().total!"
       (nzPageIndexChange)="onDictPageIndexChange($event)"
       (nzPageSizeChange)="onDictPageSizeChange($event)"
     >
@@ -64,11 +64,7 @@
       <tbody>
         @for (data of dictDataList(); track data.id) {
           <tr>
-            <td
-              [nzShowExpand]="true"
-              [nzExpand]="isDictExpanded(data.id)"
-              (nzExpandChange)="onDictExpandChange(data.id, $event)"
-            ></td>
+            <td [nzExpand]="isDictExpanded(data.id)" [nzShowExpand]="true" (nzExpandChange)="onDictExpandChange(data.id, $event)"></td>
             <td nzEllipsis>{{ data.code }}</td>
             <td nzEllipsis>{{ data.name }}</td>
             <td>
@@ -77,26 +73,26 @@
             </td>
           </tr>
           <tr [nzExpand]="isDictExpanded(data.id)">
-            <td colspan="4" class="dict-nested-cell">
+            <td class="dict-nested-cell" colspan="4">
               <div class="dict-nested-toolbar">
-                <button *appAuth="ActionCode.DictItemAdd" nz-button nzType="primary" nzSize="small" (click)="addItem(data.id!)">
+                <button *appAuth="ActionCode.DictItemAdd" nz-button nzSize="small" nzType="primary" (click)="addItem(data.id!)">
                   <i nz-icon nzType="plus"></i>
                   新建字典项
                 </button>
-                <button class="m-l-8" nz-button nzSize="small" (click)="refreshItemsForDict(data.id!)" [disabled]="itemsLoadingFor(data.id!)">
+                <button class="m-l-8" nz-button nzSize="small" [disabled]="itemsLoadingFor(data.id!)" (click)="refreshItemsForDict(data.id!)">
                   <i nz-icon nzType="reload"></i>
                   刷新字典项
                 </button>
               </div>
               <nz-table
-                nzSize="small"
-                nzBordered
-                nzTableLayout="fixed"
                 class="dict-nested-table"
+                nzBordered
+                nzSize="small"
+                nzTableLayout="fixed"
                 [nzData]="itemsForDict(data.id!)"
-                [nzShowPagination]="false"
                 [nzLoading]="itemsLoadingFor(data.id!)"
                 [nzNoResult]="nestedEmptyTpl"
+                [nzShowPagination]="false"
               >
                 <thead>
                   <tr>
@@ -127,5 +123,5 @@
 </div>
 
 <ng-template #nestedEmptyTpl>
-  <nz-empty nzNotFoundImage="simple" nzNotFoundContent="暂无字典项"></nz-empty>
+  <nz-empty nzNotFoundContent="暂无字典项" nzNotFoundImage="simple"></nz-empty>
 </ng-template>

@@ -11,12 +11,7 @@ export interface ProductVO {
 }
 
 /** 与后端 ProductParam 对齐（创建/更新请求体） */
-export type ProductParam = Pick<
-  ProductVO,
-  'title' | 
-  'price' | 
-  'enabled'
->;
+export type ProductParam = Pick<ProductVO, 'title' | 'price' | 'enabled'>;
 
 /** 与后端 ProductQueryParam 对齐（分页筛选） */
 export interface ProductQueryParam {

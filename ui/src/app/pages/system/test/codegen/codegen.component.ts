@@ -3,12 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 
-import {
-  CodeGenFieldDef,
-  CodeGenRequest,
-  CodeGenResult,
-  CodeGenTarget
-} from '@app/pages/system/test/codegen/models/codegen.models';
+import { CodeGenFieldDef, CodeGenRequest, CodeGenResult, CodeGenTarget } from '@app/pages/system/test/codegen/models/codegen.models';
 import { CodeGenService } from '@app/pages/system/test/codegen/services/codegen.service';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 

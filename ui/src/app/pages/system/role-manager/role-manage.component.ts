@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ActionCode } from '@app/config/actionCode';
-import { SearchCommonVO } from '@core/services/types';
 import { Role, RoleService } from '@services/system/role.service';
 import { AntTableConfig, AntTableComponent } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';

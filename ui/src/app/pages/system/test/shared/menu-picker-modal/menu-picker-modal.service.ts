@@ -15,10 +15,6 @@ export class MenuPickerModalService {
   }
 
   public show(modalOptions: ModalOptions = {}, modalData?: MenuPickerModalData): Observable<ModalResponse> {
-    return this.modalWrapService.show<MenuPickerModalComponent, MenuPickerModalData>(
-      this.getContentComponent(),
-      modalOptions,
-      modalData
-    );
+    return this.modalWrapService.show<MenuPickerModalComponent, MenuPickerModalData>(this.getContentComponent(), modalOptions, modalData);
   }
 }

@@ -1,4 +1,4 @@
-import {  Component, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 
 import { LazyService } from '@core/services/common/lazy.service';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
@@ -60,14 +60,11 @@ export class LazyLoadscript {
 
   // ── Demo 3: load 批量 ───────────────────────────────────────────────────
   readonly batchStatus = signal<LoadStatus>('idle');
-  readonly batchResults = signal<{ path: string; status: string }[]>([]);
+  readonly batchResults = signal<Array<{ path: string; status: string }>>([]);
 
   async loadBatch(): Promise<void> {
     this.batchStatus.set('loading');
-    const resources = [
-      'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js',
-      'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css'
-    ];
+    const resources = ['https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css'];
     const results = await this.lazy.load(resources);
     this.batchResults.set(results.map(r => ({ path: r.path.split('/').pop()!, status: r.status })));
     this.batchStatus.set('done');

@@ -1,8 +1,8 @@
 import { inject, Service, Type } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { TestUser } from '@app/pages/system/test/models/test-account.models';
 import { TestAccountModalComponent } from '@app/pages/system/test/account/test-account-modal/test-account-modal.component';
+import { TestUser } from '@app/pages/system/test/models/test-account.models';
 import { ModalResponse, ModalWrapService } from '@widget/base-modal';
 
 import { ModalOptions } from 'ng-zorro-antd/modal';

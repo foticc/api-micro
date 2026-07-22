@@ -68,12 +68,7 @@ export function filterApis(apis: ApiResourceDTO[], keyword: string, method?: str
   let list = [...apis];
   const kw = keyword.trim().toLowerCase();
   if (kw) {
-    list = list.filter(
-      a =>
-        a.path.toLowerCase().includes(kw) ||
-        (a.description?.toLowerCase().includes(kw) ?? false) ||
-        a.method.toLowerCase().includes(kw)
-    );
+    list = list.filter(a => a.path.toLowerCase().includes(kw) || (a.description?.toLowerCase().includes(kw) ?? false) || a.method.toLowerCase().includes(kw));
   }
   if (method) {
     list = list.filter(a => a.method === method);
@@ -82,11 +77,7 @@ export function filterApis(apis: ApiResourceDTO[], keyword: string, method?: str
 }
 
 /** 按是否已加入当前资源组筛选 */
-export function filterApisByAddedStatus(
-  apis: ApiResourceDTO[],
-  existingIds: number[],
-  status: ApiPickerAddedFilter
-): ApiResourceDTO[] {
+export function filterApisByAddedStatus(apis: ApiResourceDTO[], existingIds: number[], status: ApiPickerAddedFilter): ApiResourceDTO[] {
   if (status === 'all') {
     return [...apis];
   }
@@ -104,11 +95,7 @@ export function filterApisByAddedStatus(
 }
 
 /** 将 API 列表按 path 首段（/ 分割后第一个非空字符串）分组构建树 */
-export function buildApiPickerTreeNodes(
-  apis: ApiResourceDTO[],
-  linkedIds: number[] = [],
-  options?: ApiPickerTreeBuildOptions
-): ApiPickerTreeNodeOptions[] {
+export function buildApiPickerTreeNodes(apis: ApiResourceDTO[], linkedIds: number[] = [], options?: ApiPickerTreeBuildOptions): ApiPickerTreeNodeOptions[] {
   if (!apis.length) {
     return [];
   }
@@ -155,7 +142,7 @@ export function buildApiPickerTreeNodes(
 }
 
 /** 从树勾选 key 中提取 API id（忽略分组节点 key） */
-export function extractApiIdsFromCheckedKeys(keys: (string | number)[]): number[] {
+export function extractApiIdsFromCheckedKeys(keys: Array<string | number>): number[] {
   const ids: number[] = [];
   for (const key of keys) {
     const str = String(key);

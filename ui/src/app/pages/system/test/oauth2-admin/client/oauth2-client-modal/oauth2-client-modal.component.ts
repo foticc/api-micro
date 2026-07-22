@@ -2,12 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/cor
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 
-import {
-  RegisteredClientDTO,
-  RegisteredClientFormValue,
-  toRegisteredClientDto,
-  toRegisteredClientForm
-} from '@app/pages/system/test/models/oauth2-admin.models';
+import { RegisteredClientDTO, RegisteredClientFormValue, toRegisteredClientDto, toRegisteredClientForm } from '@app/pages/system/test/models/oauth2-admin.models';
 import { fnCheckForm } from '@utils/tools';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
 
@@ -24,17 +19,7 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 @Component({
   selector: 'app-oauth2-client-modal',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    FormsModule,
-    NzFormModule,
-    ReactiveFormsModule,
-    NzGridModule,
-    NzInputModule,
-    NzSelectModule,
-    NzSwitchModule,
-    NzDividerModule,
-    NzAlertModule
-  ],
+  imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzInputModule, NzSelectModule, NzSwitchModule, NzDividerModule, NzAlertModule],
   templateUrl: './oauth2-client-modal.component.html',
   styles: `
     :host {

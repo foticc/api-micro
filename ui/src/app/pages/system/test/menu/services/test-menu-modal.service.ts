@@ -1,8 +1,8 @@
 import { inject, Service, Type } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { TestMenuModalData } from '@app/pages/system/test/models/test-menu.models';
 import { TestMenuModalComponent } from '@app/pages/system/test/menu/test-menu-modal/test-menu-modal.component';
+import { TestMenuModalData } from '@app/pages/system/test/models/test-menu.models';
 import { ModalResponse, ModalWrapService } from '@widget/base-modal';
 
 import { ModalOptions } from 'ng-zorro-antd/modal';

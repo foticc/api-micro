@@ -1,11 +1,8 @@
-import { inject, Service } from '@angular/core';
 import { HttpResourceRef } from '@angular/common/http';
+import { inject, Service } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
-import {
-  RegisteredClientDTO,
-  RegisteredClientQueryFilter
-} from '@app/pages/system/test/models/oauth2-admin.models';
+import { RegisteredClientDTO, RegisteredClientQueryFilter } from '@app/pages/system/test/models/oauth2-admin.models';
 import { PageInfo, SearchCommonVO } from '@core/services/types';
 import { BaseHttpService } from '@services/base-http.service';
 

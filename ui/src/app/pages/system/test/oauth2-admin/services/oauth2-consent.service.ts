@@ -1,5 +1,5 @@
-import { inject, Service } from '@angular/core';
 import { HttpResourceRef } from '@angular/common/http';
+import { inject, Service } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
 import { ConsentDTO, ConsentKey, ConsentQueryFilter } from '@app/pages/system/test/models/oauth2-admin.models';
@@ -23,11 +23,7 @@ export class OAuth2ConsentService {
   }
 
   update(registeredClientId: string, principalName: string, body: ConsentDTO): Observable<ConsentDTO> {
-    return this.http.put(
-      `/manage/oauth2/consent/${encodeURIComponent(registeredClientId)}/${encodeURIComponent(principalName)}`,
-      body,
-      { needSuccessInfo: true }
-    );
+    return this.http.put(`/manage/oauth2/consent/${encodeURIComponent(registeredClientId)}/${encodeURIComponent(principalName)}`, body, { needSuccessInfo: true });
   }
 
   delete(items: ConsentKey[]): Observable<void> {

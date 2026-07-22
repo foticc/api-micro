@@ -1,5 +1,5 @@
 <h4 class="section-title">基本信息</h4>
-<nz-descriptions nzBordered [nzColumn]="2" nzSize="small">
+<nz-descriptions nzBordered nzSize="small" [nzColumn]="2">
   <nz-descriptions-item nzTitle="授权 ID" [nzSpan]="2">{{ detail.id || '—' }}</nz-descriptions-item>
   <nz-descriptions-item nzTitle="Client ID">{{ detail.registeredClientId || '—' }}</nz-descriptions-item>
   <nz-descriptions-item nzTitle="用户">{{ detail.principalName || '—' }}</nz-descriptions-item>
@@ -15,7 +15,7 @@
     <div class="token-card">
       <div class="token-card-head">
         <span class="token-card-title">{{ field.label }}</span>
-        <button nz-button nzType="link" nzSize="small" type="button" (click)="toggleVisible(field.key)">
+        <button type="button" nz-button nzSize="small" nzType="link" (click)="toggleVisible(field.key)">
           <i nz-icon [nzType]="isVisible(field.key) ? 'eye-invisible' : 'eye'"></i>
           {{ isVisible(field.key) ? '隐藏' : '显示' }}
         </button>
@@ -36,7 +36,7 @@
       <div class="token-card">
         <div class="token-card-head">
           <span class="token-card-title">{{ block.label }}</span>
-          <button nz-button nzType="link" nzSize="small" type="button" (click)="toggleVisible(block.key)">
+          <button type="button" nz-button nzSize="small" nzType="link" (click)="toggleVisible(block.key)">
             <i nz-icon [nzType]="isVisible(block.key) ? 'eye-invisible' : 'eye'"></i>
             {{ isVisible(block.key) ? '隐藏' : '显示' }}
           </button>
