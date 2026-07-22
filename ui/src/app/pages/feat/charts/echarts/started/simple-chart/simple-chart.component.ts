@@ -1,15 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
-import { NgxEchartsModule } from 'ngx-echarts';
-
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 
 @Component({
   selector: 'app-simple-chart',
-  template: ` <div class="demo-chart" echarts [options]="options"></div> `,
+  template: ` <div class="demo-chart">111</div> `,
   styles: [],
-
-  imports: [NgxEchartsModule]
+  imports: []
 })
 export class SimpleChartComponent implements OnInit {
   options: NzSafeAny;
