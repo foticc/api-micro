@@ -20,8 +20,56 @@
   height: 180px;
 }
 
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.forecast-status {
+  font-size: 20px;
+  font-weight: 500;
+  color: #52c41a;
+}
+
+.efficiency-value {
+  font-size: 48px;
+  font-weight: 600;
+  color: #1890ff;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 500;
+}
+
 #map {
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+// 各品类占比列表项样式
+.category-item-label {
+  width: 90px;
+  display: inline-block;
+}
+
+.category-item-value {
+  width: 45px;
+  text-align: right;
+}
+
+// 进度条包装器
+.progress-wrapper {
+  flex: 1;
+  margin: 0 16px;
 }

@@ -25,7 +25,6 @@
     "@angular/platform-browser": "^22.0.0",
     "@angular/router": "^22.0.0",
     "@ant-design/icons-angular": "^22.0.0",
-    "@antv/g2plot": "^2.4.33",
     "@antv/x6": "^2.18.1",
     "@antv/x6-plugin-dnd": "^2.1.1",
     "@auth0/angular-jwt": "^5.2.0",

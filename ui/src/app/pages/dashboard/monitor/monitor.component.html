@@ -46,38 +46,82 @@
     <div nz-col [nzLg]="24" [nzMd]="24" [nzSm]="24" [nzXl]="6" [nzXs]="24" [nzXXl]="6">
       <div class="card-wrap-line">
         <nz-card nzTitle="活动情况预测">
-          <div class="card-top">
-            <div nz-typography nzType="secondary">目标评估</div>
-            <div class="title">有望达到预期</div>
-          </div>
-          <div>
-            <div id="miniArea"></div>
+          <div class="p-t-16 p-b-16">
+            <div class="m-b-12" nz-typography nzType="secondary">目标评估</div>
+            <div class="forecast-status flex center g-8">
+              <i nz-icon nzTheme="fill" nzType="check-circle"></i>
+              <span>有望达到预期</span>
+            </div>
+            <nz-alert class="m-t-15" nzMessage="较上周提升 15.3%" nzShowIcon nzType="success" [nzIcon]="arrowUpTpl"></nz-alert>
+            <nz-alert class="m-t-15" nzMessage="本月已提升 20.3%" nzShowIcon nzType="success" [nzIcon]="arrowUpTpl"></nz-alert>
+
+            <ng-template #arrowUpTpl>
+              <i nz-icon nzType="arrow-up"></i>
+            </ng-template>
           </div>
         </nz-card>
 
-        <nz-card class="m-t-15" nzTitle="券核效率">
-          <div id="dashBoard"></div>
+        <nz-card nzTitle="券核效率">
+          <div class="text-center">
+            <div class="efficiency-value m-b-8">75%</div>
+            <div class="sp-14" nz-typography nzType="secondary">核销效率良好</div>
+            <div class="m-t-16 flex space-around">
+              <div>
+                <div class="sp-12" nz-typography nzType="secondary">今日</div>
+                <div class="stat-value">1,234</div>
+              </div>
+              <div>
+                <div class="sp-12" nz-typography nzType="secondary">本周</div>
+                <div class="stat-value">8,567</div>
+              </div>
+            </div>
+          </div>
         </nz-card>
       </div>
     </div>
 
     <div nz-col [nzLg]="24" [nzMd]="24" [nzSm]="24" [nzXl]="12" [nzXs]="24" [nzXXl]="12">
       <nz-card nzTitle="各品类占比">
-        <div nz-row>
-          <div id="ringProgress1" class="pipe-height center" nz-col [nzLg]="8" [nzMd]="8" [nzSm]="8" [nzXl]="8" [nzXs]="8" [nzXXl]="8"></div>
-          <div id="ringProgress2" class="pipe-height center" nz-col [nzLg]="8" [nzMd]="8" [nzSm]="8" [nzXl]="8" [nzXs]="8" [nzXXl]="8"></div>
-          <div id="ringProgress3" class="pipe-height center" nz-col [nzLg]="8" [nzMd]="8" [nzSm]="8" [nzXl]="8" [nzXs]="8" [nzXXl]="8"></div>
-        </div>
+        <nz-list nzBordered nzSize="small">
+          <nz-list-item>
+            <span class="category-item-label">电子产品</span>
+            <nz-progress class="progress-wrapper" nzStrokeColor="#1890ff" [nzPercent]="70" [nzShowInfo]="false" />
+            <nz-rate class="sp-14" [ngModel]="3.5" [nzDisabled]="true" />
+            <strong class="m-l-8 category-item-value">70%</strong>
+          </nz-list-item>
+          <nz-list-item>
+            <span class="category-item-label">服装鞋包</span>
+            <nz-progress class="progress-wrapper" nzStrokeColor="#52c41a" [nzPercent]="85" [nzShowInfo]="false" />
+            <nz-rate class="sp-14" [ngModel]="4.25" [nzDisabled]="true" />
+            <strong class="m-l-8 category-item-value">85%</strong>
+          </nz-list-item>
+          <nz-list-item>
+            <span class="category-item-label">食品饮料</span>
+            <nz-progress class="progress-wrapper" nzStrokeColor="#faad14" [nzPercent]="60" [nzShowInfo]="false" />
+            <nz-rate class="sp-14" [ngModel]="3" [nzDisabled]="true" />
+            <strong class="m-l-8 category-item-value">60%</strong>
+          </nz-list-item>
+        </nz-list>
       </nz-card>
     </div>
     <div nz-col [nzLg]="12" [nzMd]="24" [nzSm]="24" [nzXl]="6" [nzXs]="24" [nzXXl]="6">
       <nz-card nzTitle="热门搜索">
-        <div id="wordCloud" class="pipe-height"></div>
+        <div class="tag-cloud p-16">
+          @for (item of wordCloudData | slice: 0 : 12; track item.x) {
+            <nz-tag [nzColor]="getTagColor(item.category)">
+              {{ item.x }}
+            </nz-tag>
+          }
+        </div>
       </nz-card>
     </div>
     <div nz-col [nzLg]="12" [nzMd]="24" [nzSm]="24" [nzXl]="6" [nzXs]="24" [nzXXl]="6">
       <nz-card nzTitle="资源剩余">
-        <div id="liquidPlot" class="pipe-height"></div>
+        <div style="padding: 24px 16px; text-align: center">
+          <div style="font-size: 42px; font-weight: 600; color: #ff4d4f; margin-bottom: 8px">25%</div>
+          <div style="color: #8c8c8c; font-size: 14px; margin-bottom: 16px">库存告急</div>
+          <nz-tag nzColor="red">需要补货</nz-tag>
+        </div>
       </nz-card>
     </div>
   </section>
