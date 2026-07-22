@@ -4,7 +4,7 @@ import { NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } 
 import { environment } from '@env/environment';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
-import { EditorComponent } from '@tinymce/tinymce-angular';
+// import { EditorComponent } from '@tinymce/tinymce-angular';
 
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -14,13 +14,13 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
   selector: 'app-rich-text',
   templateUrl: './rich-text.component.html',
 
-  imports: [PageHeaderComponent, NzCardModule, WaterMarkComponent, FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, EditorComponent]
+  imports: [PageHeaderComponent, NzCardModule, WaterMarkComponent, FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule]
 })
 export class RichTextComponent {
   private fb = inject(NonNullableFormBuilder);
 
   pageHeaderInfo: Partial<PageHeaderType> = {
-    title: '富文本，人们总是喜欢用花里胡哨的文字，表达自己空虚的情感',
+    title: '富文本我删除掉了，我希望antd admin相对纯粹，尽量少引用第三方库，如果你要看富文本案例，请看antd admin v21以及之前的版本源码',
     breadcrumb: ['首页', '扩展功能', '富文本']
   };
   localUrl = 'http://139.9.225.248:8088';

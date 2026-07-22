@@ -50,7 +50,7 @@ export class EchartsComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.pageHeaderInfo = {
       title: 'Echarts',
-      desc: '本来是展示ngx-echarts的基本操作，不过我认为展示第三方库的使用方法没有意义，所以这里改成了portal区块化各个功能的演示示例。如果你要看echarts的相关例子，请下载v21以及之前的antd admin代码',
+      desc: '本来是展示ngx-echarts的基本操作，现在我希望antd admin尽量纯粹，少应用第三方包，所以这里改成了portal区块化各个功能的演示示例。如果你要看echarts的相关例子，请下载v21以及之前的antd admin代码',
       breadcrumb: ['首页', '功能', '图表', 'Echarts'],
       footer: this.headerFooter()
     };
