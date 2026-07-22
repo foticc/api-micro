@@ -360,5 +360,6 @@ export class SearchTableComponent implements OnInit {
 
   ngOnInit(): void {
     this.initTable();
+    this.getDataList(1);
   }
 }

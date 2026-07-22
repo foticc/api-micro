@@ -401,5 +401,6 @@ export class TreeListComponent implements OnInit {
 
   ngOnInit(): void {
     this.initTable();
+    this.getDataList(1);
   }
 }
