@@ -1,7 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, OnInit, TemplateRef, inject, DestroyRef, signal, viewChild, computed, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 
 import { ActionCode } from '@app/config/actionCode';
 import { OptionsInterface } from '@core/services/types';
@@ -31,9 +31,14 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 
 interface SearchParam {
-  menuName: number;
-  visible: boolean;
+  menuName: string;
+  visible: boolean | null;
 }
+
+const DEFAULT_SEARCH_PARAM: SearchParam = {
+  menuName: '',
+  visible: null
+};
 
 @Component({
   selector: 'app-menu',
@@ -43,7 +48,7 @@ interface SearchParam {
     PageHeaderComponent,
     WaterMarkComponent,
     NzCardModule,
-    FormsModule,
+    FormField,
     NzFormModule,
     NzGridModule,
     NzInputModule,
@@ -66,7 +71,8 @@ export class MenuComponent implements OnInit {
   readonly newLinkFlag = viewChild.required<TemplateRef<NzSafeAny>>('newLinkFlag');
 
   ActionCode = ActionCode;
-  searchParam: Partial<SearchParam> = {};
+  searchModel = signal<SearchParam>({ ...DEFAULT_SEARCH_PARAM });
+  searchForm = form(this.searchModel);
   readonly pageHeaderInfo: Partial<PageHeaderType> = {
     title: '菜单管理,新增完菜单记得给对应角色添加刚刚新增的菜单权限，不然无法展示',
     breadcrumb: ['首页', '系统管理', '菜单管理']
@@ -94,7 +100,7 @@ export class MenuComponent implements OnInit {
     }
     const menuList = this.menuResource.value();
     const target = fnFlatDataHasParentToTree(menuList.list, 'fatherId');
-    let list = fnFlattenTreeDataByDataList(target);
+    const list = fnFlattenTreeDataByDataList(target);
     // 因为前段要对后端返回的数据进行处理，所以排序这里交给了前段来做
     const sortFile = this.currentSortFile();
     if (sortFile) {
@@ -116,7 +122,9 @@ export class MenuComponent implements OnInit {
   }
 
   getDataList(sortFile?: SortFile): void {
-    this.searchFilters.set({ ...this.searchParam });
+    // 过滤掉空值,只传递有实际值的搜索条件
+    const filters = Object.fromEntries(Object.entries(this.searchModel()).filter(([_, value]) => value !== null && value !== ''));
+    this.searchFilters.set(filters);
     if (sortFile) {
       this.currentSortFile.set(sortFile);
     }
@@ -124,7 +132,7 @@ export class MenuComponent implements OnInit {
 
   /*重置*/
   resetForm(): void {
-    this.searchParam = {};
+    this.searchModel.set({ ...DEFAULT_SEARCH_PARAM });
     this.searchFilters.set({});
     this.currentSortFile.set(undefined);
     this.menuResource.reload();

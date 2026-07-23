@@ -1,10 +1,10 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, OnInit, TemplateRef, inject, DestroyRef, signal, viewChild, computed, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 
 import { ActionCode } from '@app/config/actionCode';
-import { OptionsInterface, SearchCommonVO } from '@core/services/types';
+import { OptionsInterface } from '@core/services/types';
 import { Dept, DeptService } from '@services/system/dept.service';
 import { AntTableConfig, SortFile } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
@@ -31,8 +31,14 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 
 interface SearchParam {
   departmentName: string;
-  state: boolean;
+  state: boolean | null;
 }
+
+// 提取默认值常量
+const DEFAULT_SEARCH_PARAM: SearchParam = {
+  departmentName: '',
+  state: null
+};
 
 @Component({
   selector: 'app-dept',
@@ -41,7 +47,7 @@ interface SearchParam {
   imports: [
     PageHeaderComponent,
     NzCardModule,
-    FormsModule,
+    FormField,
     NzFormModule,
     NzGridModule,
     NzInputModule,
@@ -60,7 +66,8 @@ export class DeptComponent implements OnInit {
   readonly operationTpl = viewChild.required<TemplateRef<NzSafeAny>>('operationTpl');
   readonly state = viewChild.required<TemplateRef<NzSafeAny>>('state');
   ActionCode = ActionCode;
-  searchParam: Partial<SearchParam> = {};
+  searchModel = signal<SearchParam>({ ...DEFAULT_SEARCH_PARAM });
+  searchForm = form(this.searchModel);
   readonly pageHeaderInfo: Partial<PageHeaderType> = {
     title: '部门管理',
     breadcrumb: ['首页', '系统管理', '部门管理']
@@ -88,7 +95,7 @@ export class DeptComponent implements OnInit {
     }
     const deptList = this.deptResource.value();
     const target = fnFlatDataHasParentToTree(deptList.list);
-    let list = fnFlattenTreeDataByDataList(target);
+    const list = fnFlattenTreeDataByDataList(target);
     // 因为前段要对后端返回的数据进行处理，所以排序这里交给了前段来做
     const sortFile = this.currentSortFile();
     if (sortFile) {
@@ -117,7 +124,9 @@ export class DeptComponent implements OnInit {
   }
 
   getDataList(sortFile?: SortFile): void {
-    this.searchFilters.set({ ...this.searchParam });
+    // 过滤掉空值,只传递有实际值的搜索条件
+    const filters = Object.fromEntries(Object.entries(this.searchModel()).filter(([_, value]) => value !== null && value !== ''));
+    this.searchFilters.set(filters);
     if (sortFile) {
       this.currentSortFile.set(sortFile);
     }
@@ -131,7 +140,7 @@ export class DeptComponent implements OnInit {
 
   /*重置*/
   resetForm(): void {
-    this.searchParam = {};
+    this.searchModel.set({ ...DEFAULT_SEARCH_PARAM });
     this.searchFilters.set({});
     this.currentSortFile.set(undefined);
   }

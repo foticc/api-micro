@@ -1,9 +1,11 @@
-import {  Component, DestroyRef, inject, input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {  Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
+import { form, FormField, required } from '@angular/forms/signals';
+
+interface DetailFormModel {
+  userName: string;
+}
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
-import { fnCheckForm } from '@utils/tools';
-
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
@@ -13,7 +15,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
   selector: 'app-search-table-detail',
   templateUrl: './search-table-detail.component.html',
 
-  imports: [PageHeaderComponent, NzInputModule, FormsModule, NzDividerModule, NzFormModule, ReactiveFormsModule, NzGridModule]
+  imports: [PageHeaderComponent, NzInputModule, FormField, NzDividerModule, NzFormModule, NzGridModule]
 })
 export class SearchTableDetailComponent implements OnInit {
   pageHeaderInfo: Partial<PageHeaderType> = {
@@ -21,23 +23,23 @@ export class SearchTableDetailComponent implements OnInit {
     // desc: '表单页用于向用户收集或验证信息，基础表单常见于数据项较少的表单场景。',
     breadcrumb: ['首页', '列表页', '查询表格', '详情']
   };
-  validateForm!: FormGroup;
+  formModel = signal<DetailFormModel>({
+    userName: ''
+  });
+  validateForm = form(this.formModel, (schemaPath) => {
+    required(schemaPath.userName, { message: '请输入用户名' });
+  });
   name = input.required<string>(); // 从路由中获取的参数，ng16支持的新特性
   backUrl = '/default/page-demo/list/search-table';
   destroyRef = inject(DestroyRef);
 
-  private fb = inject(FormBuilder);
-
-  initForm(): void {
-    this.validateForm = this.fb.group({
-      userName: [null, [Validators.required]]
-    });
-  }
-
   submitForm(): void {
-    if (!fnCheckForm(this.validateForm)) {
+    if (this.validateForm().invalid()) {
+      // 标记所有字段为 touched，使验证错误提示显示
+      this.validateForm().markAsTouched();
       return;
     }
+    console.log('表单数据:', this.formModel());
   }
 
   _onReuseDestroy(): void {
@@ -45,7 +47,6 @@ export class SearchTableDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initForm();
-    this.validateForm.get('userName')?.setValue(this.name());
+    this.formModel.set({ userName: this.name() });
   }
 }

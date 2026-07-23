@@ -1,14 +1,22 @@
-import { AfterViewInit,  Component, DestroyRef, inject, OnInit, TemplateRef, viewChild } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, DestroyRef, inject, signal, effect } from '@angular/core';
+import { form, FormField, required } from '@angular/forms/signals';
+
+interface BaseFormModel {
+  title: string;
+  date: Date[] | null;
+  desc: string;
+  standard: string;
+  client: string;
+  invitedCommenter: string;
+  weights: number | null;
+  isPublic: string;
+}
 
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
-import { fnCheckForm } from '@utils/tools';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -27,9 +35,8 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
     PageHeaderComponent,
     NzCardModule,
     WaterMarkComponent,
-    FormsModule,
+    FormField,
     NzFormModule,
-    ReactiveFormsModule,
     NzGridModule,
     NzInputModule,
     NzDatePickerModule,
@@ -40,9 +47,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
     NzWaveModule
   ]
 })
-export class BaseComponent implements OnInit, AfterViewInit {
-  readonly dragTpl = viewChild.required<TemplateRef<NzSafeAny>>('dragTpl');
-  readonly baseForm = viewChild.required<FormGroup>('baseForm');
+export class BaseComponent {
   pageHeaderInfo: Partial<PageHeaderType> = {
     title: '基础表单',
     desc: '表单页用于向用户收集或验证信息，基础表单常见于数据项较少的表单场景。',
@@ -55,38 +60,37 @@ export class BaseComponent implements OnInit, AfterViewInit {
   ];
   destroyRef = inject(DestroyRef);
 
-  validateForm!: FormGroup;
+  formModel = signal<BaseFormModel>({
+    title: '',
+    date: null,
+    desc: '',
+    standard: '',
+    client: '',
+    invitedCommenter: '',
+    weights: null,
+    isPublic: ''
+  });
+
+  validateForm = form(this.formModel, schemaPath => {
+    required(schemaPath.title, { message: '请输入标题' });
+    required(schemaPath.date, { message: '请选择起止日期' });
+    required(schemaPath.desc, { message: '请输入目标描述' });
+    required(schemaPath.standard, { message: '请输入衡量标准' });
+  });
 
   submitForm(): void {
-    if (!fnCheckForm(this.validateForm)) {
+    if (this.validateForm().invalid()) {
+      // 标记所有字段为 touched，使验证错误提示显示
+      this.validateForm().markAsTouched();
       return;
     }
-  }
-  private fb = inject(FormBuilder);
-
-  initForm(): void {
-    this.validateForm = this.fb.group({
-      title: [null, [Validators.required]],
-      date: [null, [Validators.required]],
-      desc: [null, [Validators.required]],
-      standard: [null, [Validators.required]],
-      client: [null],
-      invitedCommenter: [null],
-      weights: [null],
-      isPublic: [null]
-    });
+    console.log('表单提交:', this.formModel());
+    // 提交逻辑
   }
 
-  ngOnInit(): void {
-    this.initForm();
-  }
-
-  ngAfterViewInit(): void {
-    // 无论是模版式表单还是响应式表单，都可以通过这种方式来监听表单数据都变化
-    this.baseForm()
-      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(res => {
-        console.log(res);
-      });
-  }
+  // 使用 effect 监听表单数据变化
+  private formChangeEffect = effect(() => {
+    const formValue = this.formModel();
+    console.log('表单数据变化:', formValue);
+  });
 }
