@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, OnInit, signal, TemplateRef, viewChild, computed, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 
 import { ActionCode } from '@app/config/actionCode';
@@ -27,6 +27,10 @@ interface SearchParam {
   roleName: string;
 }
 
+const DEFAULT_SEARCH_PARAM: SearchParam = {
+  roleName: ''
+};
+
 @Component({
   selector: 'app-role-manage',
   templateUrl: './role-manage.component.html',
@@ -34,7 +38,7 @@ interface SearchParam {
   imports: [
     PageHeaderComponent,
     NzCardModule,
-    FormsModule,
+    FormField,
     NzFormModule,
     NzGridModule,
     NzInputModule,
@@ -48,7 +52,8 @@ interface SearchParam {
 })
 export class RoleManageComponent implements OnInit {
   readonly operationTpl = viewChild.required<TemplateRef<NzSafeAny>>('operationTpl');
-  searchParam: Partial<SearchParam> = {};
+  searchModel = signal<SearchParam>({ ...DEFAULT_SEARCH_PARAM });
+  searchForm = form(this.searchModel);
   readonly pageHeaderInfo: Partial<PageHeaderType> = {
     title: '角色管理',
     breadcrumb: ['首页', '用户管理', '角色管理']
@@ -103,13 +108,15 @@ export class RoleManageComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.searchParam = {};
+    this.searchModel.set({ ...DEFAULT_SEARCH_PARAM });
     this.searchFilters.set({});
     this.requestPageIndex.set(1);
   }
 
   getDataList(e: number): void {
-    this.searchFilters.set({ ...this.searchParam });
+    // 过滤掉空值,只传递有实际值的搜索条件
+    const filters = Object.fromEntries(Object.entries(this.searchModel()).filter(([_, value]) => value !== null && value !== ''));
+    this.searchFilters.set(filters);
     this.requestPageIndex.set(e);
   }
 

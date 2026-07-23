@@ -1,7 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, OnInit, TemplateRef, inject, DestroyRef, signal, viewChild, computed, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 
 import { ActionCode } from '@app/config/actionCode';
 import { OptionsInterface } from '@core/services/types';
@@ -31,8 +31,14 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 
 interface SearchParam {
   departmentName: string;
-  state: boolean;
+  state: boolean | null;
 }
+
+// 提取默认值常量
+const DEFAULT_SEARCH_PARAM: SearchParam = {
+  departmentName: '',
+  state: null
+};
 
 @Component({
   selector: 'app-dept',
@@ -41,7 +47,7 @@ interface SearchParam {
   imports: [
     PageHeaderComponent,
     NzCardModule,
-    FormsModule,
+    FormField,
     NzFormModule,
     NzGridModule,
     NzInputModule,
@@ -60,7 +66,8 @@ export class DeptComponent implements OnInit {
   readonly operationTpl = viewChild.required<TemplateRef<NzSafeAny>>('operationTpl');
   readonly state = viewChild.required<TemplateRef<NzSafeAny>>('state');
   ActionCode = ActionCode;
-  searchParam: Partial<SearchParam> = {};
+  searchModel = signal<SearchParam>({ ...DEFAULT_SEARCH_PARAM });
+  searchForm = form(this.searchModel);
   readonly pageHeaderInfo: Partial<PageHeaderType> = {
     title: '部门管理',
     breadcrumb: ['首页', '系统管理', '部门管理']
@@ -117,7 +124,9 @@ export class DeptComponent implements OnInit {
   }
 
   getDataList(sortFile?: SortFile): void {
-    this.searchFilters.set({ ...this.searchParam });
+    // 过滤掉空值,只传递有实际值的搜索条件
+    const filters = Object.fromEntries(Object.entries(this.searchModel()).filter(([_, value]) => value !== null && value !== ''));
+    this.searchFilters.set(filters);
     if (sortFile) {
       this.currentSortFile.set(sortFile);
     }
@@ -131,7 +140,7 @@ export class DeptComponent implements OnInit {
 
   /*重置*/
   resetForm(): void {
-    this.searchParam = {};
+    this.searchModel.set({ ...DEFAULT_SEARCH_PARAM });
     this.searchFilters.set({});
     this.currentSortFile.set(undefined);
   }

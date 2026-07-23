@@ -1,5 +1,12 @@
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+
+import { Component,  inject, signal } from '@angular/core';
+import { form, FormField } from '@angular/forms/signals';
+
+interface SearchInfo {
+  owner: string[];
+  author: string | null;
+  like: string | null;
+}
 
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
 import { NumberLoopPipe } from '@shared/pipes/number-loop.pipe';
@@ -30,20 +37,21 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
     NzButtonModule,
     NzDividerModule,
     NzSelectModule,
-    FormsModule,
+    FormField,
     NzListModule,
     NzAvatarModule,
     NzTypographyModule,
     NumberLoopPipe
-  ]
+]
 })
 export class ArticleComponent {
   expanded = false;
-  searchInfo = {
+  searchModel = signal<SearchInfo>({
     owner: ['2', '3'],
     author: null,
     like: null
-  };
+  });
+  searchForm = form(this.searchModel);
   allSelFlag = false;
   tagArray = [
     { name: '类目一', isChecked: false },

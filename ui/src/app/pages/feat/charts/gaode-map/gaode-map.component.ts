@@ -1,7 +1,7 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import AMapLoader from '@amap/amap-jsapi-loader';
+// import AMapLoader from '@amap/amap-jsapi-loader';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
 
@@ -14,48 +14,9 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 
   imports: [PageHeaderComponent, NzCardModule, WaterMarkComponent, NzInputModule, FormsModule]
 })
-export class GaodeMapComponent implements AfterViewInit {
+export class GaodeMapComponent {
   pageHeaderInfo: Partial<PageHeaderType> = {
-    title: '高德地图，高德打电话给我了，我这个key注销了，我就保留源代码在这里，供小伙伴参考，我自己的key就不暴露了',
+    title: '我希望antd admin纯粹，所以移除了高德地图的功能，如果想看原本的实现，请看https://github.com/huajian123/ng-antd-admin/releases/tag/v22.0',
     breadcrumb: ['首页', '功能', '图表', '高德地图']
   };
-  marker: [number, number] = [116.437253, 39.935033];
-  markerPosition: string = this.marker.join(',');
-
-  ngAfterViewInit(): void {
-    // api地址
-    // https://lbs.amap.com/demo/javascript-api/example/map-lifecycle/map-show
-    // 自己去申请一个key，别用我这个Key，多谢。高德打电话给我了，我这个Key注销掉了，我就保留使用方法在这里，就不展示出来了
-    // 申请地址 https://console.amap.com/dev/key/app
-    AMapLoader.load({
-      key: 'xxxxxxxxxxxxx', //首次load必填
-      version: '1.4.15',
-      AMapUI: {
-        version: '1.1',
-        plugins: ['overlay/SimpleMarker']
-      }
-    })
-      .then(AMap => {
-        const map = new AMap.Map('container', {
-          resizeEnable: true,
-          zoom: 11,
-          center: [116.397428, 39.90923]
-        });
-
-        const marker = new AMap.Marker({
-          position: new AMap.LngLat(this.marker[0], this.marker[1]), // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
-          /*  title: '南京',*/
-          draggable: true
-        });
-        marker.on('dragend', () => {
-          this.marker = [marker.getPosition()['R'], marker.getPosition()['Q']];
-          this.markerPosition = this.marker.join(',');
-          console.log(this.markerPosition);
-        });
-        marker.setMap(map);
-      })
-      .catch(e => {
-        console.error(e);
-      });
-  }
 }

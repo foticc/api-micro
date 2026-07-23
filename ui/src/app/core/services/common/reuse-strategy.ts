@@ -137,9 +137,16 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
     if (!!scrollFutureKey && SimpleReuseStrategy.scrollHandlers[scrollFutureKey]) {
       SimpleReuseStrategy.scrollHandlers[scrollFutureKey].scroll.forEach((elOptionItem: Record<string, [number, number]>) => {
         Object.keys(elOptionItem).forEach(element => {
-          setTimeout(() => {
-            this.scrollService.scrollToPosition(this.doc.querySelector(element), elOptionItem[element]);
-          }, 1);
+          // Angular 22 的 View Transitions + Zoneless 需要等待 DOM 完全渲染
+          // 使用双重 requestAnimationFrame 确保元素已经重新挂载到文档中
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              const el = this.doc.querySelector(element);
+              if (el || element === 'window') {
+                this.scrollService.scrollToPosition(el, elOptionItem[element]);
+              }
+            });
+          });
         });
       });
     }

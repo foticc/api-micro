@@ -1,6 +1,7 @@
 import { Component, OnInit, TemplateRef, inject, DestroyRef, viewChild, signal, computed, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 
 import { ActionCode } from '@app/config/actionCode';
 import { OptionsInterface } from '@core/services/types';
@@ -28,9 +29,9 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 
 interface SearchParam {
   userName: string;
-  departmentId: number;
-  mobile: number;
-  available: boolean;
+  departmentId: number | null;
+  mobile: string;
+  available: boolean | null;
 }
 
 @Component({
@@ -42,6 +43,7 @@ interface SearchParam {
     NzGridModule,
     NzCardModule,
     FormsModule,
+    FormField,
     NzFormModule,
     NzInputModule,
     NzSelectModule,
@@ -57,7 +59,13 @@ interface SearchParam {
 export class AccountComponent implements OnInit {
   readonly operationTpl = viewChild.required<TemplateRef<NzSafeAny>>('operationTpl');
   readonly availableFlag = viewChild.required<TemplateRef<NzSafeAny>>('availableFlag');
-  searchParam: Partial<SearchParam> = {};
+  searchModel = signal<SearchParam>({
+    userName: '',
+    departmentId: null,
+    mobile: '',
+    available: null
+  });
+  searchForm = form(this.searchModel);
   readonly pageHeaderInfo: Partial<PageHeaderType> = {
     title: '账号管理',
     breadcrumb: ['首页', '用户管理', '账号管理'],
@@ -119,13 +127,20 @@ export class AccountComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.searchParam = {};
+    this.searchModel.set({
+      userName: '',
+      departmentId: null,
+      mobile: '',
+      available: null
+    });
     this.searchFilters.set({});
     this.requestPageIndex.set(1);
   }
 
   getDataList(e: number): void {
-    this.searchFilters.set({ ...this.searchParam });
+    // 过滤掉 null 和空字符串，只传递有值的搜索条件
+    const filters = Object.fromEntries(Object.entries(this.searchModel()).filter(([_, value]) => value !== null && value !== ''));
+    this.searchFilters.set(filters as Partial<SearchParam>);
     this.requestPageIndex.set(e);
   }
 

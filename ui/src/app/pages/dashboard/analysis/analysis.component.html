@@ -46,7 +46,12 @@
             <i nz-icon nz-tooltip nzTheme="outline" nzTooltipTitle="指标说明" nzType="info-circle"></i>
           </div>
           <div class="card-mid">
-            <div id="miniArea"></div>
+            <div class="mid-text">
+              <span>
+                环比增长 8.5%
+                <i nz-icon nzTheme="outline" nzType="rise" style="color: #52c41a; font-size: 12px"></i>
+              </span>
+            </div>
           </div>
           <nz-divider class="m-0"></nz-divider>
           <div class="card-footer">日访问量 1,234</div>
@@ -62,7 +67,12 @@
             <i nz-icon nz-tooltip nzTheme="outline" nzTooltipTitle="指标说明" nzType="info-circle"></i>
           </div>
           <div class="card-mid">
-            <div id="miniBar"></div>
+            <div class="mid-text">
+              <span>
+                月环比 6.2%
+                <i nz-icon nzTheme="outline" nzType="rise" style="color: #52c41a; font-size: 12px"></i>
+              </span>
+            </div>
           </div>
           <nz-divider class="m-0"></nz-divider>
           <div class="card-footer">转化率 60%</div>
@@ -78,7 +88,12 @@
             <i nz-icon nz-tooltip nzTheme="outline" nzTooltipTitle="指标说明" nzType="info-circle"></i>
           </div>
           <div class="card-mid">
-            <div id="progress"></div>
+            <div class="mid-text">
+              <span>
+                目标达成 78%
+                <i nz-icon nzTheme="outline" nzType="check-circle" style="color: #52c41a; font-size: 12px"></i>
+              </span>
+            </div>
           </div>
           <nz-divider class="m-0"></nz-divider>
           <div class="card-footer">日销售额 ￥12,423</div>
@@ -94,7 +109,16 @@
           <div nz-row>
             <div nz-col [nzLg]="12" [nzMd]="13" [nzSm]="24" [nzXl]="17" [nzXs]="24">
               <h3 class="p-l-35">销售趋势</h3>
-              <div id="histogram"></div>
+              <nz-list class="m-l-20 m-r-20" nzSize="small">
+                @for (item of histogramData; track item.type) {
+                  <nz-list-item>
+                    <span class="month-label">{{ item.type }}</span>
+                    <nz-progress class="progress-wrapper" nzStrokeColor="#1890ff" [nzPercent]="item.value / 10" [nzShowInfo]="false" />
+                    <nz-rate class="sp-14" [ngModel]="item.value / 200" [nzDisabled]="true" />
+                    <strong class="m-l-8 value-number">{{ item.value }}</strong>
+                  </nz-list-item>
+                }
+              </nz-list>
             </div>
             <div nz-col [nzLg]="12" [nzMd]="11" [nzSm]="24" [nzXl]="7" [nzXs]="24">
               <h3 class="p-l-35 m-b-20">门店销售额排名</h3>
@@ -243,7 +267,10 @@
                 </span>
               </div>
             </div>
-            <div id="searchUserChart"></div>
+            <div style="padding: 24px 16px; text-align: center; color: #8c8c8c">
+              <i nz-icon nzType="line-chart" style="font-size: 32px; color: #d9d9d9"></i>
+              <div style="margin-top: 8px; font-size: 12px">趋势平稳</div>
+            </div>
           </div>
           <div class="search-block" nz-col [nzLg]="12" [nzMd]="12" [nzSm]="24" [nzXl]="12" [nzXs]="24" [nzXXl]="12">
             <div>
@@ -261,9 +288,12 @@
                 </span>
               </div>
             </div>
-            <div id="searchUserAvgChart"></div>
+            <div style="padding: 24px 16px; text-align: center; color: #8c8c8c">
+              <i nz-icon nzType="area-chart" style="font-size: 32px; color: #d9d9d9"></i>
+              <div style="margin-top: 8px; font-size: 12px">持续增长</div>
+            </div>
           </div>
-          <nz-table #sortTable class="m-t-25" nzSize="small" nzTableLayout="fixed" [nzData]="listOfData">
+          <nz-table #sortTable class="m-t-25" nzSize="small" nzTableLayout="fixed" [nzData]="listOfData" [nzFrontPagination]="false">
             <thead>
               <tr>
                 @for (column of listOfColumn; track column) {
@@ -289,9 +319,17 @@
       </ng-template>
     </div>
     <div class="pipe-wrap" nz-col nzSpan="12" [nzLg]="12" [nzMd]="24" [nzSm]="24" [nzXl]="12" [nzXs]="24" [nzXXl]="12">
-      <nz-card nzTitle="销售额类别占比" [nzBodyStyle]="{ height: '500px' }">
-        <h4>销售额</h4>
-        <div id="ringPie"></div>
+      <nz-card nzTitle="销售额类别占比" [nzBodyStyle]="{ height: '500px', padding: '24px' }">
+        <nz-list nzSize="small">
+          @for (item of ringData; track item.type) {
+            <nz-list-item>
+              <span class="category-label">{{ item.type }}</span>
+              <nz-progress class="progress-wrapper" [nzPercent]="item.value" [nzShowInfo]="false" [nzStrokeColor]="getColorForItem(item)" />
+              <nz-rate class="sp-14" [ngModel]="item.value / 20" [nzDisabled]="true" />
+              <strong class="m-l-8 category-value">{{ item.value }}%</strong>
+            </nz-list-item>
+          }
+        </nz-list>
       </nz-card>
     </div>
   </section>

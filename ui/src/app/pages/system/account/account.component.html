@@ -9,7 +9,7 @@
           <nz-form-item>
             <nz-form-label [nzFor]="">用户名称</nz-form-label>
             <nz-form-control>
-              <input name="userName" nz-input placeholder="请输入角色名称" [(ngModel)]="searchParam.userName" />
+              <input nz-input placeholder="请输入角色名称" [formField]="searchForm.userName" />
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -18,7 +18,7 @@
           <nz-form-item>
             <nz-form-label [nzFor]="">手机</nz-form-label>
             <nz-form-control>
-              <input name="mobile" nz-input placeholder="请输入手机号" [(ngModel)]="searchParam.mobile" />
+              <input nz-input placeholder="请输入手机号" [formField]="searchForm.mobile" />
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -28,7 +28,7 @@
             <nz-form-item>
               <nz-form-label [nzFor]="">是否启用</nz-form-label>
               <nz-form-control>
-                <nz-select name="available" nzAllowClear nzPlaceHolder="下拉选择" [(ngModel)]="searchParam.available">
+                <nz-select nzAllowClear nzPlaceHolder="下拉选择" [formField]="searchForm.available">
                   @for (item of availableOptions; track item) {
                     <nz-option [nzLabel]="item.label" [nzValue]="item.value"></nz-option>
                   }

@@ -1,15 +1,19 @@
-import { DecimalPipe, PercentPipe } from '@angular/common';
-import { afterNextRender, Component, inject } from '@angular/core';
+import { CommonModule, DecimalPipe, PercentPipe } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
-import { Gauge, Liquid, RingProgress, TinyArea, WordCloud } from '@antv/g2plot';
-import { LazyService } from '@core/services/common/lazy.service';
-
+import { NzAlertComponent } from 'ng-zorro-antd/alert';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzIconDirective } from 'ng-zorro-antd/icon';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { NzRateModule } from 'ng-zorro-antd/rate';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 declare let BMap: NzSafeAny;
 
@@ -18,10 +22,26 @@ declare let BMap: NzSafeAny;
   templateUrl: './monitor.component.html',
   styleUrl: './monitor.component.less',
 
-  imports: [NzCardModule, NzBreadCrumbModule, NzGridModule, NzStatisticModule, NzTypographyModule, NzEmptyModule, DecimalPipe, PercentPipe]
+  imports: [
+    CommonModule,
+    FormsModule,
+    NzCardModule,
+    NzBreadCrumbModule,
+    NzGridModule,
+    NzListModule,
+    NzStatisticModule,
+    NzTypographyModule,
+    NzEmptyModule,
+    NzProgressModule,
+    NzRateModule,
+    NzTagModule,
+    DecimalPipe,
+    PercentPipe,
+    NzAlertComponent,
+    NzIconDirective
+  ]
 })
 export class MonitorComponent {
-  private lazyService = inject(LazyService);
   readonly deadline = Date.now() + 1000 * 60 * 60 * 24 * 2 + 1000 * 30;
   miniAreaData = [264, 274, 284, 294, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440, 450, 460, 470];
   wordCloudData = [
@@ -411,163 +431,20 @@ export class MonitorComponent {
       category: 'europe'
     }
   ];
-  constructor() {
-    afterNextRender(() => {
-      this.initDashBoard();
-      this.initArea();
-      this.initLiquidPlot();
-      for (let i = 1; i <= 3; i++) {
-        this.initRingProgress(i);
-      }
-      this.wordCloud();
-      // this.lazyService.loadScript('http://api.map.baidu.com/getscript?v=2.0&ak=RD5HkkjTa6uAIDpw7GRFtR83Fk7Wdk0j').then(() => {
-      //   const map = new BMap.Map('map');
-      //   const point = new BMap.Point(116.404, 39.915);
-      //   map.centerAndZoom(point, 15);
-      //   map.enableScrollWheelZoom(true);
-      // });
-    });
+  constructor() {}
+
+  // 词云标签颜色
+  getTagColor(category: string): string {
+    const colorMap: Record<string, string> = {
+      asia: 'blue',
+      america: 'green',
+      europe: 'orange',
+      africa: 'red',
+      australia: 'purple'
+    };
+    return colorMap[category] || 'default';
   }
 
-  initDashBoard(): void {
-    const gauge = new Gauge('dashBoard', {
-      percent: 0.75,
-      autoFit: true,
-      height: 180,
-      range: {
-        color: '#30BF78'
-      },
-      indicator: {
-        pointer: {
-          style: {
-            stroke: '#D0D0D0'
-          }
-        },
-        pin: {
-          style: {
-            stroke: '#D0D0D0'
-          }
-        }
-      },
-      axis: {
-        label: {
-          formatter(v) {
-            return Number(v) * 100;
-          }
-        },
-        subTickLine: {
-          count: 3
-        }
-      },
-      statistic: {
-        content: {
-          formatter: () => `87 %`
-        }
-      }
-    });
-    gauge.render();
-  }
-
-  initArea(): void {
-    const tinyArea = new TinyArea('miniArea', {
-      height: 120,
-      autoFit: true,
-      data: this.miniAreaData,
-      smooth: true,
-      areaStyle: {
-        fill: '#d6e3fd'
-      },
-      annotations: [
-        // 平均值
-        {
-          type: 'line',
-          start: ['min', 'mean'],
-          end: ['max', 'mean'],
-          text: {
-            content: '400亿元',
-            offsetY: -2,
-            style: {
-              textAlign: 'left',
-              fontSize: 10,
-              // fill: 'rgba(44, 53, 66, 0.45)',
-              textBaseline: 'bottom'
-            }
-          },
-          style: {
-            //   stroke: 'rgba(0, 0, 0, 0.25)',
-          }
-        },
-        // 目标值
-        {
-          type: 'line',
-          start: ['min', 800],
-          end: ['max', 800],
-          text: {
-            content: '1400亿元',
-            offsetY: -2,
-            style: {
-              textAlign: 'left',
-              fontSize: 10,
-              // fill: 'rgba(44, 53, 66, 0.45)',
-              textBaseline: 'bottom'
-            }
-          },
-          style: {
-            // stroke: 'rgba(0, 0, 0, 0.55)',
-          }
-        }
-      ]
-    });
-    tinyArea.render();
-  }
-
-  initLiquidPlot(): void {
-    const liquidPlot = new Liquid('liquidPlot', {
-      percent: 0.25,
-      outline: {
-        border: 4,
-        distance: 8
-      },
-      wave: {
-        length: 128
-      }
-    });
-    liquidPlot.render();
-  }
-
-  wordCloud(): void {
-    const wordCloud = new WordCloud('wordCloud', {
-      data: this.wordCloudData,
-      wordField: 'x',
-      weightField: 'value',
-      // color: '#122c6a',
-      wordStyle: {
-        fontFamily: 'Verdana',
-        fontSize: [24, 80]
-      },
-      // 设置交互类型
-      interactions: [{ type: 'element-active' }],
-      state: {
-        active: {
-          // 这里可以设置 active 时的样式
-          style: {
-            lineWidth: 3
-          }
-        }
-      }
-    });
-    wordCloud.render();
-  }
-
-  initRingProgress(i: number): void {
-    const ringProgress = new RingProgress(`ringProgress${i}`, {
-      height: 90,
-      width: 90,
-      autoFit: false,
-      percent: 0.7,
-      color: ['#5B8FF9', '#E8EDF3']
-    });
-
-    ringProgress.render();
-  }
+  // 进度条格式化
+  formatPercent = (percent: number): string => `${percent}%`;
 }

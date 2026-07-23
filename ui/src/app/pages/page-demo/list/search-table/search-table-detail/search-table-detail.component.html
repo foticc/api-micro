@@ -6,15 +6,15 @@
 </ng-template>
 <div class="normal-table-wrap">
   <h1>输入框演示</h1>
-  <input nz-input [ngModel]="name()" />
+  <input nz-input [value]="name()" />
 
   <nz-divider></nz-divider>
 
   <h1>表单演示</h1>
-  <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+  <form nz-form>
     <nz-form-item>
       <nz-form-control nzErrorTip="请输入用户名!">
-        <input type="text" formControlName="userName" nz-input placeholder="用户名" />
+        <input type="text" [formField]="validateForm.userName" nz-input placeholder="用户名" />
       </nz-form-control>
     </nz-form-item>
   </form>

@@ -6,7 +6,7 @@ export default [
   {
     path: '',
     component: DefaultComponent,
-    data: { shouldDetach: 'no', preload: true },
+    data: { preload: true },
     canActivateChild: [],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },

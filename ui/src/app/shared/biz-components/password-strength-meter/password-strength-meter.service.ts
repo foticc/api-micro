@@ -1,24 +1,34 @@
 import { inject, Service } from '@angular/core';
 
-import { zxcvbn, zxcvbnOptions } from '@zxcvbn-ts/core';
-import zxcvbnEnPackage from '@zxcvbn-ts/language-en';
+import { ZxcvbnFactory } from '@zxcvbn-ts/core';
+import { adjacencyGraphs, dictionary as commonDictionary } from '@zxcvbn-ts/language-common';
+import { dictionary as enDictionary, translations } from '@zxcvbn-ts/language-en';
 
-import { PSMOptions, PSM_CONFIG } from './password-strength-meter.types';
-
-export const DEFAULT_CONFIG: PSMOptions = {
-  translations: zxcvbnEnPackage.translations
-};
+import { PSM_CONFIG } from './password-strength-meter.types';
 
 @Service()
 export class PasswordStrengthMeterService {
-  private options = inject(PSM_CONFIG, { optional: true });
+  private customOptions = inject(PSM_CONFIG, { optional: true });
+  private zxcvbn: ZxcvbnFactory;
 
   constructor() {
-    if (this.options) {
-      zxcvbnOptions.setOptions(this.options);
-    } else {
-      zxcvbnOptions.setOptions(DEFAULT_CONFIG);
-    }
+    // 配置默认选项
+    const defaultOptions = {
+      dictionary: {
+        ...commonDictionary,
+        ...enDictionary,
+      },
+      graphs: adjacencyGraphs,
+      translations: translations,
+    };
+
+    // 合并自定义选项
+    const options = this.customOptions
+      ? { ...defaultOptions, ...this.customOptions }
+      : defaultOptions;
+
+    // 创建 zxcvbn 实例
+    this.zxcvbn = new ZxcvbnFactory(options);
   }
 
   /**
@@ -32,21 +42,21 @@ export class PasswordStrengthMeterService {
    *  @param password - Password
    */
   score(password: string): number {
-    const result = zxcvbn(password);
+    const result = this.zxcvbn.check(password);
     return result.score;
   }
 
   /**
    * this will return the password strength score with feedback messages
-   * return type { score: number; feedback: { suggestions: string[]; warning: string } }
+   * return type { score: number; feedback: { suggestions: string[]; warning: string | null } }
    *
    * @param password - Password
    */
   scoreWithFeedback(password: string): {
     score: number;
-    feedback: { suggestions: string[]; warning: string };
+    feedback: { suggestions: string[]; warning: string | null };
   } {
-    const result = zxcvbn(password);
+    const result = this.zxcvbn.check(password);
     return { score: result.score, feedback: result.feedback };
   }
 }

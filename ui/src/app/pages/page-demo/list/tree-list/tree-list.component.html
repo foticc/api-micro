@@ -10,7 +10,7 @@
           <nz-form-item>
             <nz-form-label [nzFor]="">规则名称</nz-form-label>
             <nz-form-control>
-              <input name="ruleName" nz-input placeholder="请输入" [(ngModel)]="searchParam.ruleName" />
+              <input nz-input placeholder="请输入" [formField]="searchForm.ruleName" />
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -18,7 +18,7 @@
           <nz-form-item>
             <nz-form-label [nzFor]="">描述</nz-form-label>
             <nz-form-control>
-              <input name="desc" nz-input placeholder="请输入" [(ngModel)]="searchParam.desc" />
+              <input nz-input placeholder="请输入" [formField]="searchForm.desc" />
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -27,7 +27,7 @@
             <nz-form-item>
               <nz-form-label [nzFor]="">服务调用次数</nz-form-label>
               <nz-form-control>
-                <input name="desc" nz-input placeholder="请输入" [(ngModel)]="searchParam.desc" />
+                <input nz-input placeholder="请输入" [formField]="searchForm.desc" />
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -35,7 +35,7 @@
             <nz-form-item>
               <nz-form-label [nzFor]="">状态</nz-form-label>
               <nz-form-control>
-                <input name="desc" nz-input placeholder="请输入" [(ngModel)]="searchParam.desc" />
+                <input nz-input placeholder="请输入" [formField]="searchForm.desc" />
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -43,7 +43,7 @@
             <nz-form-item>
               <nz-form-label [nzFor]="">上次调度时间</nz-form-label>
               <nz-form-control>
-                <input name="desc" nz-input placeholder="请输入" [(ngModel)]="searchParam.desc" />
+                <input nz-input placeholder="请输入" [formField]="searchForm.desc" />
               </nz-form-control>
             </nz-form-item>
           </div>

@@ -7,17 +7,17 @@
     <nz-descriptions-item nzTitle="转账金额">500元</nz-descriptions-item>
   </nz-descriptions>
   <nz-divider></nz-divider>
-  <form [formGroup]="validateForm">
+  <form>
     <nz-form-item>
       <nz-form-label nzFor="password" nzRequired [nzSm]="6" [nzXs]="24">支付密码</nz-form-label>
       <nz-form-control nzErrorTip="支付密码" [nzSm]="14" [nzXs]="24">
-        <input type="password" formControlName="password" nz-input />
+        <input type="password" [formField]="validateForm.password" nz-input />
       </nz-form-control>
     </nz-form-item>
     <nz-form-item nz-row>
       <nz-form-control [nzOffset]="6" [nzSpan]="14">
-        <button nz-button nzType="primary" (click)="submit()">提交</button>
-        <button class="m-l-10" nz-button nzType="default" (click)="previous.emit()">上一步</button>
+        <button type="button" nz-button nzType="primary" (click)="submit()">提交</button>
+        <button type="button" class="m-l-10" nz-button nzType="default" (click)="previous.emit()">上一步</button>
       </nz-form-control>
     </nz-form-item>
   </form>

@@ -30,7 +30,7 @@ export class PasswordStrengthMeterComponent implements OnChanges {
 
   passwordStrength: number | null = null;
 
-  feedback: { suggestions: string[]; warning: string } | null = null;
+  feedback: { suggestions: string[]; warning: string | null } | null = null;
 
   private prevPasswordStrength: number | null = null;
 

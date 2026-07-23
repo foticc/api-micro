@@ -1,7 +1,7 @@
 import { DecimalPipe } from '@angular/common';
-import { afterNextRender, Component, computed, inject, TemplateRef, viewChild } from '@angular/core';
+import { Component, computed, inject, TemplateRef, viewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
-import { Radar } from '@antv/g2plot';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { WaterMarkComponent } from '@shared/components/water-mark/water-mark.component';
 import { NumberLoopPipe } from '@shared/pipes/number-loop.pipe';
@@ -15,6 +15,8 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { NzRateModule } from 'ng-zorro-antd/rate';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 
@@ -24,6 +26,7 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
   styleUrl: './workbench.component.less',
 
   imports: [
+    FormsModule,
     PageHeaderComponent,
     NzGridModule,
     WaterMarkComponent,
@@ -35,6 +38,8 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
     NzIconModule,
     NzAvatarModule,
     NzStatisticModule,
+    NzProgressModule,
+    NzRateModule,
     DecimalPipe,
     NumberLoopPipe
   ]
@@ -42,69 +47,23 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
 export class WorkbenchComponent {
   readonly pageHeaderContent = viewChild.required<TemplateRef<NzSafeAny>>('pageHeaderContent');
   msg = inject(NzMessageService);
+
+  // 能力评估数据（转换为列表展示格式）
   radarData = [
-    { item: 'Design', user: 'a', score: 70 },
-    { item: 'Design', user: 'b', score: 30 },
-    { item: 'Development', user: 'a', score: 60 },
-    { item: 'Development', user: 'b', score: 70 },
-    { item: 'Marketing', user: 'a', score: 50 },
-    { item: 'Marketing', user: 'b', score: 60 },
-    { item: 'Users', user: 'a', score: 40 },
-    { item: 'Users', user: 'b', score: 50 },
-    { item: 'Test', user: 'a', score: 60 },
-    { item: 'Test', user: 'b', score: 70 },
-    { item: 'Language', user: 'a', score: 70 },
-    { item: 'Language', user: 'b', score: 50 },
-    { item: 'Technology', user: 'a', score: 50 },
-    { item: 'Technology', user: 'b', score: 40 },
-    { item: 'Support', user: 'a', score: 30 },
-    { item: 'Support', user: 'b', score: 40 },
-    { item: 'Sales', user: 'a', score: 60 },
-    { item: 'Sales', user: 'b', score: 40 },
-    { item: 'UX', user: 'a', score: 50 },
-    { item: 'UX', user: 'b', score: 60 }
+    { name: 'Design', score: 70 },
+    { name: 'Development', score: 60 },
+    { name: 'Marketing', score: 50 },
+    { name: 'Users', score: 40 },
+    { name: 'Test', score: 60 },
+    { name: 'Language', score: 70 },
+    { name: 'Technology', score: 50 },
+    { name: 'Support', score: 30 },
+    { name: 'Sales', score: 60 },
+    { name: 'UX', score: 50 }
   ];
   pageHeaderInfo = computed<Partial<PageHeaderType>>(() => ({
     title: '工作台',
     breadcrumb: ['首页', 'Dashboard', '工作台'],
     desc: this.pageHeaderContent()
   }));
-
-  constructor() {
-    afterNextRender(() => {
-      this.initRadar();
-    });
-  }
-
-  private initRadar(): void {
-    const radarPlot = new Radar('randar', {
-      data: this.radarData,
-      xField: 'item',
-      yField: 'score',
-      seriesField: 'user',
-      meta: {
-        score: {
-          alias: '分数',
-          min: 0,
-          max: 80
-        }
-      },
-      xAxis: {
-        line: null,
-        tickLine: null,
-        grid: {
-          line: {
-            style: {
-              lineDash: null
-            }
-          }
-        }
-      },
-      // 开启辅助点
-      point: {
-        size: 2
-      }
-    });
-    radarPlot.render();
-  }
 }

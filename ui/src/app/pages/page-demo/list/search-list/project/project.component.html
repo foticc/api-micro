@@ -34,13 +34,13 @@
       <div nz-row>
         <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="12" [nzXl]="8" [nzXs]="12" [nzXXl]="8">
           作者：
-          <nz-select class="max-width" nzPlaceHolder="不限" [(ngModel)]="searchInfo.author">
+          <nz-select class="max-width" nzPlaceHolder="不限" [formField]="searchForm.author">
             <nz-option nzLabel="王昭君" nzValue="1"></nz-option>
           </nz-select>
         </div>
         <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="12" [nzXl]="8" [nzXs]="12" [nzXXl]="8">
           好评度：
-          <nz-select class="max-width" nzPlaceHolder="不限" [(ngModel)]="searchInfo.like">
+          <nz-select class="max-width" nzPlaceHolder="不限" [formField]="searchForm.like">
             <nz-option nzLabel="优秀" nzValue="1"></nz-option>
             <nz-option nzLabel="普通" nzValue="2"></nz-option>
           </nz-select>

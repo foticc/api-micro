@@ -5,7 +5,6 @@ import { AdvancedComponent } from '@app/pages/feat/charts/echarts/advanced/advan
 import { SeriesComponent } from '@app/pages/feat/charts/echarts/series/series.component';
 import { StartedComponent } from '@app/pages/feat/charts/echarts/started/started.component';
 import { PageHeaderType, PageHeaderComponent } from '@shared/components/page-header/page-header.component';
-import { NGX_ECHARTS_CONFIG, NgxEchartsModule } from 'ngx-echarts';
 
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
@@ -22,13 +21,7 @@ type targetComp = StartedComponent | AdvancedComponent | SeriesComponent;
   selector: 'app-echarts',
   templateUrl: './echarts.component.html',
 
-  imports: [PageHeaderComponent, PortalModule, NzTabsModule, NgxEchartsModule],
-  providers: [
-    {
-      provide: NGX_ECHARTS_CONFIG,
-      useFactory: () => ({ echarts: () => import('echarts') })
-    }
-  ]
+  imports: [PageHeaderComponent, PortalModule, NzTabsModule]
 })
 export class EchartsComponent implements OnInit, AfterViewInit {
   pageHeaderInfo: Partial<PageHeaderType> = {
@@ -57,7 +50,7 @@ export class EchartsComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.pageHeaderInfo = {
       title: 'Echarts',
-      desc: 'Echarts的示例内容',
+      desc: '本来是展示ngx-echarts的基本操作，现在我希望antd admin尽量纯粹，少应用第三方包，所以这里改成了portal区块化各个功能的演示示例。如果想看原本的实现，请看https://github.com/huajian123/ng-antd-admin/releases/tag/v22.0',
       breadcrumb: ['首页', '功能', '图表', 'Echarts'],
       footer: this.headerFooter()
     };

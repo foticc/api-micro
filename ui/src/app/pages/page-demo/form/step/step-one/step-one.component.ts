@@ -1,7 +1,13 @@
-import { Component, OnInit, inject, input, output, InputSignal } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, input, output, InputSignal, signal } from '@angular/core';
+import { form, FormField, required } from '@angular/forms/signals';
 
-import { fnCheckForm } from '@utils/tools';
+interface StepOneFormModel {
+  paymentAccount: string;
+  payWay: string;
+  payWayNo: string;
+  payeeName: string;
+  amount: number | null;
+}
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
@@ -17,34 +23,39 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
   templateUrl: './step-one.component.html',
   styleUrl: './step-one.component.less',
 
-  imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzSelectModule, NzButtonModule, NzInputModule, NzWaveModule, NzDividerModule, NzTypographyModule]
+  imports: [FormField, NzFormModule, NzGridModule, NzSelectModule, NzButtonModule, NzInputModule, NzWaveModule, NzDividerModule, NzTypographyModule]
 })
 export class StepOneComponent implements OnInit {
   stepDirection: InputSignal<'horizontal' | 'vertical'> = input<'horizontal' | 'vertical'>('horizontal');
-  validateForm!: FormGroup;
   readonly next = output<void>();
 
-  private fb = inject(FormBuilder);
+  formModel = signal<StepOneFormModel>({
+    paymentAccount: '',
+    payWay: 'zhifubao',
+    payWayNo: '',
+    payeeName: '',
+    amount: null
+  });
+
+  validateForm = form(this.formModel, schemaPath => {
+    required(schemaPath.paymentAccount, { message: '请输入付款账户' });
+    required(schemaPath.payWayNo, { message: '请输入收款账户' });
+    required(schemaPath.payeeName, { message: '请输入收款人姓名' });
+    required(schemaPath.amount, { message: '请输入收款金额' });
+  });
 
   // 下一步
   goNext(): void {
-    if (!fnCheckForm(this.validateForm)) {
+    if (this.validateForm().invalid()) {
+      // 标记所有字段为 touched，使验证错误提示显示
+      this.validateForm().markAsTouched();
       return;
     }
+    console.log('表单数据:', this.formModel());
     this.next.emit();
   }
 
-  initForm(): void {
-    this.validateForm = this.fb.group({
-      paymentAccount: [null, [Validators.required]],
-      payWay: ['zhifubao'],
-      payWayNo: [null, [Validators.required]],
-      payeeName: [null, [Validators.required]],
-      amount: [null, [Validators.required]]
-    });
-  }
-
   ngOnInit(): void {
-    this.initForm();
+    // Signal Forms 不需要 initForm
   }
 }
