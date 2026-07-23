@@ -105,7 +105,7 @@ export function filterFlatMenusByAddedStatus(flatMenus: Menu[], existingIds: num
     let current: Menu | undefined = m;
     while (current) {
       matchedIds.add(Number(current.id));
-      const parentId = Number(current.fatherId);
+      const parentId: number = Number(current.fatherId);
       current = parentId === 0 ? undefined : byId.get(parentId);
     }
   }
@@ -127,7 +127,7 @@ export function filterFlatMenus(flatMenus: Menu[], keyword: string): Menu[] {
       let current: Menu | undefined = m;
       while (current) {
         matchedIds.add(Number(current.id));
-        const parentId = Number(current.fatherId);
+        const parentId: number = Number(current.fatherId);
         current = parentId === 0 ? undefined : byId.get(parentId);
       }
     }
