@@ -1,5 +1,5 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, Injector } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -11,20 +11,22 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 let isHandlingUnauthorized = false;
 
-function handleHttpUnauthorized(message: NzMessageService, loginInOutService: LoginInOutService): void {
+function handleHttpUnauthorized(message: NzMessageService, injector: Injector): void {
   if (isHandlingUnauthorized) {
     return;
   }
   isHandlingUnauthorized = true;
   message.error('登录已过期，请重新登录');
+  // 仅在 401 时再解析，避免拦截器顶层 inject 与 HttpClient 形成循环依赖
+  const loginInOutService = injector.get(LoginInOutService);
   void loginInOutService.clearSessionAndRedirect().finally(() => {
     isHandlingUnauthorized = false;
   });
 }
 
-function handleHttpError(error: HttpErrorResponse, message: NzMessageService, loginInOutService: LoginInOutService): Observable<never> {
+function handleHttpError(error: HttpErrorResponse, message: NzMessageService, injector: Injector): Observable<never> {
   if (error.status === 401) {
-    handleHttpUnauthorized(message, loginInOutService);
+    handleHttpUnauthorized(message, injector);
     const errMsg = getHttpErrorMessage(error);
     return throwError(() => ({ code: 401, msg: errMsg, data: null }) satisfies ActionResult<null>);
   }
@@ -36,12 +38,12 @@ function handleHttpError(error: HttpErrorResponse, message: NzMessageService, lo
 
 export const errorHandlerInterceptor: HttpInterceptorFn = (req, next) => {
   const message = inject(NzMessageService);
-  const loginInOutService = inject(LoginInOutService);
+  const injector = inject(Injector);
 
   return next(req).pipe(
     catchError(error => {
       if (error instanceof HttpErrorResponse) {
-        return handleHttpError(error, message, loginInOutService);
+        return handleHttpError(error, message, injector);
       }
       return throwError(() => error);
     })
