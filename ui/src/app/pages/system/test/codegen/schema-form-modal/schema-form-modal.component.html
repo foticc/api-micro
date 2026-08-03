@@ -1,0 +1,199 @@
+<form class="schema-form-modal" nz-form nzLayout="vertical">
+  <nz-spin [nzSpinning]="loading()">
+    <div class="form-toolbar">
+      <button nz-button nzSize="small" nzType="link" type="button" (click)="loadExample()">载入示例字段</button>
+    </div>
+
+    <div nz-row [nzGutter]="12">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label nzRequired>方案名称</nz-form-label>
+          <nz-form-control>
+            <input name="schemaName" nz-input placeholder="产品模块-后端" [ngModel]="form().schemaName" (ngModelChange)="patchForm({ schemaName: $event })" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="16">
+        <nz-form-item>
+          <nz-form-label>备注</nz-form-label>
+          <nz-form-control>
+            <input name="schemaRemark" nz-input placeholder="可选" [ngModel]="form().schemaRemark" (ngModelChange)="patchForm({ schemaRemark: $event })" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-label nzRequired>生成目标</nz-form-label>
+          <nz-form-control>
+            <nz-radio-group name="target" [ngModel]="form().target" (ngModelChange)="onTargetChange($event)">
+              @for (t of targetOptions(); track t) {
+                <label nz-radio [nzValue]="t">{{ targetLabel(t) }}</label>
+              }
+            </nz-radio-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label nzRequired>moduleName</nz-form-label>
+          <nz-form-control>
+            <input name="moduleName" nz-input placeholder="Product" [ngModel]="form().moduleName" (ngModelChange)="onModuleNameChange($event)" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label>apiPath</nz-form-label>
+          <nz-form-control>
+            <input name="apiPath" nz-input [ngModel]="form().apiPath" (ngModelChange)="patchForm({ apiPath: $event })" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label>enableAudit</nz-form-label>
+          <nz-form-control>
+            <nz-switch name="enableAudit" nzCheckedChildren="开" nzUnCheckedChildren="关" [ngModel]="form().enableAudit" (ngModelChange)="patchForm({ enableAudit: $event })" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      @if (isBackend()) {
+        <div nz-col [nzSpan]="8">
+          <nz-form-item>
+            <nz-form-label>tableName</nz-form-label>
+            <nz-form-control>
+              <input name="tableName" nz-input [ngModel]="form().tableName" (ngModelChange)="patchForm({ tableName: $event })" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="16">
+          <nz-form-item>
+            <nz-form-label>packageName</nz-form-label>
+            <nz-form-control>
+              <input name="packageName" nz-input [ngModel]="form().packageName" (ngModelChange)="patchForm({ packageName: $event })" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      }
+
+      @if (isFrontend()) {
+        <div nz-col [nzSpan]="8">
+          <nz-form-item>
+            <nz-form-label>moduleTitle</nz-form-label>
+            <nz-form-control>
+              <input name="moduleTitle" nz-input [ngModel]="form().moduleTitle" (ngModelChange)="patchForm({ moduleTitle: $event })" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="16">
+          <nz-form-item>
+            <nz-form-label>frontendBasePath</nz-form-label>
+            <nz-form-control>
+              <input name="frontendBasePath" nz-input [ngModel]="form().frontendBasePath" (ngModelChange)="patchForm({ frontendBasePath: $event })" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      }
+    </div>
+
+    <div class="fields-head">
+      <strong>业务字段</strong>
+      <button nz-button nzSize="small" nzType="dashed" type="button" (click)="addField()">
+        <i nz-icon nzType="plus"></i>
+        添加
+      </button>
+    </div>
+
+    <nz-table #fieldTable nzBordered nzSize="small" [nzData]="form().fields" [nzFrontPagination]="false" [nzShowPagination]="false">
+      <thead>
+        <tr>
+          <th nzWidth="110px">name</th>
+          <th nzWidth="120px">javaType</th>
+          @if (isBackend()) {
+            <th nzWidth="100px">columnName</th>
+          }
+          <th nzWidth="60px" nzAlign="center">null</th>
+          <th nzWidth="60px" nzAlign="center">req</th>
+          <th nzWidth="70px" nzAlign="center">search</th>
+          <th>comment</th>
+          <th nzWidth="50px"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (field of fieldTable.data; track $index) {
+          <tr>
+            <td><input nz-input [name]="'fn' + $index" [(ngModel)]="field.name" /></td>
+            <td>
+              <nz-select [name]="'ft' + $index" [(ngModel)]="field.javaType" (ngModelChange)="onJavaTypeChange(field)">
+                @for (t of javaTypeOptions(); track t) {
+                  <nz-option [nzLabel]="t" [nzValue]="t" />
+                }
+              </nz-select>
+            </td>
+            @if (isBackend()) {
+              <td><input nz-input [name]="'fc' + $index" [(ngModel)]="field.columnName" /></td>
+            }
+            <td nzAlign="center"><label nz-checkbox [name]="'fnl' + $index" [(ngModel)]="field.nullable"></label></td>
+            <td nzAlign="center"><label nz-checkbox [name]="'fr' + $index" [(ngModel)]="field.required"></label></td>
+            <td nzAlign="center">
+              <label
+                nz-checkbox
+                [disabled]="field.javaType !== 'String'"
+                [name]="'fs' + $index"
+                [nz-tooltip]="field.javaType !== 'String' ? '仅 String' : null"
+                [(ngModel)]="field.searchable"
+              ></label>
+            </td>
+            <td><input nz-input [name]="'fm' + $index" [(ngModel)]="field.comment" /></td>
+            <td><span class="operate-text" (click)="removeField($index)">删</span></td>
+          </tr>
+        }
+      </tbody>
+    </nz-table>
+
+    @if (showPreview()) {
+      <nz-divider />
+      <div class="preview-block">
+        <div class="preview-block__head">
+          <strong>预览结果</strong>
+          @if (previewResult(); as result) {
+            <nz-tag [nzColor]="result.target === 'frontend' ? 'blue' : 'green'">{{ targetLabel(result.target) }}</nz-tag>
+            <span class="text-secondary">{{ result.files.length }} 个文件</span>
+          }
+        </div>
+        <nz-spin [nzSpinning]="previewLoading()">
+          @if (previewResult(); as result) {
+            <nz-tabs [(nzSelectedIndex)]="activeFileTab">
+              @for (file of result.files; track file.relativePath) {
+                <nz-tab [nzTitle]="fileTabTitle(file.relativePath)">
+                  <div class="file-path-bar">
+                    <code>{{ file.relativePath }}</code>
+                    <button nz-button nzSize="small" nzType="link" type="button" (click)="copyContent(file.content)">复制</button>
+                  </div>
+                  <pre class="code-block"><code>{{ file.content }}</code></pre>
+                </nz-tab>
+              }
+            </nz-tabs>
+          } @else {
+            <nz-empty nzNotFoundContent="暂无预览" />
+          }
+        </nz-spin>
+      </div>
+    }
+  </nz-spin>
+
+  <div class="modal-footer">
+    <button nz-button type="button" (click)="cancel()">取消</button>
+    <button nz-button type="button" [nzLoading]="previewLoading()" (click)="preview()">
+      <i nz-icon nzType="code"></i>
+      预览
+    </button>
+    <button nz-button nzType="primary" type="button" [nzLoading]="saving()" (click)="save()">
+      <i nz-icon nzType="save"></i>
+      {{ isEdit() ? '保存' : '创建' }}
+    </button>
+  </div>
+</form>

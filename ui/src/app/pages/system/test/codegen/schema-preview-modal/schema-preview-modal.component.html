@@ -1,0 +1,50 @@
+<div class="schema-preview-modal">
+  <nz-spin [nzSpinning]="loading() || previewLoading()">
+    <div class="preview-toolbar">
+      <div class="preview-toolbar__left">
+        @if (detail(); as d) {
+          <strong>{{ d.name }}</strong>
+          <span class="text-secondary">{{ d.moduleName }}</span>
+        }
+        <nz-radio-group [ngModel]="previewTarget()" (ngModelChange)="onTargetChange($event)">
+          <label nz-radio nzValue="backend">后端 Java</label>
+          <label nz-radio nzValue="frontend">前端 Angular</label>
+        </nz-radio-group>
+      </div>
+      <div class="preview-toolbar__right">
+        @if (previewResult(); as result) {
+          <nz-tag [nzColor]="result.target === 'frontend' ? 'blue' : 'green'">{{ targetLabel(result.target) }}</nz-tag>
+          <span class="text-secondary">{{ result.files.length }} 个文件</span>
+          <button nz-button nzSize="small" type="button" (click)="copyAll()">
+            <i nz-icon nzType="copy"></i>
+            复制全部
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (previewResult(); as result) {
+      @if (result.target === 'frontend' && result.files.some(f => f.relativePath.endsWith('routing.entry.ts'))) {
+        <div class="routing-hint">请将 <code>routing.entry.ts</code> 合并到 <code>test-routing.ts</code></div>
+      }
+      <div class="text-secondary path-line">{{ result.outputPath }} · {{ result.apiPath }}</div>
+      <nz-tabs [(nzSelectedIndex)]="activeFileTab">
+        @for (file of result.files; track file.relativePath) {
+          <nz-tab [nzTitle]="fileTabTitle(file.relativePath)">
+            <div class="file-path-bar">
+              <code>{{ file.relativePath }}</code>
+              <button nz-button nzSize="small" nzType="link" type="button" (click)="copyContent(file.content)">复制</button>
+            </div>
+            <pre class="code-block"><code>{{ file.content }}</code></pre>
+          </nz-tab>
+        }
+      </nz-tabs>
+    } @else if (!loading() && !previewLoading()) {
+      <nz-empty nzNotFoundContent="暂无预览内容" />
+    }
+  </nz-spin>
+
+  <div class="modal-footer">
+    <button nz-button type="button" (click)="close()">关闭</button>
+  </div>
+</div>
