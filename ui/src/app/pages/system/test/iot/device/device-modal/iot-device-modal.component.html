@@ -1,0 +1,48 @@
+<form nz-form nzLayout="vertical" [formGroup]="addEditForm">
+  <div nz-row [nzGutter]="16">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item>
+        <nz-form-label nzRequired>所属产品</nz-form-label>
+        <nz-form-control nzErrorTip="请选择产品">
+          <nz-select formControlName="productId" nzShowSearch nzPlaceHolder="选择产品">
+            @for (item of products(); track item.id) {
+              <nz-option [nzLabel]="item.name + ' (' + item.productKey + ')'" [nzValue]="item.id" />
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12">
+      <nz-form-item>
+        <nz-form-label nzRequired>序列号</nz-form-label>
+        <nz-form-control nzErrorTip="请输入序列号">
+          <input formControlName="serialNo" nz-input placeholder="serialNo，创建后不可改" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12">
+      <nz-form-item>
+        <nz-form-label>昵称</nz-form-label>
+        <nz-form-control>
+          <input formControlName="nickname" nz-input placeholder="昵称" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12">
+      <nz-form-item>
+        <nz-form-label>固件版本</nz-form-label>
+        <nz-form-control>
+          <input formControlName="fwVersion" nz-input placeholder="可选" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="24">
+      <nz-form-item>
+        <nz-form-label>IoTDB 路径</nz-form-label>
+        <nz-form-control>
+          <input formControlName="iotdbPath" nz-input placeholder="留空则按产品模板生成" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</form>

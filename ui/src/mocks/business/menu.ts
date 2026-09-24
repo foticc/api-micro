@@ -1670,10 +1670,66 @@ let menus: Menu[] = [
     status: true,
     newLinkFlag: false,
     visible: true
+  },
+  {
+    id: 138,
+    fatherId: 6,
+    menuName: 'IoT 产品',
+    menuType: 'C',
+    alIcon: '',
+    icon: 'appstore',
+    path: '/default/system/test/iot/product',
+    code: 'default:system:test:iot-product',
+    orderNum: 20,
+    status: true,
+    newLinkFlag: false,
+    visible: true
+  },
+  {
+    id: 139,
+    fatherId: 6,
+    menuName: 'IoT 设备',
+    menuType: 'C',
+    alIcon: '',
+    icon: 'hdd',
+    path: '/default/system/test/iot/device',
+    code: 'default:system:test:iot-device',
+    orderNum: 21,
+    status: true,
+    newLinkFlag: false,
+    visible: true
+  },
+  {
+    id: 140,
+    fatherId: 6,
+    menuName: 'IoT 测点',
+    menuType: 'C',
+    alIcon: '',
+    icon: 'line-chart',
+    path: '/default/system/test/iot/property',
+    code: 'default:system:test:iot-property',
+    orderNum: 22,
+    status: true,
+    newLinkFlag: false,
+    visible: true
+  },
+  {
+    id: 141,
+    fatherId: 6,
+    menuName: 'IoTDB 联调',
+    menuType: 'C',
+    alIcon: '',
+    icon: 'database',
+    path: '/default/system/test/iot/demo',
+    code: 'default:system:test:iot-demo',
+    orderNum: 23,
+    status: true,
+    newLinkFlag: false,
+    visible: true
   }
 ];
 
-let nextId = 138;
+let nextId = 142;
 
 export const menu = [
   http.post('/site/api/auth/menu', () => {

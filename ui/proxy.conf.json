@@ -1,4 +1,20 @@
 {
+  "/site/api/api/v1/iot": {
+    "target": "http://localhost:8010/",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/site/api": ""
+    }
+  },
+  "/site/api/demo/sgd1": {
+    "target": "http://localhost:8010/",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/site/api": ""
+    }
+  },
   "/site/api/manage/oauth2": {
     "target": "http://localhost:9000/",
     "secure": false,

@@ -1,0 +1,148 @@
+<app-page-header [pageHeaderInfo]="pageHeaderInfo" />
+
+<div class="normal-table-wrap">
+  <nz-card class="m-b-10" [nzBodyStyle]="{ 'padding-bottom': '12px' }">
+    <form nz-form>
+      <nz-form-item>
+        <nz-form-label>设备</nz-form-label>
+        <nz-form-control>
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder="按昵称或序列号选择"
+            style="max-width: 420px"
+            [ngModel]="deviceId()"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="onDeviceChange($event)"
+          >
+            @for (item of devices(); track item.id) {
+              <nz-option [nzLabel]="deviceLabel(item)" [nzValue]="item.id" />
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+    @if (device(); as current) {
+      <nz-descriptions nzSize="small" [nzColumn]="4">
+        <nz-descriptions-item nzTitle="序列号">{{ current.serialNo }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="昵称">{{ current.nickname || '—' }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="物模型版本">v{{ current.tslVersion ?? '—' }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="状态">
+          @if (current.status === 'ENABLED') {
+            <nz-tag nzColor="success">启用</nz-tag>
+          } @else if (current.status === 'DISABLED') {
+            <nz-tag>停用</nz-tag>
+          } @else {
+            {{ current.status || '—' }}
+          }
+        </nz-descriptions-item>
+      </nz-descriptions>
+    }
+  </nz-card>
+
+  @if (!deviceId()) {
+    <nz-card>
+      <nz-empty nzNotFoundContent="先选择一台设备" />
+    </nz-card>
+  } @else {
+    <div nz-row [nzGutter]="16">
+      <div nz-col [nzLg]="10" [nzMd]="24" [nzSpan]="24">
+        <nz-card class="m-b-10" nzTitle="最新值" [nzBodyStyle]="{ padding: '0 0 8px' }">
+          <nz-table
+            #latestTable
+            [nzData]="latestList()"
+            [nzFrontPagination]="false"
+            [nzLoading]="latestLoading()"
+            [nzNoResult]="latestEmpty"
+            [nzShowPagination]="false"
+            nzSize="small"
+          >
+            <thead>
+              <tr>
+                <th>测点</th>
+                <th>最新值</th>
+                <th>时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of latestTable.data; track row.identifier) {
+                <tr class="property-row" [class.property-row-active]="row.identifier === identifier()" (click)="selectProperty(row)">
+                  <td>
+                    <div>{{ row.name || row.identifier }}</div>
+                    <div style="color: rgba(0, 0, 0, 0.45)">{{ row.identifier }}</div>
+                  </td>
+                  <td>{{ formatValue(row.value) }}</td>
+                  <td>{{ row.time || '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </nz-table>
+          <ng-template #latestEmpty>
+            <nz-empty nzNotFoundContent="当前物模型没有属性" />
+          </ng-template>
+        </nz-card>
+      </div>
+      <div nz-col [nzLg]="14" [nzMd]="24" [nzSpan]="24">
+        <nz-card [nzTitle]="historyTitle">
+          <ng-template #historyTitle>
+            历史数据
+            @if (identifier()) {
+              <span style="margin-left: 8px; font-weight: normal; color: rgba(0, 0, 0, 0.65)">{{ selectedName() }}</span>
+            }
+          </ng-template>
+          <div class="m-b-10">
+            <nz-radio-group [ngModel]="rangePreset()" [ngModelOptions]="{ standalone: true }" (ngModelChange)="onRangeChange($event)">
+              <label nz-radio-button nzValue="1h">近1小时</label>
+              <label nz-radio-button nzValue="24h">近24小时</label>
+              <label nz-radio-button nzValue="7d">近7天</label>
+              <label nz-radio-button nzValue="custom">自定义</label>
+            </nz-radio-group>
+            @if (rangePreset() === 'custom') {
+              <div class="m-t-8" nz-row [nzGutter]="8">
+                <div nz-col [nzSpan]="9">
+                  <nz-date-picker nzShowTime style="width: 100%" [(ngModel)]="from" [ngModelOptions]="{ standalone: true }" />
+                </div>
+                <div nz-col [nzSpan]="9">
+                  <nz-date-picker nzShowTime style="width: 100%" [(ngModel)]="to" [ngModelOptions]="{ standalone: true }" />
+                </div>
+                <div nz-col [nzSpan]="6">
+                  <button nz-button nzType="primary" [nzLoading]="historyLoading()" (click)="loadHistory()">查询</button>
+                </div>
+              </div>
+            }
+          </div>
+          @if (!identifier()) {
+            <nz-empty nzNotFoundContent="点左侧测点查看历史" />
+          } @else {
+            <nz-table
+              #historyTable
+              [nzData]="historyResult()?.points ?? []"
+              [nzLoading]="historyLoading()"
+              [nzNoResult]="historyEmpty"
+              [nzPageSize]="20"
+              nzSize="small"
+            >
+              <thead>
+                <tr>
+                  <th>时间</th>
+                  <th>值</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (point of historyTable.data; track $index) {
+                  <tr>
+                    <td>{{ point.time || '—' }}</td>
+                    <td>{{ formatValue(point.value) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </nz-table>
+            <ng-template #historyEmpty>
+              <nz-empty nzNotFoundContent="这个时间范围内没有数据" />
+            </ng-template>
+          }
+        </nz-card>
+      </div>
+    </div>
+  }
+</div>

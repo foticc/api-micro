@@ -1,0 +1,103 @@
+<app-page-header [pageHeaderInfo]="pageHeaderInfo" />
+
+<div class="normal-table-wrap">
+  <nz-card class="m-b-10" nzHoverable [nzBodyStyle]="{ 'padding-bottom': 0 }">
+    <form nz-form>
+      <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24 }">
+        <div nz-col [nzLg]="6" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+          <nz-form-item>
+            <nz-form-label>产品</nz-form-label>
+            <nz-form-control>
+              <nz-select name="productId" nzAllowClear nzShowSearch nzPlaceHolder="全部" [(ngModel)]="searchParam.productId">
+                @for (item of products(); track item.id) {
+                  <nz-option [nzLabel]="item.name + ' (' + item.productKey + ')'" [nzValue]="item.id" />
+                }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzLg]="6" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+          <nz-form-item>
+            <nz-form-label>序列号</nz-form-label>
+            <nz-form-control>
+              <input name="serialNo" nz-input placeholder="serialNo" [(ngModel)]="searchParam.serialNo" (keyup.enter)="getDataList(1)" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzLg]="6" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+          <nz-form-item>
+            <nz-form-label>昵称</nz-form-label>
+            <nz-form-control>
+              <input name="nickname" nz-input placeholder="昵称" [(ngModel)]="searchParam.nickname" (keyup.enter)="getDataList(1)" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzLg]="6" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+          <nz-form-item>
+            <nz-form-label>状态</nz-form-label>
+            <nz-form-control>
+              <nz-select name="status" nzAllowClear nzPlaceHolder="全部" [(ngModel)]="searchParam.status">
+                @for (item of statusOptions; track item.value) {
+                  <nz-option [nzLabel]="item.label" [nzValue]="item.value" />
+                }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="text-right p-0 m-b-10" nz-col [nzSpan]="24">
+          <button nz-button nzType="primary" (click)="getDataList(1)">
+            <i nz-icon nzType="search"></i>
+            搜索
+          </button>
+          <button class="m-l-15" nz-button (click)="resetForm()">
+            <i nz-icon nzType="close-circle"></i>
+            重置
+          </button>
+        </div>
+      </div>
+    </form>
+  </nz-card>
+
+  <app-card-table-wrap [btnTpl]="tableBtns" [tableTitle]="'设备列表'" (reload)="reloadTable()">
+    <app-ant-table
+      [checkedCashArrayFromComment]="checkedCashArray"
+      [tableConfig]="tableConfig()"
+      [tableData]="dataList()"
+      (changePageIndex)="getDataList($event)"
+      (changePageSize)="changePageSize($event)"
+      (selectedChange)="selectedChecked($event)"
+    />
+    <ng-template #productTpl let-productId="productId">
+      {{ productName(productId) }}
+    </ng-template>
+    <ng-template #statusTpl let-status="status">
+      @if (status === 'ENABLED') {
+        <nz-tag nzColor="success">启用</nz-tag>
+      } @else if (status === 'DISABLED') {
+        <nz-tag nzColor="default">停用</nz-tag>
+      } @else {
+        <nz-tag>{{ status }}</nz-tag>
+      }
+    </ng-template>
+    <ng-template #operationTpl let-row="$$dataItem">
+      <span class="operate-text" (click)="edit(row)">编辑</span>
+      <span class="operate-text" (click)="toggleStatus(row)">{{ row.status === 'ENABLED' ? '停用' : '启用' }}</span>
+      <span class="operate-text" (click)="resetSecret(row)">重置密钥</span>
+      <span class="operate-text" (click)="upgradeTsl(row)">升级物模型</span>
+      <span class="operate-text" (click)="openProperties(row)">测点</span>
+      <span class="operate-text" (click)="insertSample(row)">测试数据</span>
+      <span class="operate-text" (click)="del(row.id)">删除</span>
+    </ng-template>
+  </app-card-table-wrap>
+</div>
+
+<ng-template #tableBtns>
+  <button class="m-r-8" nz-button nzType="primary" (click)="add()">
+    <i nz-icon nzType="plus"></i>
+    新建
+  </button>
+  <button nz-button nzDanger nzType="default" (click)="allDel()">
+    <i nz-icon nzType="delete"></i>
+    批量删除
+  </button>
+</ng-template>

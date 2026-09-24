@@ -1,0 +1,56 @@
+<form nz-form nzLayout="vertical" [formGroup]="addEditForm">
+  <div nz-row [nzGutter]="16">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item>
+        <nz-form-label nzRequired>产品标识</nz-form-label>
+        <nz-form-control nzErrorTip="请输入产品标识，最长 64">
+          <input formControlName="productKey" nz-input placeholder="productKey，创建后不可改" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12">
+      <nz-form-item>
+        <nz-form-label nzRequired>名称</nz-form-label>
+        <nz-form-control nzErrorTip="请输入名称">
+          <input formControlName="name" nz-input placeholder="产品名称" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12">
+      <nz-form-item>
+        <nz-form-label>认证方式</nz-form-label>
+        <nz-form-control>
+          <input formControlName="authType" nz-input placeholder="HMAC" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12">
+      <nz-form-item>
+        <nz-form-label>状态</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="status">
+            @for (item of statusOptions; track item.value) {
+              <nz-option [nzLabel]="item.label" [nzValue]="item.value" />
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="24">
+      <nz-form-item>
+        <nz-form-label>设备路径模板</nz-form-label>
+        <nz-form-control>
+          <input formControlName="iotdbPathPattern" nz-input placeholder="root.iot.{productKey}.{serialNo}" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="24">
+      <nz-form-item>
+        <nz-form-label>描述</nz-form-label>
+        <nz-form-control>
+          <textarea formControlName="description" nz-input rows="3" placeholder="描述"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</form>

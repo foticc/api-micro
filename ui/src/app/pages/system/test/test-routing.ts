@@ -67,5 +67,6 @@ export default [
     title: 'OAuth2 授权同意',
     data: { key: 'rbac-test-oauth2-consent' },
     loadComponent: () => import('./oauth2-admin/consent/oauth2-consent-list.component').then(m => m.OAuth2ConsentListComponent)
-  }
+  },
+  { path: 'iot', loadChildren: () => import('./iot/iot-routing') }
 ] satisfies Route[];

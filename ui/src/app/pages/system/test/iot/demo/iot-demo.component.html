@@ -1,0 +1,46 @@
+<app-page-header [pageHeaderInfo]="pageHeaderInfo" />
+
+<div class="normal-table-wrap">
+  <nz-card class="m-b-10" nzHoverable [nzBodyStyle]="{ 'padding-bottom': 0 }">
+    <form nz-form>
+      <div nz-row [nzGutter]="16">
+        <div nz-col [nzLg]="8" [nzMd]="12" [nzSpan]="24">
+          <nz-form-item>
+            <nz-form-label>开始</nz-form-label>
+            <nz-form-control>
+              <nz-date-picker name="start" nzShowTime style="width: 100%" [(ngModel)]="start" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzLg]="8" [nzMd]="12" [nzSpan]="24">
+          <nz-form-item>
+            <nz-form-label>结束</nz-form-label>
+            <nz-form-control>
+              <nz-date-picker name="end" nzShowTime style="width: 100%" [(ngModel)]="end" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="m-b-10" nz-col [nzLg]="8" [nzMd]="12" [nzSpan]="24">
+          <button nz-button nzType="primary" (click)="search()">
+            <i nz-icon nzType="search"></i>
+            查询
+          </button>
+        </div>
+      </div>
+    </form>
+  </nz-card>
+
+  <app-card-table-wrap [btnTpl]="tableBtns" [tableTitle]="'root.sg.d1'" (reload)="reloadTable()">
+    <app-ant-table [tableConfig]="tableConfig()" [tableData]="dataList()" (changePageIndex)="getDataList($event)" (changePageSize)="changePageSize($event)" (sortFn)="changeSort($event)" />
+    <ng-template #operationTpl let-row="$$dataItem">
+      <span class="operate-text" (click)="del(row)">删除</span>
+    </ng-template>
+  </app-card-table-wrap>
+</div>
+
+<ng-template #tableBtns>
+  <button nz-button nzType="primary" (click)="save()">
+    <i nz-icon nzType="plus"></i>
+    写入示例点
+  </button>
+</ng-template>
