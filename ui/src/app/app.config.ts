@@ -7,7 +7,7 @@ import { provideRouter, RouteReuseStrategy, TitleStrategy, withComponentInputBin
 
 import { DashboardOutline, FormOutline, MenuFoldOutline, MenuUnfoldOutline } from '@ant-design/icons-angular/icons';
 import { appRoutes } from '@app/app.routes';
-import { provideTestOAuth2 } from '@app/pages/system/test/oauth2/providers/provide-test-oauth2';
+import { provideTestOAuth2 } from '@app/pages/test/oauth2/providers/provide-test-oauth2';
 import { CustomPageTitleResolverService } from '@core/services/common/custom-page-title-resolver.service';
 import { InitLangService } from '@core/services/common/init-lang.service';
 import { InitThemeService } from '@core/services/common/init-theme.service';

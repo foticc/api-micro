@@ -14,7 +14,7 @@ import {
   RbacRolePageItem,
   RbacRolePayload,
   RoleListFilters
-} from '@app/pages/system/test/models/rbac.models';
+} from '@app/pages/test/models/rbac.models';
 import { PageInfo, SearchCommonVO } from '@core/services/types';
 import { BaseHttpService } from '@services/base-http.service';
 

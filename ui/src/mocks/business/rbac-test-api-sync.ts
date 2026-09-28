@@ -1,4 +1,4 @@
-import { mockApiSyncCount } from '@app/pages/system/test/api/mock/api-sync.mock';
+import { mockApiSyncCount } from '@app/pages/test/api/mock/api-sync.mock';
 import { http, HttpResponse } from 'msw';
 
 export const rbacTestApiSync = [

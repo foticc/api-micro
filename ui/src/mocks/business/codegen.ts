@@ -155,7 +155,7 @@ function buildFrontendResult(body: CodeGenRequest) {
   const module = body.moduleName.trim();
   const kebab = moduleKebab(module);
   const apiPath = body.apiPath ?? `/demo/generated/${moduleCamel(module)}`;
-  const basePath = body.frontendBasePath ?? `src/app/pages/system/test/${kebab}`;
+  const basePath = body.frontendBasePath ?? `src/app/pages/test/${kebab}`;
   const title = body.moduleTitle ?? `${module}（测试）`;
   const audit = body.enableAudit !== false;
   const hasKeyword = body.fields.some(f => f.searchable && f.javaType === 'String');

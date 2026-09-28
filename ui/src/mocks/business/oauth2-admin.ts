@@ -1,4 +1,4 @@
-import type { AuthorizationDTO, ConsentDTO, RegisteredClientDTO } from '@app/pages/system/test/models/oauth2-admin.models';
+import type { AuthorizationDTO, ConsentDTO, RegisteredClientDTO } from '@app/pages/test/models/oauth2-admin.models';
 import { http, HttpResponse } from 'msw';
 
 let clients: RegisteredClientDTO[] = [

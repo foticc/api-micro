@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } 
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 
-import { OAuth2LoginButtonComponent } from '@app/pages/system/test/oauth2/components/oauth2-login-button.component';
+import { OAuth2LoginButtonComponent } from '@app/pages/test/oauth2/components/oauth2-login-button.component';
 import { LoginInOutService } from '@core/services/common/login-in-out.service';
 import { LoginService } from '@core/services/http/login/login.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';

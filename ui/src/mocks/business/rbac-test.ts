@@ -7,7 +7,7 @@ import type {
   RbacRole,
   RbacRolePageItem,
   RbacRolePayload
-} from '@app/pages/system/test/models/rbac.models';
+} from '@app/pages/test/models/rbac.models';
 import { http, HttpResponse } from 'msw';
 
 let nextPermId = 100;

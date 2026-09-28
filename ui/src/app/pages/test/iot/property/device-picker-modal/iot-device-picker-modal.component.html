@@ -1,0 +1,41 @@
+<form nz-form>
+  <div nz-row [nzGutter]="16">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label>序列号</nz-form-label>
+        <nz-form-control>
+          <input name="serialNo" nz-input placeholder="序列号" [(ngModel)]="searchParam.serialNo" (keyup.enter)="search()" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label>昵称</nz-form-label>
+        <nz-form-control>
+          <input name="nickname" nz-input placeholder="昵称" [(ngModel)]="searchParam.nickname" (keyup.enter)="search()" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="m-b-10" nz-col [nzSpan]="8">
+      <button nz-button nzType="primary" (click)="search()">
+        <i nz-icon nzType="search"></i>
+        搜索
+      </button>
+    </div>
+  </div>
+</form>
+
+<app-ant-table [tableConfig]="tableConfig()" [tableData]="dataList()" (changePageIndex)="getDataList($event)" (changePageSize)="changePageSize($event)" />
+
+<ng-template #statusTpl let-status="status">
+  @if (status === 'ENABLED') {
+    启用
+  } @else if (status === 'DISABLED') {
+    停用
+  } @else {
+    {{ status || '-' }}
+  }
+</ng-template>
+<ng-template #operationTpl let-row="$$dataItem">
+  <span class="operate-text" (click)="choose(row)">选择</span>
+</ng-template>
