@@ -2,6 +2,7 @@ import { Route } from '@angular/router';
 
 export default [
   { path: '', redirectTo: 'permission', pathMatch: 'full' },
+  { path: 'dict', title: '字典管理', data: { key: 'dict' }, loadComponent: () => import('./dict/dict.component').then(m => m.DictComponent) },
   {
     path: 'permission',
     title: '权限资源组',
