@@ -12,6 +12,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 
 import { TECH_ITEMS, TechItem } from './transitions';
 
+
 @Component({
   selector: 'app-transitions-detail',
 

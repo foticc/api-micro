@@ -37,6 +37,7 @@ export class SetRoleComponent implements OnInit {
   });
   readonly id = input.required<string>(); // 从路由中获取的角色id，ng16支持的新特性
   readonly roleName = input.required<string>(); // 从路由中获取的角色名称，ng16支持的新特性
+  readonly authCodes = input.required<string[]>(); // 由路由 resources 加载并自动绑定v22.2.0提供
 
   private dataService = inject(RoleService);
   private menusService = inject(MenusService);
@@ -44,16 +45,14 @@ export class SetRoleComponent implements OnInit {
   private message = inject(NzMessageService);
   private destroyRef = inject(DestroyRef);
 
-  // 通过角色id获取这个角色拥有的权限码
-  authCodeResource = this.dataService.getPermissionByIdResource(() => this.id());
   // 获取所有菜单
   menuListResource = this.menusService.getMenuListResource(() => ({ pageSize: 0, pageIndex: 0, filters: {} as NzSafeAny }));
 
   permissionList = computed<Array<Menu & { isOpen?: boolean; checked?: boolean }>>(() => {
-    if (!this.authCodeResource.hasValue() || !this.menuListResource.hasValue()) {
+    if (!this.menuListResource.hasValue()) {
       return [];
     }
-    const authCodes = this.authCodeResource.value();
+    const authCodes = this.authCodes();
     // isOpen表示 节点是否展开
     const menuArray: Array<Menu & { isOpen?: boolean; checked?: boolean }> = this.menuListResource.value().list;
     menuArray.forEach(item => {

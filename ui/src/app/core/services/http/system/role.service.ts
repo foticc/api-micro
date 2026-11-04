@@ -45,8 +45,8 @@ export class RoleService {
     return this.http.postResource<PageInfo<Role>>('/role/list', param, { showLoading: true, loadingText: '请求中' });
   }
 
-  getPermissionByIdResource(id: () => string): HttpResourceRef<string[]> {
-    return this.http.getResource<string[]>(`/permission/list-role-resources/${id()}`);
+  public getPermissionById(id: string): Observable<string[]> {
+    return this.http.get<string[]>(`/permission/list-role-resources/${id}`);
   }
 
   public getRolesDetail(id: number): Observable<Role> {

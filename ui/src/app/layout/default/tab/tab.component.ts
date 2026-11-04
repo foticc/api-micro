@@ -8,6 +8,7 @@ import { SplitNavStoreService } from '@store/common-store/split-nav-store.servic
 import { ThemeService } from '@store/common-store/theme.service';
 import { fnStopMouseEvent } from '@utils/tools';
 
+
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzContextMenuService, NzDropdownMenuComponent, NzDropdownModule } from 'ng-zorro-antd/dropdown';
@@ -36,7 +37,7 @@ export class TabComponent {
   $isCollapsed = computed(() => this.themesService.$isCollapsed());
 
   public trackByTab(index: number, tab: TabModel): string {
-    return tab.title;
+    return tab.path;
   }
 
   // 点击tab跳转到对应的path

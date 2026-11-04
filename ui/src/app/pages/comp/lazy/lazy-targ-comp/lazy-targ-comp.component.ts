@@ -6,10 +6,10 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 
 export enum LazySelPeopleEnum {
-  'Yanzu',
-  'Dehua',
-  'YiLin',
-  'Jielun'
+  Yanzu,
+  Dehua,
+  YiLin,
+  Jielun
 }
 
 @Component({

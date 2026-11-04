@@ -5,7 +5,7 @@ import { appConfig } from '@app/app.config';
 
 import { environment } from './environments/environment';
 
-async function bootstrap() {
+async function bootstrap():Promise<void> {
   if (environment.mockEnabled) {
     const { worker } = await import('./mocks/browser');
     await worker.start({ onUnhandledRequest: 'bypass', serviceWorker: { url: './mockServiceWorker.js' } });
