@@ -1,12 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, signal, computed, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 
-import { ApiResourceDTO, ApiResourceSearchParam, ApiResourceService } from '@services/system/api-resource.service';
+import { ApiResourceDTO, ApiResourceService } from '@services/system/api-resource.service';
 import { BasicConfirmModalComponent } from '@widget/base-modal';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzTreeNodeKey, NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -15,11 +14,11 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
-import { NzTreeModule } from 'ng-zorro-antd/tree';
 
-import { ApiPickerAddedFilter, ApiPickerTreeNodeOptions, buildApiPickerTreeNodes, extractApiIdsFromCheckedKeys, filterApis, filterApisByAddedStatus } from './api-picker-tree.util';
+import { API_FALLBACK_MODULE, ApiPickerAddedFilter, catalogModule, filterApis, filterApisByAddedStatus, moduleLabel } from './api-picker-tree.util';
 
 export interface ApiPickerModalData {
   /** 当前已关联的 API 资源 id，打开弹窗时预勾选 */
@@ -28,91 +27,109 @@ export interface ApiPickerModalData {
   manageMode?: boolean;
 }
 
+type CatalogSelection = { kind: 'all' } | { kind: 'stale' } | { kind: 'module'; module: string };
+
 @Component({
   selector: 'app-api-picker-modal',
   templateUrl: './api-picker-modal.component.html',
+  styleUrl: './api-picker-modal.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, NzFormModule, NzGridModule, NzInputModule, NzButtonModule, NzIconModule, NzSelectModule, NzTreeModule, NzTagModule, NzSpinModule, NzTooltipModule],
-  styles: `
-    .picker-search {
-      margin-bottom: 12px;
-    }
-    .picker-summary {
-      margin-bottom: 12px;
-      color: rgba(0, 0, 0, 0.45);
-      font-size: 13px;
-    }
-    .picker-tree-toolbar {
-      margin-bottom: 8px;
-    }
-    .picker-tree-scroll {
-      max-height: 460px;
-      overflow: auto;
-      border: 1px solid #f0f0f0;
-      border-radius: 4px;
-      padding: 8px 12px;
-    }
-    .tree-node-title {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      max-width: 100%;
-    }
-    .tree-node-path {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .tree-node-desc {
-      color: rgba(0, 0, 0, 0.45);
-      font-size: 12px;
-    }
-    .tree-node-tag {
-      flex-shrink: 0;
-    }
-    .tree-node-extra {
-      margin-left: 4px;
-    }
-  `
+  imports: [FormsModule, NzFormModule, NzGridModule, NzInputModule, NzButtonModule, NzIconModule, NzSelectModule, NzTableModule, NzTagModule, NzSpinModule, NzTooltipModule]
 })
-export class ApiPickerModalComponent extends BasicConfirmModalComponent implements OnInit {
+export class ApiPickerModalComponent extends BasicConfirmModalComponent {
   readonly nzModalData: ApiPickerModalData = inject(NZ_MODAL_DATA, { optional: true }) ?? {};
   override modalRef = inject(NzModalRef);
 
+  /** 嵌入配置页时传入；弹窗模式仍走 NZ_MODAL_DATA */
+  readonly existingIds = input<number[] | null>(null);
+  readonly manageModeInput = input<boolean | null>(null);
+  /** 配置页把操作放到卡片标题栏，这里不再重复显示 */
+  readonly showToolbar = input(true);
+
   private apiService = inject(ApiResourceService);
   private message = inject(NzMessageService);
-  private cdr = inject(ChangeDetectorRef);
 
-  searchParam: ApiResourceSearchParam = {};
-  addedFilter: ApiPickerAddedFilter = 'all';
+  private apiResource = this.apiService.getApiResourceListResource(() => ({}));
+
+  keywordDraft = '';
+  methodDraft?: string;
+  addedDraft: ApiPickerAddedFilter = 'all';
+
+  private keyword = signal('');
+  private method = signal<string | undefined>(undefined);
+  private addedFilter = signal<ApiPickerAddedFilter>('all');
+  private selection = signal<CatalogSelection>({ kind: 'all' });
+  private apis = signal<ApiResourceDTO[]>([]);
+  private selectedIds = signal<ReadonlySet<number>>(new Set());
+  private lockedIds = new Set<number>();
+  private apiById = new Map<number, ApiResourceDTO>();
+  readonly selectionReady = signal(false);
+
+  pageIndex = signal(1);
+  pageSize = signal(10);
   manageMode = false;
-
-  apiResource = this.apiService.getApiResourcePageResource(() => ({
-    pageIndex: 1,
-    pageSize: 9999,
-    filters: {}
-  }));
+  initialLinkedCount = 0;
 
   loading = computed(() => this.apiResource.isLoading());
+  selectedCount = computed(() => this.selectedIds().size);
 
-  treeNodes = signal<ApiPickerTreeNodeOptions[]>([]);
-  expandedKeys = signal<string[]>([]);
-  checkedKeys = signal<string[]>([]);
+  private pool = computed(() => {
+    const linked = [...this.selectedIds()];
+    const matched = filterApis(this.apis(), this.keyword(), this.method());
+    return filterApisByAddedStatus(matched, linked, this.addedFilter());
+  });
 
-  private allApis: ApiResourceDTO[] = [];
-  private apiById = new Map<number, ApiResourceDTO>();
-  private selectedById = new Map<number, ApiResourceDTO>();
-  private initialLinkedIds: number[] = [];
-  private selectionInitialized = false;
+  /** 模块和「全部」不展示未关联的已失效接口，避免保存时把已关联的失效接口悄悄丢掉 */
+  private catalogApis = computed(() => {
+    const linked = this.selectedIds();
+    return this.pool().filter(api => api.status !== 'STALE' || (api.id != null && linked.has(api.id)));
+  });
 
-  private syncApiTree = effect(() => {
-    if (!this.apiResource.hasValue()) {
-      return;
+  moduleStats = computed(() => {
+    const counts = new Map<string, number>();
+    for (const api of this.catalogApis()) {
+      const moduleName = catalogModule(api);
+      if (moduleName === API_FALLBACK_MODULE) {
+        continue;
+      }
+      counts.set(moduleName, (counts.get(moduleName) ?? 0) + 1);
     }
-    this.allApis = (this.apiResource.value().list ?? []).filter(a => a.id != null);
-    this.apiById = new Map(this.allApis.map(a => [a.id!, a]));
-    this.initializeSelectionIfNeeded();
-    this.applyTreeFilter();
+    return [...counts.entries()].sort(([left], [right]) => left.localeCompare(right)).map(([module, count]) => ({ module, count }));
+  });
+
+  totalCount = computed(() => this.catalogApis().length);
+
+  otherCount = computed(() => this.catalogApis().filter(api => catalogModule(api) === API_FALLBACK_MODULE).length);
+
+  staleCount = computed(() => this.pool().filter(api => api.status === 'STALE').length);
+
+  filteredApis = computed(() => {
+    const current = this.selection();
+    let list: ApiResourceDTO[];
+    if (current.kind === 'stale') {
+      list = this.pool().filter(api => api.status === 'STALE');
+    } else if (current.kind === 'module') {
+      list = this.catalogApis().filter(api => catalogModule(api) === current.module);
+    } else {
+      list = this.catalogApis();
+    }
+    return [...list].sort((left, right) => left.path.localeCompare(right.path) || left.method.localeCompare(right.method));
+  });
+
+  pageRows = computed(() => {
+    const start = (this.pageIndex() - 1) * this.pageSize();
+    return this.filteredApis().slice(start, start + this.pageSize());
+  });
+
+  pageAllChecked = computed(() => {
+    const rows = this.pageRows().filter(row => row.id != null);
+    return rows.length > 0 && rows.every(row => this.selectedIds().has(row.id!));
+  });
+
+  pageIndeterminate = computed(() => {
+    const rows = this.pageRows().filter(row => row.id != null);
+    const checked = rows.filter(row => this.selectedIds().has(row.id!)).length;
+    return checked > 0 && checked < rows.length;
   });
 
   readonly methodOptions = [
@@ -129,112 +146,147 @@ export class ApiPickerModalComponent extends BasicConfirmModalComponent implemen
     { label: '已关联', value: 'added' }
   ];
 
-  ngOnInit(): void {
-    this.initialLinkedIds = (this.nzModalData.existingIds ?? []).map(id => Number(id)).filter(id => !Number.isNaN(id));
-    this.manageMode = this.nzModalData.manageMode ?? this.initialLinkedIds.length > 0;
-  }
-
-  selectedCount(): number {
-    return this.selectedById.size;
-  }
-
-  initialLinkedCount(): number {
-    return this.initialLinkedIds.length;
-  }
+  private syncApis = effect(() => {
+    const fromInput = this.existingIds();
+    const manageModeInput = this.manageModeInput();
+    if (!this.apiResource.hasValue() || this.selectionReady()) {
+      return;
+    }
+    const source = fromInput ?? this.nzModalData.existingIds ?? [];
+    this.lockedIds = new Set(source.map(id => Number(id)).filter(id => !Number.isNaN(id)));
+    this.initialLinkedCount = this.lockedIds.size;
+    this.manageMode = manageModeInput ?? this.nzModalData.manageMode ?? this.lockedIds.size > 0;
+    const list = (this.apiResource.value() ?? []).filter(api => api.id != null);
+    this.apiById = new Map(list.map(api => [api.id!, api]));
+    const next = new Set<number>();
+    for (const id of this.lockedIds) {
+      if (this.apiById.has(id)) {
+        next.add(id);
+      }
+    }
+    this.apis.set(list);
+    this.selectedIds.set(next);
+    this.selectionReady.set(true);
+  });
 
   search(): void {
-    this.applyTreeFilter();
+    this.keyword.set(this.keywordDraft.trim());
+    this.method.set(this.methodDraft);
+    this.pageIndex.set(1);
   }
 
   resetSearch(): void {
-    this.searchParam = {};
-    this.addedFilter = 'all';
-    this.applyTreeFilter();
+    this.keywordDraft = '';
+    this.methodDraft = undefined;
+    this.addedDraft = 'all';
+    this.keyword.set('');
+    this.method.set(undefined);
+    this.addedFilter.set('all');
+    this.selection.set({ kind: 'all' });
+    this.pageIndex.set(1);
   }
 
-  onAddedFilterChange(): void {
-    this.applyTreeFilter();
+  onAddedFilterChange(value: ApiPickerAddedFilter): void {
+    this.addedFilter.set(value);
+    this.pageIndex.set(1);
   }
 
-  expandAll(): void {
-    const keys: string[] = [];
-    const walk = (nodes: NzTreeNodeOptions[]) => {
-      for (const n of nodes) {
-        keys.push(n.key as string);
-        if (n.children?.length) {
-          walk(n.children);
-        }
-      }
-    };
-    walk(this.treeNodes());
-    this.expandedKeys.set(keys);
-    this.cdr.markForCheck();
+  selectAll(): void {
+    this.selection.set({ kind: 'all' });
+    this.pageIndex.set(1);
   }
 
-  collapseAll(): void {
-    this.expandedKeys.set([]);
-    this.cdr.markForCheck();
+  selectModule(moduleName: string): void {
+    this.selection.set({ kind: 'module', module: moduleName });
+    this.pageIndex.set(1);
   }
 
-  selectAllFiltered(): void {
-    const selectable = this.getFilteredApis().filter(a => a.id != null);
-    if (!selectable.length) {
-      this.message.info('当前筛选条件下没有可选 API');
+  selectStale(): void {
+    this.selection.set({ kind: 'stale' });
+    this.pageIndex.set(1);
+  }
+
+  isAllSelected(): boolean {
+    return this.selection().kind === 'all';
+  }
+
+  isStaleSelected(): boolean {
+    return this.selection().kind === 'stale';
+  }
+
+  isModuleSelected(moduleName: string): boolean {
+    const current = this.selection();
+    return current.kind === 'module' && current.module === moduleName;
+  }
+
+  isChecked(id: number | undefined): boolean {
+    return id != null && this.selectedIds().has(id);
+  }
+
+  isLocked(id: number | undefined): boolean {
+    return !this.manageMode && id != null && this.lockedIds.has(id);
+  }
+
+  onRowChecked(api: ApiResourceDTO, checked: boolean): void {
+    if (api.id == null || this.isLocked(api.id)) {
       return;
     }
-    for (const api of selectable) {
-      this.selectedById.set(api.id!, api);
+    this.updateSelection(next => {
+      if (checked) {
+        next.add(api.id!);
+      } else {
+        next.delete(api.id!);
+      }
+    });
+  }
+
+  onPageChecked(checked: boolean): void {
+    const rows = this.pageRows().filter(row => row.id != null && !this.isLocked(row.id));
+    this.updateSelection(next => {
+      for (const row of rows) {
+        if (checked) {
+          next.add(row.id!);
+        } else {
+          next.delete(row.id!);
+        }
+      }
+    });
+  }
+
+  onPageSize(size: number): void {
+    this.pageSize.set(size);
+    this.pageIndex.set(1);
+  }
+
+  selectFiltered(): void {
+    const rows = this.filteredApis().filter(row => row.id != null);
+    if (rows.length === 0) {
+      this.message.info('当前筛选条件下没有可选接口');
+      return;
     }
-    this.syncCheckedKeysFromSelection();
-    this.message.success(`已选中 ${selectable.length} 条 API`);
-    this.cdr.markForCheck();
+    this.updateSelection(next => {
+      for (const row of rows) {
+        next.add(row.id!);
+      }
+    });
+    this.message.success(`已选中 ${rows.length} 条接口`);
   }
 
   clearSelection(): void {
-    if (!this.selectedById.size) {
+    if (this.selectedIds().size === 0) {
       return;
     }
-    this.selectedById.clear();
-    this.checkedKeys.set([]);
-    this.cdr.markForCheck();
-  }
-
-  onCheckedKeysChange(keys: NzTreeNodeKey[]): void {
-    const ids = extractApiIdsFromCheckedKeys(keys);
-    const next = new Map<number, ApiResourceDTO>();
-    for (const id of ids) {
-      const api = this.apiById.get(id);
-      if (api) {
-        next.set(id, api);
+    if (this.manageMode) {
+      this.selectedIds.set(new Set());
+      return;
+    }
+    const kept = new Set<number>();
+    for (const id of this.lockedIds) {
+      if (this.apiById.has(id)) {
+        kept.add(id);
       }
     }
-    this.selectedById = next;
-    this.syncCheckedKeysFromSelection();
-    this.cdr.markForCheck();
-  }
-
-  isApiLinked(origin: ApiPickerTreeNodeOptions | null | undefined): boolean {
-    if (!origin?.api?.id) {
-      return false;
-    }
-    return this.selectedById.has(origin.api.id);
-  }
-
-  isGroupOrigin(origin: ApiPickerTreeNodeOptions | null | undefined): boolean {
-    return origin?.isGroup === true;
-  }
-
-  groupSummary(origin: ApiPickerTreeNodeOptions): string {
-    const total = origin.children?.length ?? origin.selectableCount ?? 0;
-    const linked = origin.existingCount ?? 0;
-    if (linked > 0) {
-      return `${total} 条，已关联 ${linked}`;
-    }
-    return `${total} 条`;
-  }
-
-  protected getAsyncFnData(modalValue: unknown): Observable<unknown> {
-    return of(modalValue);
+    this.selectedIds.set(kept);
   }
 
   methodTagColor(method: string): string {
@@ -248,47 +300,26 @@ export class ApiPickerModalComponent extends BasicConfirmModalComponent implemen
     return map[method] ?? 'default';
   }
 
+  moduleText(moduleName: string): string {
+    return moduleLabel(moduleName);
+  }
+
+  protected getAsyncFnData(modalValue: unknown): Observable<unknown> {
+    return of(modalValue);
+  }
+
+  selectedApiIds(): number[] {
+    return [...this.selectedIds()];
+  }
+
   override getCurrentValue(): Observable<unknown> {
-    return of([...this.selectedById.values()]);
+    const selected = [...this.selectedIds()].map(id => this.apiById.get(id)).filter((api): api is ApiResourceDTO => api != null);
+    return of(selected);
   }
 
-  private initializeSelectionIfNeeded(): void {
-    if (this.selectionInitialized) {
-      return;
-    }
-    for (const id of this.initialLinkedIds) {
-      const api = this.apiById.get(id);
-      if (api) {
-        this.selectedById.set(id, api);
-      }
-    }
-    this.selectionInitialized = true;
-    this.syncCheckedKeysFromSelection();
-  }
-
-  private getFilteredApis(): ApiResourceDTO[] {
-    const linkedIds = [...this.selectedById.keys()];
-    let filtered = filterApis(this.allApis, this.searchParam.keyword ?? '', this.searchParam.method);
-    filtered = filterApisByAddedStatus(filtered, linkedIds, this.addedFilter);
-    return filtered;
-  }
-
-  private applyTreeFilter(syncCheckedKeys = true): void {
-    const linkedIds = [...this.selectedById.keys()];
-    const filtered = this.getFilteredApis();
-    this.treeNodes.set(buildApiPickerTreeNodes(filtered, linkedIds, { manageMode: this.manageMode }));
-
-    if (this.searchParam.keyword?.trim() || this.searchParam.method || this.addedFilter !== 'all') {
-      this.expandAll();
-    }
-
-    if (syncCheckedKeys) {
-      this.syncCheckedKeysFromSelection();
-    }
-    this.cdr.markForCheck();
-  }
-
-  private syncCheckedKeysFromSelection(): void {
-    this.checkedKeys.set([...this.selectedById.keys()].map(String));
+  private updateSelection(change: (next: Set<number>) => void): void {
+    const next = new Set(this.selectedIds());
+    change(next);
+    this.selectedIds.set(next);
   }
 }

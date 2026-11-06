@@ -1,8 +1,11 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, signal, computed, effect, TemplateRef, viewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, signal, computed, effect, TemplateRef, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
-import { ApiResourceDTO, ApiResourceSearchParam, ApiResourceService } from '@services/system/api-resource.service';
+import { ApiResourceDTO, ApiResourceModuleStat, ApiResourceSearchParam, ApiResourceService } from '@services/system/api-resource.service';
 import { AntTableConfig, AntTableComponent } from '@shared/components/ant-table/ant-table.component';
 import { CardTableWrapComponent } from '@shared/components/card-table-wrap/card-table-wrap.component';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
@@ -24,12 +27,17 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 
 import { ApiSyncService } from './api-sync.service';
 
+const FALLBACK_MODULE = '其他';
+
+type CatalogSelection = { kind: 'all' } | { kind: 'stale' } | { kind: 'module'; module: string };
+
 @Component({
   selector: 'app-api-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
     FormsModule,
+    RouterLink,
     NzCardModule,
     NzFormModule,
     NzGridModule,
@@ -42,26 +50,33 @@ import { ApiSyncService } from './api-sync.service';
     CardTableWrapComponent,
     AntTableComponent
   ],
-  templateUrl: './api-list.component.html'
+  templateUrl: './api-list.component.html',
+  styleUrl: './api-list.component.less'
 })
 export class ApiListComponent implements AfterViewInit {
   readonly operationTpl = viewChild.required<TemplateRef<NzSafeAny>>('operationTpl');
   readonly methodTagTpl = viewChild.required<TemplateRef<NzSafeAny>>('methodTagTpl');
   readonly descriptionTpl = viewChild.required<TemplateRef<NzSafeAny>>('descriptionTpl');
+  readonly sourceTpl = viewChild.required<TemplateRef<NzSafeAny>>('sourceTpl');
+  readonly permissionTpl = viewChild.required<TemplateRef<NzSafeAny>>('permissionTpl');
 
   private apiService = inject(ApiResourceService);
   private apiSyncService = inject(ApiSyncService);
   private apiModalService = inject(ApiModalService);
   private message = inject(NzMessageService);
   private modal = inject(NzModalService);
+  private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
   searchParam: ApiResourceSearchParam = {};
+  statusFilter: string | null = null;
   checkedCashArray: ApiResourceDTO[] = [];
 
   private requestPageSize = signal(10);
   private requestPageIndex = signal(1);
   private searchFilters = signal<ApiResourceSearchParam>({});
+  private catalogVersion = signal(0);
+  readonly selection = signal<CatalogSelection>({ kind: 'all' });
 
   apiResource = this.apiService.getApiResourcePageResource(() => ({
     pageSize: this.requestPageSize(),
@@ -69,12 +84,35 @@ export class ApiListComponent implements AfterViewInit {
     filters: { ...this.searchFilters() }
   }));
 
+  modulesResource = this.apiService.getModulesResource(() => {
+    this.catalogVersion();
+    return {};
+  });
+
   dataList = computed(() => {
     if (this.apiResource.hasValue()) {
       return [...this.apiResource.value().list];
     }
     return [] as ApiResourceDTO[];
   });
+
+  moduleStats = computed(() => {
+    if (!this.modulesResource.hasValue()) {
+      return [] as ApiResourceModuleStat[];
+    }
+    return this.modulesResource.value().modules.filter(item => item.module !== FALLBACK_MODULE);
+  });
+
+  otherCount = computed(() => {
+    if (!this.modulesResource.hasValue()) {
+      return 0;
+    }
+    return this.modulesResource.value().modules.find(item => item.module === FALLBACK_MODULE)?.count ?? 0;
+  });
+
+  totalCount = computed(() => (this.modulesResource.hasValue() ? this.modulesResource.value().total : 0));
+
+  staleCount = computed(() => (this.modulesResource.hasValue() ? this.modulesResource.value().staleCount : 0));
 
   tableConfig = signal<AntTableConfig>({
     headers: [],
@@ -103,7 +141,7 @@ export class ApiListComponent implements AfterViewInit {
 
   readonly listPageHeader: Partial<PageHeaderType> = {
     title: 'API 资源管理（测试）',
-    desc: '维护后端接口资源（方法 + 路径），供权限资源组引用与授权。'
+    desc: '按路径模块浏览接口。扫描记录只改描述；授权仍在权限资源组维护。'
   };
 
   readonly methodOptions = [
@@ -114,12 +152,38 @@ export class ApiListComponent implements AfterViewInit {
     { label: 'DELETE', value: 'DELETE' }
   ];
 
+  readonly statusOptions = [
+    { label: '未绑定权限', value: 'unbound' },
+    { label: '没有描述', value: 'missingDescription' },
+    { label: '已失效', value: 'stale' }
+  ];
+
   ngAfterViewInit(): void {
     this.initTable();
   }
 
   selectedChecked(rows: ApiResourceDTO[]): void {
     this.checkedCashArray = [...rows];
+  }
+
+  selectAll(): void {
+    this.selection.set({ kind: 'all' });
+    this.getDataList(1);
+  }
+
+  selectStale(): void {
+    this.selection.set({ kind: 'stale' });
+    this.getDataList(1);
+  }
+
+  selectModule(module: string): void {
+    this.selection.set({ kind: 'module', module });
+    this.getDataList(1);
+  }
+
+  isModuleSelected(module: string): boolean {
+    const current = this.selection();
+    return current.kind === 'module' && current.module === module;
   }
 
   getDataList(pageIndex: number): void {
@@ -129,8 +193,8 @@ export class ApiListComponent implements AfterViewInit {
 
   resetSearch(): void {
     this.searchParam = {};
-    this.searchFilters.set({});
-    this.requestPageIndex.set(1);
+    this.statusFilter = null;
+    this.getDataList(1);
   }
 
   changePageSize(size: number): void {
@@ -139,6 +203,7 @@ export class ApiListComponent implements AfterViewInit {
   }
 
   reloadTable(): void {
+    this.catalogVersion.update(version => version + 1);
     this.apiResource.reload();
     this.message.info('刷新成功');
   }
@@ -146,21 +211,19 @@ export class ApiListComponent implements AfterViewInit {
   openSync(): void {
     this.modal.confirm({
       nzTitle: '同步接口资源库',
-      nzContent: '将根据后台扫描结果，将尚未登记的 API 自动写入资源库。是否继续？',
+      nzContent: '将扫描当前服务已注册的接口，把尚未入库的写入资源库，并刷新已有记录的模块与名称。',
       nzOkText: '开始同步',
       nzOnOk: () =>
-        this.apiSyncService
-          .runSync()
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe(result => {
-            if (result.created > 0) {
-              this.message.success(`已同步 ${result.created} 条 API`);
+        firstValueFrom(
+          this.apiSyncService.runSync().pipe(
+            tap(result => {
+              this.message.success(`新增 ${result.created}，刷新 ${result.refreshed}，失效 ${result.stale}`);
+              this.catalogVersion.update(version => version + 1);
               this.requestPageIndex.set(1);
               this.apiResource.reload();
-            } else {
-              this.message.info('无需同步，资源库已与后台一致');
-            }
-          })
+            })
+          )
+        )
     });
   }
 
@@ -178,6 +241,7 @@ export class ApiListComponent implements AfterViewInit {
           .subscribe({
             next: () => {
               this.requestPageIndex.set(1);
+              this.catalogVersion.update(version => version + 1);
               this.apiResource.reload();
             },
             error: err => this.showError(err)
@@ -201,8 +265,9 @@ export class ApiListComponent implements AfterViewInit {
               return;
             }
             const { method, path, description } = modalValue as ApiResourceDTO;
+            const payload = detail.source === 'SCAN' ? { method: detail.method, path: detail.path, description } : { method, path, description };
             this.apiService
-              .editApiResource(id, { method, path, description })
+              .editApiResource(id, payload)
               .pipe(takeUntilDestroyed(this.destroyRef))
               .subscribe({
                 next: () => this.apiResource.reload(),
@@ -218,36 +283,48 @@ export class ApiListComponent implements AfterViewInit {
       return;
     }
     const ids = this.checkedCashArray.map(row => row.id!).filter(id => id != null);
+    const referenced = this.referenceText(this.checkedCashArray);
     this.modal.confirm({
       nzTitle: '确定要批量删除吗？',
-      nzContent: `将删除 ${ids.length} 条 API，删除后不可恢复`,
+      nzContent: `${referenced}将删除 ${ids.length} 条 API，删除后不可恢复`,
       nzOnOk: () =>
         this.apiService
           .delApiResource(ids)
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
             this.checkedCashArray = [];
+            this.catalogVersion.update(version => version + 1);
             this.apiResource.reload();
           })
     });
   }
 
   remove(id: number, row: ApiResourceDTO): void {
+    const referenced = this.referenceText([row]);
     this.modal.confirm({
       nzTitle: '确定要删除吗？',
-      nzContent: `删除 ${row.method} ${row.path}，删除后不可恢复`,
+      nzContent: `${referenced}删除 ${row.method} ${row.path}，删除后不可恢复`,
       nzOnOk: () =>
         this.apiService
           .delApiResource([id])
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
+            this.catalogVersion.update(version => version + 1);
             if (this.dataList().length === 1 && this.tableConfig().pageIndex !== 1) {
-              this.requestPageIndex.update(p => Math.max(1, p - 1));
+              this.requestPageIndex.update(page => Math.max(1, page - 1));
             } else {
               this.apiResource.reload();
             }
           })
     });
+  }
+
+  private referenceText(rows: ApiResourceDTO[]): string {
+    const names = [...new Set(rows.flatMap(row => row.permissions ?? []).map(item => item.name).filter(Boolean))];
+    if (names.length === 0) {
+      return '';
+    }
+    return `已被权限引用：${names.join('、')}。`;
   }
 
   private buildFilters(): ApiResourceSearchParam {
@@ -258,6 +335,19 @@ export class ApiListComponent implements AfterViewInit {
     }
     if (this.searchParam.method) {
       filters.method = this.searchParam.method;
+    }
+    const current = this.selection();
+    if (current.kind === 'module') {
+      filters.module = current.module;
+    }
+    if (current.kind === 'stale' || this.statusFilter === 'stale') {
+      filters.status = 'STALE';
+    }
+    if (this.statusFilter === 'unbound') {
+      filters.unbound = true;
+    }
+    if (this.statusFilter === 'missingDescription') {
+      filters.missingDescription = true;
     }
     return filters;
   }
@@ -276,12 +366,31 @@ export class ApiListComponent implements AfterViewInit {
         {
           title: 'API 路径',
           field: 'path',
-          width: 280
+          width: 240
+        },
+        {
+          title: '名称',
+          field: 'name',
+          width: 140
         },
         {
           title: '描述',
           field: 'description',
           tdTemplate: this.descriptionTpl()
+        },
+        {
+          title: '来源',
+          field: 'source',
+          width: 130,
+          tdTemplate: this.sourceTpl(),
+          notNeedEllipsis: true
+        },
+        {
+          title: '引用权限',
+          field: 'permissions',
+          width: 180,
+          tdTemplate: this.permissionTpl(),
+          notNeedEllipsis: true
         },
         {
           title: '操作',

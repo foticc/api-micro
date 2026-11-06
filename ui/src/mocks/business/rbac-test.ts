@@ -232,16 +232,7 @@ function filterList(keyword?: string): RbacPermission[] {
     return [...permissions];
   }
   return permissions.filter(
-    p =>
-      p.name.toLowerCase().includes(k) ||
-      p.code.toLowerCase().includes(k) ||
-      resolveModule(p).toLowerCase().includes(k) ||
-      (p.apis && p.apis.some(api => api.path.toLowerCase().includes(k))) ||
-      p.menus?.some(m => {
-        const name = String(m.name ?? m['menuName'] ?? '');
-        const code = String(m.code ?? '');
-        return name.toLowerCase().includes(k) || code.toLowerCase().includes(k);
-      })
+    p => p.name.toLowerCase().includes(k) || p.code.toLowerCase().includes(k) || resolveModule(p).toLowerCase().includes(k)
   );
 }
 
@@ -250,9 +241,7 @@ function toPageItem(p: RbacPermission): RbacPermissionPageItem {
     id: p.id,
     code: p.code,
     name: p.name,
-    module: resolveModule(p),
-    menuCount: p.menus?.length ?? p.menuIds?.length ?? 0,
-    apiCount: p.apis?.length ?? p.apiIds?.length ?? 0
+    module: resolveModule(p)
   };
 }
 

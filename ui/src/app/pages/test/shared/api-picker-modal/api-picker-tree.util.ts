@@ -4,6 +4,8 @@ import { NzTreeNodeOptions } from 'ng-zorro-antd/core/tree';
 
 export type ApiPickerAddedFilter = 'all' | 'added' | 'notAdded';
 
+export type ApiPickerStatusFilter = 'active' | 'stale' | 'all';
+
 export type ApiPickerSortBy = 'path' | 'method';
 
 export interface ApiPickerTreeBuildOptions {
@@ -23,7 +25,7 @@ export interface ApiPickerTreeNodeOptions extends NzTreeNodeOptions {
 }
 
 const GROUP_KEY_PREFIX = 'group:';
-const ROOT_FALLBACK = '其他';
+export const API_FALLBACK_MODULE = '其他';
 
 export function groupNodeKey(prefix: string): string {
   return `${GROUP_KEY_PREFIX}${prefix}`;
@@ -31,6 +33,24 @@ export function groupNodeKey(prefix: string): string {
 
 export function isGroupNodeKey(key: string): boolean {
   return key.startsWith(GROUP_KEY_PREFIX);
+}
+
+/** 与资源目录相同：优先用 module，空则取路径第一段 */
+export function catalogModule(api: ApiResourceDTO): string {
+  const moduleName = api.module?.trim();
+  if (moduleName) {
+    return moduleName;
+  }
+  return getRootSegment(api.path);
+}
+
+export function moduleLabel(moduleName: string): string {
+  return moduleName === API_FALLBACK_MODULE ? '未归类' : moduleName;
+}
+
+function methodMatches(apiMethod: string, selected: string): boolean {
+  const target = selected.trim().toUpperCase();
+  return apiMethod.split('/').some(part => part.trim().toUpperCase() === target);
 }
 
 /** path 按 / 分割，取第一个非空段作为分组根（如 /api/users → api） */
@@ -41,7 +61,7 @@ export function getRootSegment(path: string): string {
       return segment;
     }
   }
-  return ROOT_FALLBACK;
+  return API_FALLBACK_MODULE;
 }
 
 function sortApis(apis: ApiResourceDTO[]): ApiResourceDTO[] {
@@ -63,17 +83,39 @@ function createApiLeaf(api: ApiResourceDTO, linkedSet: Set<number>, manageMode: 
   };
 }
 
-/** 按关键字 / 方法过滤 API */
+/** 按关键字 / 方法过滤 API。关键字含路径、描述、名称、模块；方法按 / 拆开匹配。 */
 export function filterApis(apis: ApiResourceDTO[], keyword: string, method?: string): ApiResourceDTO[] {
   let list = [...apis];
   const kw = keyword.trim().toLowerCase();
   if (kw) {
-    list = list.filter(a => a.path.toLowerCase().includes(kw) || (a.description?.toLowerCase().includes(kw) ?? false) || a.method.toLowerCase().includes(kw));
+    list = list.filter(api => {
+      const moduleName = catalogModule(api).toLowerCase();
+      return (
+        api.path.toLowerCase().includes(kw) ||
+        (api.description?.toLowerCase().includes(kw) ?? false) ||
+        (api.name?.toLowerCase().includes(kw) ?? false) ||
+        moduleName.includes(kw) ||
+        moduleLabel(catalogModule(api)).toLowerCase().includes(kw) ||
+        api.method.toLowerCase().includes(kw)
+      );
+    });
   }
   if (method) {
-    list = list.filter(a => a.method === method);
+    list = list.filter(api => methodMatches(api.method, method));
   }
   return list;
+}
+
+/** 正常列表隐藏未关联的已失效接口；已关联的失效接口仍保留，避免保存时被悄悄去掉 */
+export function filterApisByStatus(apis: ApiResourceDTO[], status: ApiPickerStatusFilter, linkedIds: number[]): ApiResourceDTO[] {
+  if (status === 'all') {
+    return [...apis];
+  }
+  if (status === 'stale') {
+    return apis.filter(api => api.status === 'STALE');
+  }
+  const linked = new Set(linkedIds);
+  return apis.filter(api => api.status !== 'STALE' || (api.id != null && linked.has(api.id)));
 }
 
 /** 按是否已加入当前资源组筛选 */
@@ -108,7 +150,7 @@ export function buildApiPickerTreeNodes(apis: ApiResourceDTO[], linkedIds: numbe
     if (api.id == null) {
       continue;
     }
-    const root = getRootSegment(api.path);
+    const root = catalogModule(api);
     const bucket = groupMap.get(root) ?? [];
     bucket.push(api);
     groupMap.set(root, bucket);
@@ -128,8 +170,8 @@ export function buildApiPickerTreeNodes(apis: ApiResourceDTO[], linkedIds: numbe
       key: groupNodeKey(root),
       isLeaf: false,
       isGroup: true,
-      groupPrefix: `/${root}`,
-      segmentLabel: root,
+      groupPrefix: root,
+      segmentLabel: moduleLabel(root),
       selectableCount,
       existingCount: linkedCount,
       disableCheckbox: !manageMode && selectableCount === 0,

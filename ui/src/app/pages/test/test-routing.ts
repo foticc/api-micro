@@ -10,6 +10,12 @@ export default [
     loadComponent: () => import('./permission/permission-list.component').then(m => m.PermissionListComponent)
   },
   {
+    path: 'permission/:id',
+    title: '配置权限资源组',
+    data: { key: 'rbac-permission-config' },
+    loadComponent: () => import('./permission/permission-config.component').then(m => m.PermissionConfigComponent)
+  },
+  {
     path: 'role-assignment',
     title: '角色管理（测试）',
     data: { key: 'rbac-role-assignment' },

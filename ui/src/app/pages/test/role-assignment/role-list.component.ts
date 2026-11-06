@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, signal, computed, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 
 import { TestRoleModalService } from '../role-assignment/test-role-modal/test-role-modal.service';
@@ -8,12 +9,10 @@ import { RbacTestService } from '@services/system/rbac-test.service';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 import { ModalBtnStatus } from '@widget/base-modal';
 
-import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -24,8 +23,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 
-import { PermissionApi, PermissionMenu, PermissionListFilters, RbacPermissionPageItem, RbacRolePageItem, RbacRolePayload, RoleListFilters } from '../models/rbac.models';
-import { normalizePermissionMenus } from '../shared/permission-menu-tree.util';
+import { PermissionListFilters, RbacPermissionPageItem, RbacRolePageItem, RbacRolePayload, RoleListFilters } from '../models/rbac.models';
 
 type ViewMode = 'list' | 'assign';
 
@@ -44,8 +42,6 @@ type ViewMode = 'list' | 'assign';
     NzInputModule,
     NzCheckboxModule,
     NzIconModule,
-    NzAlertModule,
-    NzEmptyModule,
     NzTagModule,
     NzSpinModule
   ],
@@ -59,6 +55,7 @@ export class RoleListComponent {
   private rbacTestService = inject(RbacTestService);
   private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
 
   viewMode = signal<ViewMode>('list');
   listKeyword = '';
@@ -66,7 +63,6 @@ export class RoleListComponent {
   onlySelected = signal(false);
   listLoading = signal(false);
   assignLoading = signal(false);
-  previewLoading = signal(false);
   saving = signal(false);
 
   private roleListFilters = signal<RoleListFilters>({});
@@ -135,7 +131,6 @@ export class RoleListComponent {
     this.assignLoading.set(this.assignPermissionsResource.isLoading());
     if (this.assignPermissionsResource.hasValue()) {
       this.refreshCheckedStatus();
-      this.syncPreviewAfterListChange();
       this.cdr.markForCheck();
     }
   });
@@ -144,11 +139,6 @@ export class RoleListComponent {
   private selectedPermissionIds = new Set<number>();
   allChecked = false;
   indeterminate = false;
-
-  /** 当前预览详情的资源组 id，默认不选中 */
-  activePreviewId = signal<number | null>(null);
-  previewMenus = signal<PermissionMenu[]>([]);
-  previewApis = signal<PermissionApi[]>([]);
 
   assignRoleId = 0;
   assignRoleName = '';
@@ -173,10 +163,8 @@ export class RoleListComponent {
   }
 
   permissionListScroll(): { y: string } {
-    return { y: '280px' };
+    return { y: '480px' };
   }
-
-  readonly previewTableScroll = { y: '320px' };
 
   addRole(): void {
     this.roleModalService
@@ -338,15 +326,17 @@ export class RoleListComponent {
         this.onlySelected.set(false);
         this.assignPermissionFilters.set({});
         this.selectedPermissionIds = new Set(role.permissionIds);
-        this.clearPreview();
         this.viewMode.set('assign');
       });
   }
 
-  backToList(): void {
+  readonly backToList = (): void => {
     this.viewMode.set('list');
-    this.clearPreview();
     this.rolesResource.reload();
+  };
+
+  openPermissionConfig(row: RbacPermissionPageItem): void {
+    void this.router.navigate(['/default/test/permission', row.id]);
   }
 
   searchPermissions(): void {
@@ -367,10 +357,6 @@ export class RoleListComponent {
 
   isPermissionChecked(row: RbacPermissionPageItem): boolean {
     return this.selectedPermissionIds.has(row.id);
-  }
-
-  isPreviewActive(row: RbacPermissionPageItem): boolean {
-    return this.activePreviewId() === row.id;
   }
 
   onPermissionChecked(row: RbacPermissionPageItem, checked: boolean): void {
@@ -395,33 +381,6 @@ export class RoleListComponent {
     this.cdr.markForCheck();
   }
 
-  selectPermissionPreview(row: RbacPermissionPageItem): void {
-    if (this.activePreviewId() === row.id) {
-      return;
-    }
-    this.activePreviewId.set(row.id);
-    this.previewLoading.set(true);
-    this.rbacTestService
-      .getPermission(row.id)
-      .pipe(
-        finalize(() => {
-          this.previewLoading.set(false);
-          this.cdr.markForCheck();
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(p => {
-        if (!p) {
-          this.message.warning('权限资源组不存在');
-          this.clearPreview();
-          return;
-        }
-        this.previewMenus.set(normalizePermissionMenus(p.menus));
-        this.previewApis.set(p.apis ?? []);
-        this.cdr.markForCheck();
-      });
-  }
-
   refreshCheckedStatus(): void {
     const list = this.permissionList();
     if (list.length === 0) {
@@ -432,34 +391,6 @@ export class RoleListComponent {
     const checkedCount = list.filter(r => this.isPermissionChecked(r)).length;
     this.allChecked = checkedCount === list.length;
     this.indeterminate = checkedCount > 0 && checkedCount < list.length;
-  }
-
-  private clearPreview(): void {
-    this.activePreviewId.set(null);
-    this.previewMenus.set([]);
-    this.previewApis.set([]);
-  }
-
-  /** 筛选后若当前预览项不在列表中，清空预览 */
-  private syncPreviewAfterListChange(): void {
-    const previewId = this.activePreviewId();
-    if (previewId == null) {
-      return;
-    }
-    if (!this.permissionList().some(p => p.id === previewId)) {
-      this.clearPreview();
-    }
-  }
-
-  methodTagColor(method: string): string {
-    const map: Record<string, string> = {
-      GET: 'success',
-      POST: 'processing',
-      PUT: 'warning',
-      DELETE: 'error',
-      PATCH: 'purple'
-    };
-    return map[method] ?? 'default';
   }
 
   submitAssign(): void {

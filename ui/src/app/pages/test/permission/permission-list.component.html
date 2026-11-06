@@ -8,7 +8,7 @@
           <nz-form-item>
             <nz-form-label>关键字</nz-form-label>
             <nz-form-control>
-              <input name="keyword" nz-input placeholder="名称 / 编码 / 模块 / API 路径" [(ngModel)]="keyword" (keyup.enter)="search()" />
+              <input name="keyword" nz-input placeholder="名称 / 编码 / 模块" [(ngModel)]="keyword" (keyup.enter)="search()" />
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -42,7 +42,7 @@
       nzSize="middle"
       [nzData]="pageList()"
       [nzFrontPagination]="false"
-      [nzLoading]="loading() || binding()"
+      [nzLoading]="loading()"
       [nzPageIndex]="pageIndex()"
       [nzPageSize]="pageSize()"
       [nzPageSizeOptions]="[10, 20, 50]"
@@ -57,9 +57,7 @@
           <th>权限名称</th>
           <th>编码</th>
           <th>模块</th>
-          <th nzWidth="128px">菜单</th>
-          <th nzWidth="128px">接口</th>
-          <th nzWidth="120px">操作</th>
+          <th nzWidth="180px">操作</th>
         </tr>
       </thead>
       <tbody>
@@ -70,31 +68,7 @@
             <td>{{ row.code }}</td>
             <td>{{ row.module }}</td>
             <td>
-              <button class="count-badge count-badge--menu" type="button" nz-tooltip nzTooltipTitle="点击配置关联菜单" [class.count-badge--empty]="row.menuCount === 0" (click)="bindMenus(row)">
-                <span class="count-badge__text">{{ row.menuCount }} 个菜单</span>
-                <i class="count-badge__icon" nz-icon nzType="setting"></i>
-              </button>
-            </td>
-            <td>
-              <button
-                class="count-badge count-badge--api"
-                type="button"
-                nz-tooltip
-                [class.count-badge--empty]="row.apiCount === 0"
-                [nzTooltipTitle]="row.apiCount === 0 ? '未关联接口，鉴权不生效；点击配置' : '点击配置关联接口'"
-                (click)="bindApis(row)"
-              >
-                <span class="count-badge__text">
-                  @if (row.apiCount === 0) {
-                    未关联
-                  } @else {
-                    {{ row.apiCount }} 个接口
-                  }
-                </span>
-                <i class="count-badge__icon" nz-icon nzType="setting"></i>
-              </button>
-            </td>
-            <td>
+              <span class="operate-text" (click)="openConfig(row)">配置</span>
               <span class="operate-text" (click)="openEdit(row)">编辑</span>
               <span class="operate-text" (click)="remove(row)">删除</span>
             </td>

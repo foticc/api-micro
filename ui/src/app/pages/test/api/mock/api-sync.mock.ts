@@ -1,4 +1,5 @@
-/** MSW 用：模拟 POST /rbac/api/sync 返回的同步条数 */
-export function mockApiSyncCount(): number {
-  return 8;
+import { ApiSyncResult } from '@app/pages/test/api/models/api-sync.models';
+
+export function mockApiSyncResult(): ApiSyncResult {
+  return { created: 1, refreshed: 2, stale: 1 };
 }

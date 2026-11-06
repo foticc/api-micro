@@ -17,12 +17,19 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
   selector: 'app-api-modal',
   templateUrl: './api-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzInputModule, NzSelectModule]
+  imports: [FormsModule, NzFormModule, ReactiveFormsModule, NzGridModule, NzInputModule, NzSelectModule],
+  styles: `
+    .identity-hint {
+      margin-bottom: 12px;
+      color: rgba(0, 0, 0, 0.45);
+    }
+  `
 })
 export class ApiModalComponent extends BasicConfirmModalComponent implements OnInit {
   addEditForm!: FormGroup;
   readonly nzModalData: ApiResourceDTO = inject(NZ_MODAL_DATA);
   isEdit = false;
+  identityLocked = false;
 
   readonly methodOptions = [
     { label: 'GET', value: 'GET' },
@@ -58,11 +65,16 @@ export class ApiModalComponent extends BasicConfirmModalComponent implements OnI
     this.initForm();
     this.isEdit = !!this.nzModalData;
     if (this.isEdit) {
+      this.identityLocked = this.nzModalData.source === 'SCAN';
       this.addEditForm.patchValue({
         method: this.nzModalData.method,
         path: this.nzModalData.path,
         description: this.nzModalData.description || ''
       });
+      if (this.identityLocked) {
+        this.addEditForm.get('method')?.disable();
+        this.addEditForm.get('path')?.disable();
+      }
     }
   }
 }

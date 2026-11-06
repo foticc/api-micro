@@ -24,14 +24,12 @@ export interface RbacPermission {
   description?: string;
 }
 
-/** 分页列表项：仅含统计字段，不含 menus / apis 明细 */
+/** 分页列表项：权限本身，不含菜单 / 接口明细 */
 export interface RbacPermissionPageItem {
   id: number;
   code: string;
   name: string;
   module: string;
-  menuCount: number;
-  apiCount: number;
 }
 
 /** 创建/更新权限主表（不含 menu / api 绑定） */

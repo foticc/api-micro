@@ -38,11 +38,13 @@
   ；勾选子节点将自动勾选上级，勾选父节点将自动勾选其下全部子节点
 </p>
 
-<div class="picker-tree-toolbar">
-  <button nz-button nzSize="small" (click)="expandAll()">全部展开</button>
-  <button class="m-l-8" nz-button nzSize="small" (click)="collapseAll()">全部收起</button>
-  <button class="m-l-8" nz-button nzSize="small" [disabled]="selectedCount() === 0" (click)="clearSelection()"> 清空已关联 </button>
-</div>
+@if (showToolbar()) {
+  <div class="picker-tree-toolbar">
+    <button nz-button nzSize="small" (click)="expandAll()">全部展开</button>
+    <button class="m-l-8" nz-button nzSize="small" (click)="collapseAll()">全部收起</button>
+    <button class="m-l-8" nz-button nzSize="small" [disabled]="selectedCount() === 0" (click)="clearSelection()">清空已关联</button>
+  </div>
+}
 
 <nz-spin [nzSpinning]="loading()">
   <div class="picker-tree-scroll">

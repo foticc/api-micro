@@ -46,14 +46,14 @@ export class RbacTestService {
     return this.http.post('/rbac/permissions/del', { ids: [id] }, { needSuccessInfo: true });
   }
 
-  bindPermissionApis(id: number, ids: number[]): Observable<RbacPermission> {
+  bindPermissionApis(id: number, ids: number[], needSuccessInfo = true): Observable<RbacPermission> {
     const body: PermissionBindIdsPayload = { ids };
-    return this.http.put(`/rbac/permissions/${id}/apis`, body, { needSuccessInfo: true });
+    return this.http.put(`/rbac/permissions/${id}/apis`, body, { needSuccessInfo });
   }
 
-  bindPermissionMenus(id: number, ids: number[]): Observable<RbacPermission> {
+  bindPermissionMenus(id: number, ids: number[], needSuccessInfo = true): Observable<RbacPermission> {
     const body: PermissionBindIdsPayload = { ids };
-    return this.http.put(`/rbac/permissions/${id}/menus`, body, { needSuccessInfo: true });
+    return this.http.put(`/rbac/permissions/${id}/menus`, body, { needSuccessInfo });
   }
 
   getPermissionMenuIds(id: number): Observable<PermissionBindIdsResponse> {

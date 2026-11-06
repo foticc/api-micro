@@ -1,0 +1,32 @@
+<app-page-header [backTpl]="backTpl" [backUrl]="'/default/test/permission'" [pageHeaderInfo]="pageHeader()" />
+<ng-template #backTpl>返回</ng-template>
+
+<div class="normal-table-wrap">
+  <nz-spin [nzSpinning]="loading()">
+    @if (ready()) {
+      <nz-tabs [nzAnimated]="false">
+        <nz-tab nzTitle="菜单">
+          <nz-card nzTitle="菜单" [nzExtra]="menuSave">
+            <app-menu-picker-modal [existingIds]="menuIds()" [manageModeInput]="true" [showToolbar]="false" />
+          </nz-card>
+          <ng-template #menuSave>
+            <button nz-button [disabled]="!menuPicker()" (click)="menuPicker()?.expandAll()">全部展开</button>
+            <button class="m-l-8" nz-button [disabled]="!menuPicker()" (click)="menuPicker()?.collapseAll()">全部收起</button>
+            <button class="m-l-8" nz-button [disabled]="(menuPicker()?.selectedCount() ?? 0) === 0" (click)="menuPicker()?.clearSelection()">清空已关联</button>
+            <button class="m-l-8" nz-button nzType="primary" [disabled]="!canSaveMenus()" [nzLoading]="savingMenus()" (click)="saveMenus()">保存菜单</button>
+          </ng-template>
+        </nz-tab>
+        <nz-tab nzTitle="接口">
+          <nz-card nzTitle="接口" [nzExtra]="apiSave">
+            <app-api-picker-modal [existingIds]="apiIds()" [manageModeInput]="true" [showToolbar]="false" />
+          </nz-card>
+          <ng-template #apiSave>
+            <button nz-button [disabled]="!apiPicker()" (click)="apiPicker()?.selectFiltered()">选中当前结果</button>
+            <button class="m-l-8" nz-button [disabled]="(apiPicker()?.selectedCount() ?? 0) === 0" (click)="apiPicker()?.clearSelection()">清空已选</button>
+            <button class="m-l-8" nz-button nzType="primary" [disabled]="!canSaveApis()" [nzLoading]="savingApis()" (click)="saveApis()">保存接口</button>
+          </ng-template>
+        </nz-tab>
+      </nz-tabs>
+    }
+  </nz-spin>
+</div>

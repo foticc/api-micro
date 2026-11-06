@@ -1,0 +1,69 @@
+.picker-layout {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.picker-side {
+  width: 180px;
+  flex: none;
+  max-height: 520px;
+  overflow: auto;
+  padding: 8px;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+}
+
+.picker-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.picker-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 13px;
+}
+
+.module-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.module-item:hover,
+.module-item.is-active {
+  background: #e6f4ff;
+}
+
+.module-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.module-count {
+  flex: none;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.path-cell {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

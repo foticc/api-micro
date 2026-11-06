@@ -86,24 +86,19 @@
     </nz-card>
   </div>
 } @else {
-  <app-page-header [pageHeaderInfo]="assignPageHeader()" />
+  <app-page-header [backAction]="backToList" [backTpl]="assignBackTpl" [pageHeaderInfo]="assignPageHeader()" />
+  <ng-template #assignBackTpl>返回</ng-template>
 
   <div class="normal-table-wrap role-assign-form-wrap">
     <div class="form-toolbar">
-      <button nz-button (click)="backToList()">
-        <i nz-icon nzType="arrow-left"></i>
-        返回列表
-      </button>
       <div class="form-toolbar-meta">
         <nz-tag nzColor="processing">分配模式</nz-tag>
         <span class="muted">已选资源组 {{ selectedPermissionCount() }} 个</span>
       </div>
     </div>
 
-    <nz-alert class="m-b-16" nzMessage="勾选资源组用于保存分配；点击行可预览该组关联的菜单与 API。" nzShowIcon nzType="info" />
-
     <nz-card class="m-b-16" nzTitle="权限资源组">
-      <p class="section-hint">可多选绑定到角色；点击列表行查看下方菜单与 API 明细。</p>
+      <p class="section-hint">勾选要分配给该角色的权限组。从操作列进入该组，分别修改菜单和接口。</p>
 
       <form class="m-b-16" nz-form>
         <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24 }">
@@ -141,117 +136,27 @@
               <th>权限名称</th>
               <th>编码</th>
               <th>模块</th>
-              <th>关联菜单</th>
-              <th>API 数量</th>
+              <th nzWidth="80px">操作</th>
             </tr>
           </thead>
           <tbody>
             @for (row of permissionList(); track row.id) {
-              <tr class="permission-row" [class.permission-row-active]="isPreviewActive(row)" (click)="selectPermissionPreview(row)">
-                <td (click)="$event.stopPropagation()">
+              <tr>
+                <td>
                   <label nz-checkbox [ngModel]="isPermissionChecked(row)" (ngModelChange)="onPermissionChecked(row, $event)"></label>
                 </td>
                 <td>{{ row.name }}</td>
                 <td>{{ row.code }}</td>
                 <td>{{ row.module }}</td>
-                <td>{{ row.menuCount }} 个</td>
-                <td>{{ row.apiCount }} 个</td>
+                <td>
+                  <span class="operate-text" (click)="openPermissionConfig(row)">配置</span>
+                </td>
               </tr>
             }
           </tbody>
         </nz-table>
       </nz-spin>
     </nz-card>
-
-    <div class="resource-row" nz-row [nzGutter]="24">
-      <div nz-col [nzLg]="10" [nzXs]="24">
-        <nz-card class="resource-card" nzTitle="关联菜单">
-          <p class="section-hint">只读预览，修改请前往「权限资源组」。</p>
-          <div class="preview-panel-body">
-            @if (activePreviewId() != null) {
-              <nz-spin class="preview-spin" [nzSpinning]="previewLoading()">
-                <div class="preview-table-wrap">
-                  @if (previewMenus().length > 0) {
-                    <div class="assign-toolbar">
-                      <span class="muted">共 {{ previewMenus().length }} 项</span>
-                    </div>
-                    <nz-table class="api-table menu-table" nzSize="middle" [nzData]="previewMenus()" [nzFrontPagination]="false" [nzScroll]="previewTableScroll" [nzShowPagination]="false">
-                      <thead>
-                        <tr>
-                          <th>名称</th>
-                          <th nzWidth="80px">类型</th>
-                          <th>权限码</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @for (menu of previewMenus(); track menu.id) {
-                          <tr>
-                            <td nzEllipsis>{{ menu.name }}</td>
-                            <td>
-                              <nz-tag [nzColor]="menu.type === 'button' ? 'purple' : 'blue'">
-                                {{ menu.type === 'button' ? '按钮' : '菜单' }}
-                              </nz-tag>
-                            </td>
-                            <td nzEllipsis>{{ menu.code }}</td>
-                          </tr>
-                        }
-                      </tbody>
-                    </nz-table>
-                  } @else if (!previewLoading()) {
-                    <nz-empty class="preview-empty" nzNotFoundContent="该资源组暂无关联菜单" nzNotFoundImage="simple" />
-                  }
-                </div>
-              </nz-spin>
-            } @else {
-              <nz-empty class="preview-empty" nzNotFoundContent="请选择上方权限资源组" nzNotFoundImage="simple" />
-            }
-          </div>
-        </nz-card>
-      </div>
-
-      <div nz-col [nzLg]="14" [nzXs]="24">
-        <nz-card class="resource-card" nzTitle="后端 API">
-          <p class="section-hint">只读预览，修改请前往「权限资源组」或「API 资源管理」。</p>
-          <div class="preview-panel-body">
-            @if (activePreviewId() != null) {
-              <nz-spin class="preview-spin" [nzSpinning]="previewLoading()">
-                <div class="preview-table-wrap">
-                  @if (previewApis().length > 0) {
-                    <div class="assign-toolbar">
-                      <span class="muted">共 {{ previewApis().length }} 条</span>
-                    </div>
-                    <nz-table class="api-table" nzSize="middle" [nzData]="previewApis()" [nzFrontPagination]="false" [nzScroll]="previewTableScroll" [nzShowPagination]="false">
-                      <thead>
-                        <tr>
-                          <th nzWidth="110px">方法</th>
-                          <th>路径</th>
-                          <th nzWidth="180px">说明</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @for (api of previewApis(); track api.id ?? api.path + api.method) {
-                          <tr>
-                            <td>
-                              <nz-tag [nzColor]="methodTagColor(api.method)">{{ api.method }}</nz-tag>
-                            </td>
-                            <td nzEllipsis>{{ api.path }}</td>
-                            <td nzEllipsis>{{ api.description || '—' }}</td>
-                          </tr>
-                        }
-                      </tbody>
-                    </nz-table>
-                  } @else if (!previewLoading()) {
-                    <nz-empty class="preview-empty" nzNotFoundContent="该资源组暂无 API" nzNotFoundImage="simple" />
-                  }
-                </div>
-              </nz-spin>
-            } @else {
-              <nz-empty class="preview-empty" nzNotFoundContent="请选择上方权限资源组" nzNotFoundImage="simple" />
-            }
-          </div>
-        </nz-card>
-      </div>
-    </div>
 
     <div class="form-footer-bar">
       <button nz-button (click)="backToList()">取消</button>

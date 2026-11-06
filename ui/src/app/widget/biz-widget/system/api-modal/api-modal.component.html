@@ -1,4 +1,7 @@
 <form nz-form nzLayout="vertical" [formGroup]="addEditForm">
+  @if (identityLocked) {
+    <p class="identity-hint">扫描登记的接口只可修改描述，请求方法和路径保持不变。</p>
+  }
   <div nz-row [nzGutter]="16">
     <div nz-col [nzSpan]="8">
       <nz-form-item>

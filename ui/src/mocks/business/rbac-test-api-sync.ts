@@ -1,9 +1,8 @@
-import { mockApiSyncCount } from '@app/pages/test/api/mock/api-sync.mock';
+import { mockApiSyncResult } from '@app/pages/test/api/mock/api-sync.mock';
 import { http, HttpResponse } from 'msw';
 
 export const rbacTestApiSync = [
-  http.post('/site/api/rbac/api/sync', async () => {
-    const count = mockApiSyncCount();
-    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: count });
+  http.post('/site/api/rbac/api/sync', () => {
+    return HttpResponse.json({ code: 200, msg: 'SUCCESS', data: mockApiSyncResult() });
   })
 ];

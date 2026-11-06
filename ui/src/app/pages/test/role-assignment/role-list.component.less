@@ -42,46 +42,6 @@
   flex-wrap: wrap;
 }
 
-.resource-row {
-  align-items: stretch;
-}
-
-.resource-card {
-  height: 100%;
-}
-
-/** 固定预览区高度，避免 empty / table / loading 切换时页面抖动 */
-.preview-panel-body {
-  min-height: 380px;
-}
-
-.preview-spin {
-  display: block;
-  min-height: 380px;
-}
-
-.preview-table-wrap {
-  min-height: 360px;
-}
-
-.preview-empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 320px;
-  margin: 0;
-}
-
-.permission-pick-table {
-  .permission-row {
-    cursor: pointer;
-  }
-
-  .permission-row-active > td {
-    background: #e6f4ff !important;
-  }
-}
-
 .api-table {
   ::ng-deep .ant-table-cell {
     vertical-align: middle;

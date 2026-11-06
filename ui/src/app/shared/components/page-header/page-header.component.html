@@ -1,6 +1,12 @@
 @let backTpl = this.backTpl();
 @let pageHeaderInfo = this.pageHeaderInfo();
-<nz-page-header class="site-page-header" [nzBackIcon]="backTpl ? backTpl : null" [nzGhost]="false" [nzTitle]="pageHeaderInfo.title" (nzBack)="back()">
+<ng-template #styledBack>
+  <span class="page-back">
+    <nz-icon nzType="arrow-left" />
+    <ng-container *nzStringTemplateOutlet="backTpl">返回</ng-container>
+  </span>
+</ng-template>
+<nz-page-header class="site-page-header" [nzBackIcon]="backTpl ? styledBack : null" [nzGhost]="false" [nzTitle]="pageHeaderInfo.title" (nzBack)="back()">
   <nz-breadcrumb nz-page-header-breadcrumb>
     @for (breadcrumb of pageHeaderInfo.breadcrumb; track breadcrumb) {
       <nz-breadcrumb-item>

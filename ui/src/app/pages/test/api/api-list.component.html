@@ -1,82 +1,137 @@
 <app-page-header [pageHeaderInfo]="listPageHeader" />
 
 <div class="normal-table-wrap">
-  <nz-card class="m-b-10" nzHoverable [nzBodyStyle]="{ 'padding-bottom': 0 }">
-    <form nz-form>
-      <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24 }">
-        <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXs]="24">
-          <nz-form-item>
-            <nz-form-label>关键字</nz-form-label>
-            <nz-form-control>
-              <input name="keyword" nz-input placeholder="路径或描述" [(ngModel)]="searchParam.keyword" (keyup.enter)="getDataList(1)" />
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-        <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXs]="24">
-          <nz-form-item>
-            <nz-form-label>请求方法</nz-form-label>
-            <nz-form-control>
-              <nz-select name="method" nzAllowClear nzPlaceHolder="全部" [(ngModel)]="searchParam.method">
-                @for (opt of methodOptions; track opt.value) {
-                  <nz-option [nzLabel]="opt.label" [nzValue]="opt.value" />
-                }
-              </nz-select>
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-        <div class="text-right p-0 m-b-10" nz-col [nzLg]="8" [nzMd]="24" [nzSm]="24" [nzXs]="24">
-          <button nz-button nzType="primary" (click)="getDataList(1)">
-            <i nz-icon nzType="search"></i>
-            搜索
-          </button>
-          <button class="m-l-15" nz-button (click)="resetSearch()">
-            <i nz-icon nzType="close-circle"></i>
-            重置
-          </button>
-        </div>
-      </div>
-    </form>
-  </nz-card>
+<div class="api-catalog">
+  <aside class="api-catalog-side">
+    <button type="button" class="module-item" [class.is-active]="selection().kind === 'all'" (click)="selectAll()">
+      <span>全部</span>
+      <span class="module-count">{{ totalCount() }}</span>
+    </button>
+    @for (item of moduleStats(); track item.module) {
+      <button type="button" class="module-item" [class.is-active]="isModuleSelected(item.module)" (click)="selectModule(item.module)">
+        <span class="module-name">{{ item.module }}</span>
+        <span class="module-count">{{ item.count }}</span>
+      </button>
+    }
+    <button type="button" class="module-item" [class.is-active]="isModuleSelected('其他')" (click)="selectModule('其他')">
+      <span>未归类</span>
+      <span class="module-count">{{ otherCount() }}</span>
+    </button>
+    <button type="button" class="module-item" [class.is-active]="selection().kind === 'stale'" (click)="selectStale()">
+      <span>已失效</span>
+      <span class="module-count">{{ staleCount() }}</span>
+    </button>
+  </aside>
 
-  <app-card-table-wrap [btnTpl]="tableBtns" [tableTitle]="'API 列表'" (reload)="reloadTable()">
-    <app-ant-table
-      [checkedCashArrayFromComment]="checkedCashArray"
-      [tableConfig]="tableConfig()"
-      [tableData]="dataList()"
-      (changePageIndex)="getDataList($event)"
-      (changePageSize)="changePageSize($event)"
-      (selectedChange)="selectedChecked($event)"
-    />
-    <ng-template #methodTagTpl let-method="method">
-      @switch (method) {
-        @case ('GET') {
-          <nz-tag nzColor="success">{{ method }}</nz-tag>
+  <div class="api-catalog-main">
+    <nz-card class="m-b-10" nzHoverable [nzBodyStyle]="{ 'padding-bottom': 0 }">
+      <form nz-form>
+        <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24 }">
+          <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+            <nz-form-item>
+              <nz-form-label>关键字</nz-form-label>
+              <nz-form-control>
+                <input name="keyword" nz-input placeholder="路径、描述或名称" [(ngModel)]="searchParam.keyword" (keyup.enter)="getDataList(1)" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+            <nz-form-item>
+              <nz-form-label>请求方法</nz-form-label>
+              <nz-form-control>
+                <nz-select name="method" nzAllowClear nzPlaceHolder="全部" [(ngModel)]="searchParam.method">
+                  @for (opt of methodOptions; track opt.value) {
+                    <nz-option [nzLabel]="opt.label" [nzValue]="opt.value" />
+                  }
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24" [nzXs]="24">
+            <nz-form-item>
+              <nz-form-label>状态</nz-form-label>
+              <nz-form-control>
+                <nz-select name="statusFilter" nzAllowClear nzPlaceHolder="全部" [(ngModel)]="statusFilter">
+                  @for (opt of statusOptions; track opt.value) {
+                    <nz-option [nzLabel]="opt.label" [nzValue]="opt.value" />
+                  }
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="text-right p-0 m-b-10" nz-col [nzSpan]="24">
+            <button nz-button nzType="primary" (click)="getDataList(1)">
+              <i nz-icon nzType="search"></i>
+              搜索
+            </button>
+            <button class="m-l-15" nz-button (click)="resetSearch()">
+              <i nz-icon nzType="close-circle"></i>
+              重置
+            </button>
+          </div>
+        </div>
+      </form>
+    </nz-card>
+
+    <app-card-table-wrap [btnTpl]="tableBtns" [tableTitle]="'API 列表'" (reload)="reloadTable()">
+      <app-ant-table
+        [checkedCashArrayFromComment]="checkedCashArray"
+        [tableConfig]="tableConfig()"
+        [tableData]="dataList()"
+        (changePageIndex)="getDataList($event)"
+        (changePageSize)="changePageSize($event)"
+        (selectedChange)="selectedChecked($event)"
+      />
+      <ng-template #methodTagTpl let-method="method">
+        @switch (method) {
+          @case ('GET') {
+            <nz-tag nzColor="success">{{ method }}</nz-tag>
+          }
+          @case ('POST') {
+            <nz-tag nzColor="processing">{{ method }}</nz-tag>
+          }
+          @case ('PUT') {
+            <nz-tag nzColor="warning">{{ method }}</nz-tag>
+          }
+          @case ('DELETE') {
+            <nz-tag nzColor="error">{{ method }}</nz-tag>
+          }
+          @case ('PATCH') {
+            <nz-tag nzColor="purple">{{ method }}</nz-tag>
+          }
+          @default {
+            <nz-tag>{{ method }}</nz-tag>
+          }
         }
-        @case ('POST') {
-          <nz-tag nzColor="processing">{{ method }}</nz-tag>
+      </ng-template>
+      <ng-template #descriptionTpl let-description="description">
+        {{ description || '—' }}
+      </ng-template>
+      <ng-template #sourceTpl let-source="source" let-status="status">
+        <nz-tag [nzColor]="source === 'MANUAL' ? 'blue' : 'default'">{{ source === 'MANUAL' ? '手工' : '扫描' }}</nz-tag>
+        @if (status === 'STALE') {
+          <nz-tag>已失效</nz-tag>
         }
-        @case ('PUT') {
-          <nz-tag nzColor="warning">{{ method }}</nz-tag>
+      </ng-template>
+      <ng-template #permissionTpl let-permissions="permissions">
+        @if (!permissions?.length) {
+          <span>—</span>
+        } @else {
+          @for (perm of permissions; track perm.id; let last = $last) {
+            <a [routerLink]="['/default/test/permission', perm.id]">{{ perm.name }}</a>
+            @if (!last) {
+              <span>、</span>
+            }
+          }
         }
-        @case ('DELETE') {
-          <nz-tag nzColor="error">{{ method }}</nz-tag>
-        }
-        @case ('PATCH') {
-          <nz-tag nzColor="purple">{{ method }}</nz-tag>
-        }
-        @default {
-          <nz-tag>{{ method }}</nz-tag>
-        }
-      }
-    </ng-template>
-    <ng-template #descriptionTpl let-description="description">
-      {{ description || '—' }}
-    </ng-template>
-    <ng-template #operationTpl let-$$dataItem="$$dataItem" let-id="id">
-      <span class="operate-text" (click)="edit(id)">编辑</span>
-      <span class="operate-text" (click)="remove(id, $$dataItem)">删除</span>
-    </ng-template>
-  </app-card-table-wrap>
+      </ng-template>
+      <ng-template #operationTpl let-$$dataItem="$$dataItem" let-id="id">
+        <span class="operate-text" (click)="edit(id)">编辑</span>
+        <span class="operate-text" (click)="remove(id, $$dataItem)">删除</span>
+      </ng-template>
+    </app-card-table-wrap>
+  </div>
+</div>
 </div>
 
 <ng-template #tableBtns>

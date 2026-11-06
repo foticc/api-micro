@@ -1,92 +1,122 @@
-<div class="picker-search">
-  <form nz-form>
-    <div nz-row [nzGutter]="12">
-      <div nz-col [nzSpan]="8">
-        <nz-form-item class="m-b-0">
-          <nz-form-control>
-            <input name="keyword" nz-input placeholder="搜索路径、描述或方法" [(ngModel)]="searchParam.keyword" (keyup.enter)="search()" />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col [nzSpan]="5">
-        <nz-form-item class="m-b-0">
-          <nz-form-control>
-            <nz-select name="method" nzAllowClear nzPlaceHolder="请求方法" [(ngModel)]="searchParam.method">
-              @for (opt of methodOptions; track opt.value) {
-                <nz-option [nzLabel]="opt.label" [nzValue]="opt.value" />
-              }
-            </nz-select>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col [nzSpan]="5">
-        <nz-form-item class="m-b-0">
-          <nz-form-control>
-            <nz-select name="addedFilter" nzPlaceHolder="关联状态" [(ngModel)]="addedFilter" (ngModelChange)="onAddedFilterChange()">
-              @for (opt of addedFilterOptions; track opt.value) {
-                <nz-option [nzLabel]="opt.label" [nzValue]="opt.value" />
-              }
-            </nz-select>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div class="text-right" nz-col [nzSpan]="6">
-        <button nz-button nzType="primary" (click)="search()">
-          <i nz-icon nzType="search"></i>
-          搜索
-        </button>
-        <button class="m-l-8" nz-button (click)="resetSearch()">重置</button>
-      </div>
-    </div>
-  </form>
-</div>
-
-<p class="picker-summary">
-  已关联 <strong>{{ selectedCount() }}</strong> 条
-  @if (initialLinkedCount() > 0) {
-    （打开时 {{ initialLinkedCount() }} 条）
-  }
-  ；勾选或取消勾选以增删关联，勾选分组可选中该组下全部 API
-</p>
-
-<div class="picker-tree-toolbar">
-  <button nz-button nzSize="small" (click)="expandAll()">全部展开</button>
-  <button class="m-l-8" nz-button nzSize="small" (click)="collapseAll()">全部收起</button>
-  <button class="m-l-8" nz-button nzSize="small" (click)="selectAllFiltered()">选中当前筛选结果</button>
-  <button class="m-l-8" nz-button nzSize="small" [disabled]="selectedCount() === 0" (click)="clearSelection()"> 清空已关联 </button>
-</div>
-
-<nz-spin [nzSpinning]="loading()">
-  <div class="picker-tree-scroll">
-    @if (treeNodes().length === 0 && !loading()) {
-      <p class="picker-summary">暂无匹配 API</p>
-    } @else {
-      <nz-tree
-        nzCheckable
-        [nzCheckedKeys]="checkedKeys()"
-        [nzData]="treeNodes()"
-        [nzExpandedKeys]="expandedKeys()"
-        [nzTreeTemplate]="treeTpl"
-        (nzCheckedKeysChange)="onCheckedKeysChange($event)"
-        (nzExpandedKeysChange)="expandedKeys.set($event)"
-      />
-      <ng-template #treeTpl let-node let-origin="origin">
-        <span class="tree-node-title">
-          @if (isGroupOrigin(origin)) {
-            <span class="tree-node-path" nz-tooltip [nzTooltipTitle]="origin.groupPrefix">{{ origin.segmentLabel }}</span>
-            <span class="tree-node-desc">({{ groupSummary(origin) }})</span>
-          } @else if (origin.api) {
-            <nz-tag class="tree-node-tag" [nzColor]="methodTagColor(origin.api.method)">{{ origin.api.method }}</nz-tag>
-            <span class="tree-node-path" nz-tooltip [nzTooltipTitle]="origin.api.path">{{ origin.api.path }}</span>
-            @if (origin.api.description) {
-              <span class="tree-node-desc">{{ origin.api.description }}</span>
-            }
-            @if (isApiLinked(origin)) {
-              <nz-tag class="tree-node-tag tree-node-extra" nzColor="blue">已关联</nz-tag>
-            }
-          }
-        </span>
-      </ng-template>
+<div class="picker-layout">
+  <aside class="picker-side">
+    <button type="button" class="module-item" [class.is-active]="isAllSelected()" (click)="selectAll()">
+      <span>全部</span>
+      <span class="module-count">{{ totalCount() }}</span>
+    </button>
+    @for (item of moduleStats(); track item.module) {
+      <button type="button" class="module-item" [class.is-active]="isModuleSelected(item.module)" (click)="selectModule(item.module)">
+        <span class="module-name">{{ moduleText(item.module) }}</span>
+        <span class="module-count">{{ item.count }}</span>
+      </button>
     }
+    <button type="button" class="module-item" [class.is-active]="isModuleSelected('其他')" (click)="selectModule('其他')">
+      <span>未归类</span>
+      <span class="module-count">{{ otherCount() }}</span>
+    </button>
+    <button type="button" class="module-item" [class.is-active]="isStaleSelected()" (click)="selectStale()">
+      <span>已失效</span>
+      <span class="module-count">{{ staleCount() }}</span>
+    </button>
+  </aside>
+
+  <div class="picker-main">
+    <form nz-form>
+      <div nz-row [nzGutter]="12">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item class="m-b-8">
+            <nz-form-control>
+              <input name="keyword" nz-input placeholder="路径、描述、名称或模块" [(ngModel)]="keywordDraft" (keyup.enter)="search()" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="5">
+          <nz-form-item class="m-b-8">
+            <nz-form-control>
+              <nz-select name="method" nzAllowClear nzPlaceHolder="请求方法" [(ngModel)]="methodDraft">
+                @for (opt of methodOptions; track opt.value) {
+                  <nz-option [nzLabel]="opt.label" [nzValue]="opt.value" />
+                }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="5">
+          <nz-form-item class="m-b-8">
+            <nz-form-control>
+              <nz-select name="addedFilter" nzPlaceHolder="关联状态" [(ngModel)]="addedDraft" (ngModelChange)="onAddedFilterChange($event)">
+                @for (opt of addedFilterOptions; track opt.value) {
+                  <nz-option [nzLabel]="opt.label" [nzValue]="opt.value" />
+                }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="text-right" nz-col [nzSpan]="6">
+          <button type="button" nz-button nzType="primary" (click)="search()">
+            <i nz-icon nzType="search"></i>
+            搜索
+          </button>
+          <button class="m-l-8" type="button" nz-button (click)="resetSearch()">重置</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="picker-toolbar">
+      <span>
+        已选 <strong>{{ selectedCount() }}</strong> 条
+        @if (initialLinkedCount > 0) {
+          （打开时 {{ initialLinkedCount }} 条）
+        }
+        ，当前 {{ filteredApis().length }} 条
+      </span>
+      @if (showToolbar()) {
+        <span>
+          <button type="button" nz-button nzSize="small" (click)="selectFiltered()">选中当前结果</button>
+          <button class="m-l-8" type="button" nz-button nzSize="small" [disabled]="selectedCount() === 0" (click)="clearSelection()">清空已选</button>
+        </span>
+      }
+    </div>
+
+    <nz-spin [nzSpinning]="loading()">
+      <nz-table
+        nzSize="small"
+        [nzData]="pageRows()"
+        [nzFrontPagination]="false"
+        [nzPageIndex]="pageIndex()"
+        [nzPageSize]="pageSize()"
+        [nzScroll]="{ y: '360px' }"
+        [nzShowSizeChanger]="true"
+        [nzTotal]="filteredApis().length"
+        (nzPageIndexChange)="pageIndex.set($event)"
+        (nzPageSizeChange)="onPageSize($event)"
+      >
+        <thead>
+          <tr>
+            <th nzWidth="48px" [nzChecked]="pageAllChecked()" [nzIndeterminate]="pageIndeterminate()" (nzCheckedChange)="onPageChecked($event)"></th>
+            <th nzWidth="88px">方法</th>
+            <th>路径</th>
+            <th nzWidth="140px">名称</th>
+            <th>描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of pageRows(); track row.id) {
+            <tr>
+              <td [nzChecked]="isChecked(row.id)" [nzDisabled]="isLocked(row.id)" (nzCheckedChange)="onRowChecked(row, $event)"></td>
+              <td>
+                <nz-tag [nzColor]="methodTagColor(row.method)">{{ row.method }}</nz-tag>
+                @if (row.status === 'STALE') {
+                  <nz-tag>已失效</nz-tag>
+                }
+              </td>
+              <td class="path-cell" nz-tooltip [nzTooltipTitle]="row.path">{{ row.path }}</td>
+              <td>{{ row.name || '—' }}</td>
+              <td>{{ row.description || '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </nz-table>
+    </nz-spin>
   </div>
-</nz-spin>
+</div>

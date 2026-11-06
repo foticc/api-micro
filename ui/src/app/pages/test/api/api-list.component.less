@@ -1,0 +1,53 @@
+.api-catalog {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.api-catalog-side {
+  width: 220px;
+  flex: none;
+  background: #fff;
+  border-radius: 2px;
+  padding: 8px;
+  max-height: calc(100vh - 220px);
+  overflow: auto;
+}
+
+.api-catalog-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.module-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.module-item:hover,
+.module-item.is-active {
+  background: #e6f4ff;
+}
+
+.module-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.module-count {
+  flex: none;
+  color: rgba(0, 0, 0, 0.45);
+}
+

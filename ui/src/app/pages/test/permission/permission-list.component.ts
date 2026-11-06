@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, signal, computed, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { Menu } from '@core/services/types';
-import { ApiResourceDTO } from '@services/system/api-resource.service';
 import { RbacTestService } from '@services/system/rbac-test.service';
 import { PageHeaderComponent, PageHeaderType } from '@shared/components/page-header/page-header.component';
 import { ModalBtnStatus } from '@widget/base-modal';
@@ -19,34 +17,29 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
 import { RbacPermissionPageItem, RbacPermissionPayload, PermissionListFilters } from '../models/rbac.models';
 import { PermissionModalService } from '../permission/permission-modal/permission-modal.service';
-import { ApiPickerModalService } from '../shared/api-picker-modal/api-picker-modal.service';
-import { MenuPickerModalService } from '../shared/menu-picker-modal/menu-picker-modal.service';
 
 @Component({
   selector: 'app-permission-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PageHeaderComponent, FormsModule, NzCardModule, NzFormModule, NzGridModule, NzInputModule, NzButtonModule, NzWaveModule, NzIconModule, NzTableModule, NzModalModule, NzTooltipModule],
-  templateUrl: './permission-list.component.html',
-  styleUrl: './permission-list.component.less'
+  imports: [PageHeaderComponent, FormsModule, NzCardModule, NzFormModule, NzGridModule, NzInputModule, NzButtonModule, NzWaveModule, NzIconModule, NzTableModule, NzModalModule],
+  templateUrl: './permission-list.component.html'
 })
 export class PermissionListComponent {
   private message = inject(NzMessageService);
   private modal = inject(NzModalService);
   private permissionModal = inject(PermissionModalService);
-  private apiPickerModal = inject(ApiPickerModalService);
-  private menuPickerModal = inject(MenuPickerModalService);
   private rbacTestService = inject(RbacTestService);
   private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
-  keyword = '';
-  binding = signal(false);
+  keyword = this.route.snapshot.queryParamMap.get('keyword')?.trim() ?? '';
 
-  private listFilters = signal<PermissionListFilters>({});
+  private listFilters = signal<PermissionListFilters>(this.keyword ? { keyword: this.keyword } : {});
   pageIndex = signal(1);
   pageSize = signal(10);
   total = signal(0);
@@ -76,9 +69,21 @@ export class PermissionListComponent {
     }
   });
 
+  constructor() {
+    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe(params => {
+      const keyword = params.get('keyword')?.trim() ?? '';
+      if (!keyword || keyword === this.listFilters().keyword) {
+        return;
+      }
+      this.keyword = keyword;
+      this.listFilters.set({ keyword });
+      this.pageIndex.set(1);
+    });
+  }
+
   readonly listPageHeader: Partial<PageHeaderType> = {
     title: '权限资源组',
-    desc: '先维护权限定义，再点击列表中的「菜单 / 接口」数量进行关联（接口决定鉴权，菜单决定前端展示）。'
+    desc: '维护权限组定义。从操作列进入配置，分别维护菜单和接口。'
   };
 
   reloadPage(): void {
@@ -104,6 +109,10 @@ export class PermissionListComponent {
   onPageSizeChange(size: number): void {
     this.pageSize.set(size);
     this.pageIndex.set(1);
+  }
+
+  openConfig(row: RbacPermissionPageItem): void {
+    void this.router.navigate(['/default/test/permission', row.id]);
   }
 
   openCreate(): void {
@@ -151,78 +160,6 @@ export class PermissionListComponent {
               .pipe(takeUntilDestroyed(this.destroyRef))
               .subscribe(() => this.permissionsResource.reload());
           });
-      });
-  }
-
-  bindApis(row: RbacPermissionPageItem): void {
-    this.rbacTestService
-      .getPermissionApiIds(row.id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: ({ ids }) => {
-          this.apiPickerModal
-            .show({ nzTitle: `关联接口 · ${row.name}`, nzWidth: 920 }, { existingIds: ids ?? [], manageMode: true })
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(res => {
-              if (!res || res.status === ModalBtnStatus.Cancel) {
-                return;
-              }
-              const selected = (res.modalValue ?? []) as ApiResourceDTO[];
-              const nextIds = selected.map(a => a.id).filter((id): id is number => id != null);
-              this.binding.set(true);
-              this.rbacTestService
-                .bindPermissionApis(row.id, nextIds)
-                .pipe(
-                  finalize(() => {
-                    this.binding.set(false);
-                    this.cdr.markForCheck();
-                  }),
-                  takeUntilDestroyed(this.destroyRef)
-                )
-                .subscribe({
-                  next: () => this.permissionsResource.reload()
-                });
-            });
-        },
-        error: () => {
-          this.message.warning('权限不存在或加载接口绑定失败');
-        }
-      });
-  }
-
-  bindMenus(row: RbacPermissionPageItem): void {
-    this.rbacTestService
-      .getPermissionMenuIds(row.id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: ({ ids }) => {
-          this.menuPickerModal
-            .show({ nzTitle: `关联菜单 · ${row.name}`, nzWidth: 920 }, { existingIds: ids ?? [], manageMode: true })
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(res => {
-              if (!res || res.status === ModalBtnStatus.Cancel) {
-                return;
-              }
-              const selected = (res.modalValue ?? []) as Menu[];
-              const nextIds = selected.map(m => Number(m.id)).filter(id => !Number.isNaN(id));
-              this.binding.set(true);
-              this.rbacTestService
-                .bindPermissionMenus(row.id, nextIds)
-                .pipe(
-                  finalize(() => {
-                    this.binding.set(false);
-                    this.cdr.markForCheck();
-                  }),
-                  takeUntilDestroyed(this.destroyRef)
-                )
-                .subscribe({
-                  next: () => this.permissionsResource.reload()
-                });
-            });
-        },
-        error: () => {
-          this.message.warning('权限不存在或加载菜单绑定失败');
-        }
       });
   }
 

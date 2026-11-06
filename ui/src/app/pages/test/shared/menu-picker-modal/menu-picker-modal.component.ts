@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, signal, computed, effect } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, signal, computed, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 
@@ -69,9 +69,15 @@ export interface MenuPickerModalData {
     }
   `
 })
-export class MenuPickerModalComponent extends BasicConfirmModalComponent implements OnInit {
+export class MenuPickerModalComponent extends BasicConfirmModalComponent {
   readonly nzModalData: MenuPickerModalData = inject(NZ_MODAL_DATA, { optional: true }) ?? {};
   override modalRef = inject(NzModalRef);
+
+  /** 嵌入配置页时传入；弹窗模式仍走 NZ_MODAL_DATA */
+  readonly existingIds = input<number[] | null>(null);
+  readonly manageModeInput = input<boolean | null>(null);
+  /** 配置页把操作放到卡片标题栏，这里不再重复显示 */
+  readonly showToolbar = input(true);
 
   private menusService = inject(TestMenusService);
   private cdr = inject(ChangeDetectorRef);
@@ -101,23 +107,26 @@ export class MenuPickerModalComponent extends BasicConfirmModalComponent impleme
   private selectedById = new Map<number, Menu>();
   private initialLinkedIds: number[] = [];
   private selectionInitialized = false;
+  readonly selectionReady = signal(false);
   /** 用户直接勾选（含向下级联）的节点，不含仅为展示而补的祖先 */
   private explicitCheckedIds: number[] = [];
 
   private syncMenuTree = effect(() => {
+    const ids = this.existingIds();
+    const manageModeInput = this.manageModeInput();
     if (!this.menuResource.hasValue()) {
       return;
     }
     this.allFlatMenus = [...this.menuResource.value()];
     this.menuById = new Map(this.allFlatMenus.map(m => [Number(m.id), m]));
+    if (!this.selectionInitialized) {
+      const source = ids ?? this.nzModalData.existingIds ?? [];
+      this.initialLinkedIds = source.map(id => Number(id)).filter(id => !Number.isNaN(id));
+      this.manageMode = manageModeInput ?? this.nzModalData.manageMode ?? this.initialLinkedIds.length > 0;
+    }
     this.initializeSelectionIfNeeded();
     this.applyTreeFilter();
   });
-
-  ngOnInit(): void {
-    this.initialLinkedIds = (this.nzModalData.existingIds ?? []).map(id => Number(id)).filter(id => !Number.isNaN(id));
-    this.manageMode = this.nzModalData.manageMode ?? this.initialLinkedIds.length > 0;
-  }
 
   selectedCount(): number {
     return this.selectedById.size;
@@ -208,6 +217,10 @@ export class MenuPickerModalComponent extends BasicConfirmModalComponent impleme
     return of(modalValue);
   }
 
+  selectedMenuIds(): number[] {
+    return [...this.selectedById.keys()];
+  }
+
   override getCurrentValue(): Observable<unknown> {
     return of([...this.selectedById.values()]);
   }
@@ -224,6 +237,7 @@ export class MenuPickerModalComponent extends BasicConfirmModalComponent impleme
       }
     }
     this.selectionInitialized = true;
+    this.selectionReady.set(true);
     this.syncCheckedKeysFromSelection();
   }
 
